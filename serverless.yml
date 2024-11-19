@@ -48,7 +48,14 @@ resources:
     statesRole: '${file(./iac/states/statesRole.yml):statesRole}'
 
     # ---------- REST API 🫡 ----------------
-    ##restApi: '${file(./iac/api/rest_api.yml):restApi}'
+    WebSocketApi: '${file(./iac/api/websocket_api.yml):WebSocketApi}'
+    WebSocketApiDeployment: '${file(./iac/api/websocket_api.yml):WebSocketApiDeployment}'
+    WebSocketApiStage: '${file(./iac/api/websocket_api.yml):WebSocketApiStage}'
+    WebSocketApiIntegrationRole: '${file(./iac/api/websocket_api.yml):WebSocketApiIntegrationRole}'
+    DefaultRoute: '${file(./iac/api/websocket_api.yml):DefaultRoute}'
+    DefaultRouteIntegration: '${file(./iac/api/websocket_api.yml):DefaultRouteIntegration}'
+    #DefaultRouteResponse: '${file(./iac/api/websocket_api.yml):DefaultRouteResponse}'
+
     #Stage: '${file(./iac/api/rest_api.yml):Stage}'
     ##restApiDeploy: '${file(./iac/api/rest_api.yml):restApiDeploy}'
     ##restApiRole: '${file(./iac/api/rest_api.yml):restApiRole}'

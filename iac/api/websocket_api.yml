@@ -1,0 +1,120 @@
+WebSocketApi:
+  Type: 'AWS::ApiGatewayV2::Api'
+  Properties:
+    Name: gen-ai-websockets-${self:provider.stage}
+    ProtocolType: WEBSOCKET
+    RouteSelectionExpression: "$request.body.action"
+
+WebSocketApiDeployment:
+  Type: AWS::ApiGatewayV2::Deployment
+  DependsOn:
+    - DefaultRoute
+  Properties:
+    ApiId: !Ref WebSocketApi
+
+WebSocketApiStage:
+  Type: AWS::ApiGatewayV2::Stage
+  Properties:
+    ApiId: !Ref WebSocketApi
+    StageName: ${self:provider.stage}
+    DeploymentId: !Ref WebSocketApiDeployment
+    AutoDeploy: true
+
+WebSocketApiIntegrationRole:
+  Type: AWS::IAM::Role
+  Properties:
+    RoleName: gen-ai-WebSocketRole-${self:provider.stage}
+    Path: /
+    AssumeRolePolicyDocument:
+      Statement:
+      - Effect: Allow
+        Principal:
+          Service:
+            - apigateway.amazonaws.com
+        Action:
+          - sts:AssumeRole
+      Version: "2012-10-17"
+    Policies:
+      - PolicyName: genaiWebSocketApiSFNPolicy
+        PolicyDocument:
+          Version: "2012-10-17"
+          Statement:
+            - Effect: Allow
+              Action:
+                - logs:*
+              Resource: "*"
+
+            - Effect: Allow
+              Action:
+                - states:*
+              Resource: "*"
+
+            - Effect: Allow
+              Action:
+                - sqs:*
+              Resource: "*"
+
+            - Effect: Allow
+              Action:
+                - lambda:*
+              Resource: "*"
+
+
+DefaultRoute:
+  Type: AWS::ApiGatewayV2::Route
+  Properties:
+    ApiId: !Ref WebSocketApi
+    RouteKey: $default
+    AuthorizationType: NONE
+    OperationName: DefaultRoute
+    Target: !Join 
+      - /
+      - - integrations
+        - !Ref DefaultRouteIntegration
+
+
+DefaultRouteIntegration:
+  Type: AWS::ApiGatewayV2::Integration
+  Properties:
+    ApiId: !Ref WebSocketApi
+    IntegrationType: AWS
+    CredentialsArn: 
+      Fn::GetAtt: [WebSocketApiIntegrationRole, Arn]
+    IntegrationMethod: POST
+    IntegrationUri:
+        Fn::Join:
+          - ""
+          - - "arn:aws:apigateway:"
+            - Ref: AWS::Region
+            - :sqs:path/
+            - Ref: AWS::AccountId
+            - /
+            - Fn::GetAtt:
+                - genaiQueue
+                - gen-ai-queue-${self:provider.stage}
+        PassthroughBehavior: NEVER
+        RequestParameters:
+          integration.request.header.Content-Type: "'application/x-www-form-urlencoded'"
+        RequestTemplates:
+          $default: Action=SendMessage&MessageGroupId=$input.path('$.MessageGroupId')&MessageDeduplicationId=$context.requestId&MessageAttribute.1.Name=connectionId&MessageAttribute.1.Value.StringValue=$context.connectionId&MessageAttribute.1.Value.DataType=String&MessageAttribute.2.Name=requestId&MessageAttribute.2.Value.StringValue=$context.requestId&MessageAttribute.2.Value.DataType=String&MessageBody=$util.urlEncode($input.json('$'))
+        TemplateSelectionExpression: \$default
+
+DefaultRouteResponse: 
+  Type: AWS::ApiGatewayV2::RouteResponse
+  Properties:
+    RouteId: !Ref DefaultRoute
+    ApiId: !Ref WebSocketApi
+    RouteResponseKey: $default
+
+DefaultRouteIntegrationResponse:
+  Type: AWS::ApiGatewayV2::IntegrationResponse
+  Properties: 
+    ApiId: !Ref WebSocketApi
+    IntegrationId: !Ref DefaultRouteIntegration
+    IntegrationResponseKey: $default
+
+WebSocketApiLogGroup:
+  Type: AWS::Logs::LogGroup
+  Properties:
+    LogGroupName: !Join [ "/", [ "api-hackethon23-${self:provider.stage}", WebSocketApiLogGroup]]
+    RetentionInDays: 90
