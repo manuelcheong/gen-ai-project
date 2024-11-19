@@ -1,0 +1,50 @@
+genaiState:
+  Type: AWS::StepFunctions::StateMachine
+  Properties:
+    StateMachineName: gen-ai-states-${self:provider.stage}
+    StateMachineType: STANDARD
+    RoleArn: !GetAtt statesRole.Arn
+
+    LoggingConfiguration:
+      Destinations:
+        - CloudWatchLogsLogGroup:
+            LogGroupArn: !GetAtt statesLogGroup.Arn
+      IncludeExecutionData: true
+      Level: ALL
+
+    TracingConfiguration:
+      Enabled: true
+
+    Definition:
+      Comment: "GEN AI Orquestation"
+      StartAt: processItems
+      States:
+        processItems:
+          Type: Map
+          ItemsPath: "$"
+          MaxConcurrency: 50
+          Iterator:
+            StartAt: parallelProcesor
+            States:
+              parallelProcesor:
+                Type: Parallel
+                OutputPath: "$[0]"
+                End: true
+                Branches:
+                - StartAt: parseItem
+                  States:
+                    parseItem:
+                      Type: Pass
+                      Parameters:
+                        messageId.$: $.messageId
+                        body.$: "States.StringToJson($.body)"
+                        executionTime.$: "$$.Execution.StartTime"
+                      End: true
+            
+          End: True
+
+statesLogGroup:
+  Type: AWS::Logs::LogGroup
+  Properties:
+    LogGroupName: !Join [ "/", [ "statesLogGroup_${self:provider.stage}", statesLogGroup]]
+    RetentionInDays: 30

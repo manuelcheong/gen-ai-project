@@ -42,6 +42,10 @@ resources:
     # ---------- QUEUE 🫡 ----------------
     genaiQueue: '${file(./iac/queues/genaiQueue.yml):genaiQueue}'
 
+    # ---------- STATE MACHINE DEFINITION 🫡 ----------------
+    genaiState: '${file(./iac/states/genaistate.yml):genaiState}'
+    statesRole: '${file(./iac/states/statesRole.yml):statesRole}'
+
     
 
 custom:

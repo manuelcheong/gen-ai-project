@@ -11,7 +11,7 @@ genaiPipe:
         BatchSize: 10
         MaximumBatchingWindowInSeconds: 15
     #Enrichment: arn:aws:states:${self:provider.region}:178934116267:stateMachine:enrich_msg_sfn-${self:provider.stage}
-    Target: arn:aws:lambda:${self:provider.region}:178934116267:function:hexa-core-exposition-layer-${self:provider.stage}-pipereader
+    Target: arn:aws:states:${self:provider.region}:178934116267:stateMachine:gen-ai-state-${self:provider.stage}
     #Target: arn:aws:states:${self:provider.region}:178934116267:stateMachine:ordersDispatcherStateMachine-${self:provider.stage}
 
 genaiPipeRole:

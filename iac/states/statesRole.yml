@@ -1,0 +1,51 @@
+statesRole:
+  Type: AWS::IAM::Role
+  Properties:
+    RoleName: gen-ai-states-role-${self:provider.region}-${self:provider.stage}
+    Path: /
+    AssumeRolePolicyDocument:
+      Statement:
+      - Effect: Allow
+        Principal:
+          Service:
+            - states.amazonaws.com
+        Action:
+          - sts:AssumeRole
+    Policies:
+      - PolicyName: gen_ai_states_policy
+        PolicyDocument:
+          Version: "2012-10-17"
+          Statement:
+            - Effect: Allow
+              Action:
+                - states:*
+              Resource:
+                - arn:aws:states:*
+
+            - Effect: Allow
+              Action:
+                - lambda:*
+              Resource: "*"
+
+            - Effect: Allow
+              Action:
+                - logs:*
+              Resource: "*"
+
+            - Effect: Allow
+              Action:
+                - ecs:*
+              Resource: "*"
+
+            - Effect: Allow
+              Action:
+                - events:*
+              Resource: "*"
+
+            - Effect: Allow
+              Action:
+                - iam:*
+              Resource: "*"
+
+
+

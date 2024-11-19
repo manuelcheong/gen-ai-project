@@ -1,0 +1,66 @@
+restApi:
+  Type: AWS::ApiGateway::RestApi
+  Properties:
+    Name: core-exposition-layer-${self:provider.stage}
+    Description: 'REST API - Core Exposition Layer ${self:provider.stage}'
+
+restApiDeploy:
+  Type: 'AWS::ApiGateway::Deployment'
+  Properties:
+    RestApiId: !Ref restApi
+    Description: !Sub "REST API - Core Exposition Layer ${self:provider.stage}"
+    StageName: ${self:provider.stage}
+
+Stage:  
+  Type: AWS::ApiGateway::Stage
+  Properties:
+    StageName: ${self:provider.stage}
+    RestApiId: !Ref restApi
+    DeploymentId: !Ref restApiDeploy
+
+restApiRole:
+  Type: 'AWS::IAM::Role'
+  Properties:
+    AssumeRolePolicyDocument:
+      Version: '2012-10-17'
+      Statement:
+        - Action:
+            - 'sts:AssumeRole'
+          Effect: Allow
+          Principal:
+            Service:
+              - apigateway.amazonaws.com
+    Policies:
+      - PolicyName: core-exposition-restapi-role-Policy
+        PolicyDocument:
+          Version: '2012-10-17'
+          Statement:
+            - Effect: Allow
+              Action:
+                - logs:*
+              Resource: "*"
+
+            - Effect: Allow
+              Action:
+                - sqs:*
+              Resource: "*"
+
+ApiKey:
+  Type: AWS::ApiGateway::ApiKey
+  Properties: 
+    Enabled: True
+    Name: core-exposition-api-key-${self:provider.stage}
+
+UsagePlanKey:
+  Type: AWS::ApiGateway::UsagePlanKey
+  Properties:
+    KeyId: !Ref ApiKey
+    KeyType: API_KEY
+    UsagePlanId: !Ref UsagePlan
+
+UsagePlan:
+  Type: AWS::ApiGateway::UsagePlan
+  Properties: 
+    ApiStages: 
+      - ApiId: !Ref restApi
+        Stage: ${self:provider.stage}

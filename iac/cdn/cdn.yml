@@ -1,0 +1,87 @@
+CloudFrontOriginAccessControl:
+  Type: AWS::CloudFront::OriginAccessControl
+  Properties:
+    OriginAccessControlConfig:
+      Description: "origin access control(OAC) for allowing cloudfront to access api"
+      Name: static-hosting-OAC
+      OriginAccessControlOriginType: s3
+      SigningBehavior: always
+      SigningProtocol: sigv4
+  
+
+hexaDistribution:
+  Type: AWS::CloudFront::Distribution
+  # DependsOn: CloudFrontOriginAccessControl
+  Properties:
+    DistributionConfig:
+      #WebACLId: ${self:custom.waf_webacl_id.${self:provider.stage}}
+      #  Ref: dispatcherWebACL
+      OriginGroups: 
+        Items:
+          - Id: hexa_failover_api_${self:provider.stage}
+            FailoverCriteria: 
+              StatusCodes: #403, 404, 500, 502, 503, 504
+                Items:
+                  - 502 # Bad Gateway Exception
+                  - 503 # Service Unavailable Exception
+                  - 504 # Endpoint Request Timed-out Exception
+                Quantity: 3
+            Members: 
+              Items: 
+                - OriginId: hexa_api_primary_${self:provider.stage}
+                - OriginId: hexa_api_secondary_${self:provider.stage}
+              Quantity: 2
+        Quantity: 1
+      Origins:
+        - DomainName: ${self:custom.api_region.${self:provider.region}.hexa_gw_primary_ids.${self:provider.stage}}
+          Id: hexa_api_primary_${self:provider.stage}
+        #  OriginPath: /${self:provider.stage}
+          CustomOriginConfig:
+            HTTPSPort: 443
+            OriginProtocolPolicy: https-only
+            OriginSSLProtocols: 
+              - TLSv1.2
+        - DomainName: ${self:custom.api_region.${self:provider.region}.hexa_gw_secondary_ids.${self:provider.stage}}
+          Id: hexa_api_secondary_${self:provider.stage}
+        #  OriginPath: /${self:provider.stage}
+          CustomOriginConfig:
+            HTTPSPort: 443
+            OriginProtocolPolicy: https-only
+            OriginSSLProtocols: 
+              - TLSv1.2
+      
+      Enabled: 'true'
+      HttpVersion: http2
+      Comment: Edge distribution for Hexa (${self:provider.stage}) in ( ${self:provider.region} as primary region)
+      DefaultCacheBehavior:
+        AllowedMethods:
+          - GET
+          - HEAD
+          - OPTIONS
+          - PUT
+          - PATCH
+          - POST
+          - DELETE
+
+        CachedMethods:
+          - GET
+          - HEAD
+        
+        TargetOriginId: hexa_api_primary_${self:provider.stage}
+        FunctionAssociations:
+          - EventType: viewer-request
+            FunctionARN: arn:aws:cloudfront::178934116267:function/perimeter-authorizer-${self:provider.stage}   # !GetAtt identityEdgeAuthorizer.FunctionMetadata.FunctionARN
+        ForwardedValues:
+          QueryString: 'true'
+          Headers: ["Authorization"]
+          Cookies:
+            Forward: none
+        ViewerProtocolPolicy: https-only
+        Compress: true
+        MinTTL: 0
+        MaxTTL: 0
+        DefaultTTL: 0
+      PriceClass: PriceClass_100
+      ViewerCertificate:
+        CloudFrontDefaultCertificate: 'true'
+
