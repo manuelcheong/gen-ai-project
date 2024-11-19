@@ -15,7 +15,7 @@ queueEventMethodPost:
     RestApiId:
       Ref: restApi
     HttpMethod: POST
-    ApiKeyRequired: true
+    #ApiKeyRequired: true
     AuthorizationType: NONE
     #AuthorizationType: CUSTOM
     #AuthorizerId: !Ref authorizerdefinition
@@ -26,7 +26,7 @@ queueEventMethodPost:
       Uri: !Sub "arn:aws:apigateway:${self:provider.region}:sqs:action/SendMessage"
       RequestParameters:
         integration.request.header.Content-Type: "'application/x-www-form-urlencoded'"
-        integration.request.querystring.QueueUrl: "'https://sqs.${self:provider.region}.amazonaws.com/178934116267/hexacore-input-queue-${self:provider.stage}'"
+        integration.request.querystring.QueueUrl: "'https://sqs.${self:provider.region}.amazonaws.com/178934116267/gen-ai-queue-${self:provider.stage}'"
       RequestTemplates:
         application/json: Action=SendMessage&MessageBody=$util.urlEncode($input.body)
       IntegrationResponses:

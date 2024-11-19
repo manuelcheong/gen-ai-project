@@ -1,14 +1,14 @@
 restApi:
   Type: AWS::ApiGateway::RestApi
   Properties:
-    Name: core-exposition-layer-${self:provider.stage}
-    Description: 'REST API - Core Exposition Layer ${self:provider.stage}'
+    Name: gen-ai-api-rest-${self:provider.stage}
+    Description: 'REST API - GEN AI Exposition Layer ${self:provider.stage}'
 
 restApiDeploy:
   Type: 'AWS::ApiGateway::Deployment'
   Properties:
     RestApiId: !Ref restApi
-    Description: !Sub "REST API - Core Exposition Layer ${self:provider.stage}"
+    Description: !Sub "REST API - GEN AI Exposition Layer ${self:provider.stage}"
     StageName: ${self:provider.stage}
 
 Stage:  
@@ -31,7 +31,7 @@ restApiRole:
             Service:
               - apigateway.amazonaws.com
     Policies:
-      - PolicyName: core-exposition-restapi-role-Policy
+      - PolicyName: gen-ai-restapi-role-Policy
         PolicyDocument:
           Version: '2012-10-17'
           Statement:

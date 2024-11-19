@@ -47,6 +47,20 @@ resources:
     genaiState: '${file(./iac/states/genaistate.yml):genaiState}'
     statesRole: '${file(./iac/states/statesRole.yml):statesRole}'
 
+    # ---------- REST API 🫡 ----------------
+    ##restApi: '${file(./iac/api/rest_api.yml):restApi}'
+    #Stage: '${file(./iac/api/rest_api.yml):Stage}'
+    ##restApiDeploy: '${file(./iac/api/rest_api.yml):restApiDeploy}'
+    ##restApiRole: '${file(./iac/api/rest_api.yml):restApiRole}'
+
+    #ApiKey: '${file(./iac/api/rest_api.yml):ApiKey}'
+    #UsagePlanKey: '${file(./iac/api/rest_api.yml):UsagePlanKey}'
+    #UsagePlan: '${file(./iac/api/rest_api.yml):UsagePlan}'
+
+    ##queueEventResource: '${file(./iac/api/definitions/queue_event.yml):queueEventResource}'
+    ##queueEventMethodPost: '${file(./iac/api/definitions/queue_event.yml):queueEventMethodPost}'
+
+
     
 
 custom:
