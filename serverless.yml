@@ -1,0 +1,80 @@
+service: gen-ai-service
+frameworkVersion: '4'
+
+provider:
+  name: aws
+  runtime: nodejs20.x
+  stage: ${opt:stage, 'pre'}
+  timeout: 28
+  region: ${opt:region, "eu-south-2"}
+  memorySize: 512
+  logRetentionInDays: 90
+  environment:
+    STAGE: ${self:provider.stage}
+    REGION: ${self:provider.region}
+    SERVICE: ${self:service}
+    AWS_NODEJS_CONNECTION_REUSE_ENABLED: 1
+    GLOBAL_TIMEOUT: 15000
+  lambdaHashingVersion: 20201221
+  architecture: arm64
+
+  iamRoleStatements:
+  - Effect: Allow
+    Action:
+      - states:*
+    Resource: "*"
+  
+  - Effect: Allow
+    Action:
+      - lambda:*
+    Resource: "*"
+
+  - Effect: "Allow"
+    Action:
+      - "secretsmanager:*"
+    Resource: "*"
+
+functions:
+  createsession: '${file(./iac/lambda/createsession.yml):createsession}'
+
+resources:
+  Resources:
+    # ---------- STATE MACHINE DEFINITION 🫡 ----------------
+    
+
+custom:
+  rust:
+    cargoLambda:
+      docker: false
+
+  api_region:
+    eu-south-2:
+      identity_gw_primary_ids:
+        pre: hy23erlh79.execute-api.eu-south-2.amazonaws.com
+      identity_gw_secondary_ids:
+        pre: ob6f4pwoa9.execute-api.us-east-1.amazonaws.com
+      sg: sg-0fbb09e6349387e81
+      subnets:
+        a: subnet-0346ce0e98266dc19
+        b: subnet-04f586497beeb857d
+        c: subnet-0c988a98bea52667d
+    us-east-1:
+      identity_gw_primary_ids:
+        pre: ob6f4pwoa9.execute-api.us-east-1.amazonaws.com
+      identity_gw_secondary_ids:
+        pre: hy23erlh79.execute-api.eu-south-2.amazonaws.com
+      sg: sg-3a296c64
+      subnets:
+        a: subnet-d791b9b0
+        b: subnet-f90c3ad7
+        c: subnet-e1de25ac
+
+
+  prune:    
+    automatic: true    
+    includeLayers: true    
+    number: 3
+
+plugins:
+  - serverless-prune-plugin
+  - serverless-rust-plugin
