@@ -54,7 +54,8 @@ resources:
     WebSocketApiIntegrationRole: '${file(./iac/api/websocket_api.yml):WebSocketApiIntegrationRole}'
     DefaultRoute: '${file(./iac/api/websocket_api.yml):DefaultRoute}'
     DefaultRouteIntegration: '${file(./iac/api/websocket_api.yml):DefaultRouteIntegration}'
-    #DefaultRouteResponse: '${file(./iac/api/websocket_api.yml):DefaultRouteResponse}'
+    DefaultRouteResponse: '${file(./iac/api/websocket_api.yml):DefaultRouteResponse}'
+    DefaultRouteIntegrationResponse: '${file(./iac/api/websocket_api.yml):DefaultRouteIntegrationResponse}'
 
     #Stage: '${file(./iac/api/rest_api.yml):Stage}'
     ##restApiDeploy: '${file(./iac/api/rest_api.yml):restApiDeploy}'
