@@ -43,6 +43,7 @@ resources:
     genaiQueue: '${file(./iac/queues/genaiQueue.yml):genaiQueue}'
 
     # ---------- PIPES 🫡 ----------------
+    genaiPipeRole: '${file(./iac/pipes/genaiPipe.yml):genaiPipeRole}'
     genaiPipe: '${file(./iac/pipes/genaiPipe.yml):genaiPipe}'
 
     # ---------- STATE MACHINE DEFINITION 🫡 ----------------
