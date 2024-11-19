@@ -1,0 +1,53 @@
+genaiPipe:
+  Type: AWS::Pipes::Pipe
+  Properties:
+    Name:  gen-ai-pipe-${self:provider.stage}
+    RoleArn: 
+      Fn::GetAtt: ["genaiPipeRole", "Arn"]
+    Source:  
+      Fn::GetAtt: ["genaiQueue", "Arn"]
+    SourceParameters:
+      SqsQueueParameters:
+        BatchSize: 10
+        MaximumBatchingWindowInSeconds: 15
+    #Enrichment: arn:aws:states:${self:provider.region}:178934116267:stateMachine:enrich_msg_sfn-${self:provider.stage}
+    Target: arn:aws:lambda:${self:provider.region}:178934116267:function:hexa-core-exposition-layer-${self:provider.stage}-pipereader
+    #Target: arn:aws:states:${self:provider.region}:178934116267:stateMachine:ordersDispatcherStateMachine-${self:provider.stage}
+
+genaiPipeRole:
+  Type: AWS::IAM::Role
+  Properties:
+    RoleName: gen-ai-piepes-role-${self:provider.region}-${self:provider.stage}
+    AssumeRolePolicyDocument:
+      Statement:
+      - Effect: Allow
+        Principal:
+          Service:
+            - pipes.amazonaws.com
+        Action:
+          - sts:AssumeRole
+    Policies:
+      - PolicyName: genaiPipesPolicy
+        PolicyDocument:
+          Version: "2012-10-17"
+          Statement:
+            - Effect: Allow
+              Action:
+                - states:*
+              Resource:
+                - arn:aws:states:*
+
+            - Effect: Allow
+              Action:
+                - sqs:*
+              Resource: 
+                - arn:aws:sqs:*
+              
+            - Effect: Allow
+              Action:
+                - lambda:*
+              Resource: 
+                - arn:aws:lambda:*
+
+
+            

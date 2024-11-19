@@ -1,0 +1,52 @@
+name: Deploy Gen AI
+on:
+  push:
+    branches:
+      - pre
+env:
+  AWS_REGION : "eu-west-1"
+  AWS_SECONDARY_REGION : "us-east-1"
+  STAGE: ${{ github.head_ref || github.ref_name }} 
+  SERVERLESS_ACCESS_KEY: ${{ secrets.SLS_KEY }}
+  GITHUB_CONTEXT: ${{ toJson(github) }}
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE20: true
+permissions:
+  id-token: write   
+  contents: read    
+jobs:
+
+  Deploy-GEN-AI-COMPONENTS:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Git clone the repository
+        uses: actions/checkout@v4
+      - name: configure aws credentials
+        uses: aws-actions/configure-aws-credentials@v3
+        with:
+          role-to-assume: ${{ secrets.ROLE_TO_ASUME }}
+          role-session-name: ${{ secrets.ROLE_SESSION_NAME }}
+          aws-region: ${{ env.AWS_REGION }}
+      
+      - name: Install Serverless Framework 🔧
+        run: npm install -g serverless
+
+      - name: Install NPM dependencies 📦
+        run: npm install
+
+      - name: Install Rust 🦀  
+        run: curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
+
+      - name: Setting home 🏠 ...
+        run: source $HOME/.cargo/env
+
+      - name: Setting Rust 🦀 ...
+        run: rustup target add aarch64-unknown-linux-musl
+      
+      - name: Install Cargo Lambda Plugin 🦀 👾
+        run: pip3 install cargo-lambda
+      
+      - name: Deploy GEN-AI reference 🚀 🔥
+        run: serverless deploy --stage ${{ env.STAGE }} --region ${{ env.AWS_REGION }}
+
+      - name: Prune old versions 🧹
+        run: serverless prune -n 4 --stage ${{ env.STAGE }}

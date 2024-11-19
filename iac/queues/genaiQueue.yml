@@ -1,0 +1,6 @@
+genaiQueue:
+  Type: "AWS::SQS::Queue"
+  Properties:
+    QueueName: gen-ai-queue-${self:provider.stage}
+    VisibilityTimeout: 15 
+    MessageRetentionPeriod: 60

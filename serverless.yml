@@ -34,12 +34,14 @@ provider:
       - "secretsmanager:*"
     Resource: "*"
 
-functions:
-  createsession: '${file(./iac/lambda/createsession.yml):createsession}'
+#functions:
+#  createsession: '${file(./iac/lambda/createsession.yml):createsession}'
 
 resources:
   Resources:
-    # ---------- STATE MACHINE DEFINITION 🫡 ----------------
+    # ---------- QUEUE 🫡 ----------------
+    genaiQueue: '${file(./iac/queues/genaiQueue.yml):genaiQueue}'
+
     
 
 custom:
@@ -77,4 +79,4 @@ custom:
 
 plugins:
   - serverless-prune-plugin
-  - serverless-rust-plugin
+  #- serverless-rust-plugin

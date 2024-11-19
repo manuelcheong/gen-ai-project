@@ -1,8 +1,8 @@
 {
-  "name": "identity-native",
+  "name": "gen-ai-project",
   "version": "1.0.0",
   "main": "index.js",
-  "repository": "git@github.com:SOAINT-CORP/identity-native.git",
+  "repository": "",
   "author": "Manuel Cheong <mcheong@soaint.com>",
   "license": "MIT",
   "devDependencies": {
