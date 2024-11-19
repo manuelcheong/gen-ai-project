@@ -91,7 +91,7 @@ DefaultRouteIntegration:
             - /
             - Fn::GetAtt:
                 - genaiQueue
-                - gen-ai-queue-${self:provider.stage}
+                - QueueName
         PassthroughBehavior: NEVER
         RequestParameters:
           integration.request.header.Content-Type: "'application/x-www-form-urlencoded'"
