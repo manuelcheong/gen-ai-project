@@ -39,6 +39,7 @@ genaiState:
                         messageId.$: $.messageId
                         body.$: "States.StringToJson($.body)"
                         executionTime.$: "$$.Execution.StartTime"
+                        connectionId.$: $.messageAttributes.connectionId.stringValue
                       Next: Send Message to WebSocket Client
 
                     Send Message to WebSocket Client:
