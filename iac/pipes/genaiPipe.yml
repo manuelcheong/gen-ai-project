@@ -12,6 +12,9 @@ genaiPipe:
         MaximumBatchingWindowInSeconds: 5
     #Enrichment: arn:aws:states:${self:provider.region}:178934116267:stateMachine:enrich_msg_sfn-${self:provider.stage}
     Target: arn:aws:states:${self:provider.region}:178934116267:stateMachine:gen-ai-states-${self:provider.stage}
+    TargetParameters:
+      StepFunctionStateMachineParameters:
+        InvocationType: FIRE_AND_FORGET
     #Target: arn:aws:states:${self:provider.region}:178934116267:stateMachine:ordersDispatcherStateMachine-${self:provider.stage}
 
 genaiPipeRole:
