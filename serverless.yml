@@ -61,6 +61,9 @@ resources:
     DefaultRouteResponse: '${file(./iac/api/websocket_api.yml):DefaultRouteResponse}'
     DefaultRouteIntegrationResponse: '${file(./iac/api/websocket_api.yml):DefaultRouteIntegrationResponse}'
 
+    # ------------ CDN 🤨 ------------------
+    genaiDistribution: '${file(./iac/cdn/cdn.yml):genaiDistribution}'
+
     #Stage: '${file(./iac/api/rest_api.yml):Stage}'
     ##restApiDeploy: '${file(./iac/api/rest_api.yml):restApiDeploy}'
     ##restApiRole: '${file(./iac/api/rest_api.yml):restApiRole}'
@@ -81,26 +84,17 @@ custom:
       docker: false
 
   api_region:
-    eu-south-2:
-      identity_gw_primary_ids:
-        pre: hy23erlh79.execute-api.eu-south-2.amazonaws.com
-      identity_gw_secondary_ids:
-        pre: ob6f4pwoa9.execute-api.us-east-1.amazonaws.com
+    eu-west-1:
+      genai_api_primary:
+        pre: gvy669mge1.execute-api.eu-west-1.amazonaws.com
+      genai_api_secondary:
+        pre: gvy669mge1.execute-api.eu-west-1.amazonaws.com
       sg: sg-0fbb09e6349387e81
       subnets:
         a: subnet-0346ce0e98266dc19
         b: subnet-04f586497beeb857d
         c: subnet-0c988a98bea52667d
-    us-east-1:
-      identity_gw_primary_ids:
-        pre: ob6f4pwoa9.execute-api.us-east-1.amazonaws.com
-      identity_gw_secondary_ids:
-        pre: hy23erlh79.execute-api.eu-south-2.amazonaws.com
-      sg: sg-3a296c64
-      subnets:
-        a: subnet-d791b9b0
-        b: subnet-f90c3ad7
-        c: subnet-e1de25ac
+   
 
 
   prune:    

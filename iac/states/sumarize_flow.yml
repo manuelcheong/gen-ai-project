@@ -1,0 +1,85 @@
+SummarizeContent:
+    Type: AWS::Serverless::StateMachine
+    Properties:
+      DefinitionSubstitutions:
+        IngestTextFunction: !GetAtt IngestTextFunction.Arn
+        IngestPDFFunction: !GetAtt IngestPDFFunction.Arn
+        IngestDocFunction: !GetAtt IngestDocFunction.Arn
+        SummarizeTextFileFunction: !GetAtt SummarizeTextFileFunction.Arn
+      Logging:
+        Level: ALL
+        IncludeExecutionData: true
+        Destinations:
+          - CloudWatchLogsLogGroup:
+              LogGroupArn: !GetAtt StateMachineLogGroup.Arn
+      Role: !GetAtt StateMachineRole.Arn
+      Tracing:
+        Enabled: true
+      Type: EXPRESS
+      Events:
+        RawFileTrigger:
+          Type: EventBridgeRule
+          Properties:
+            EventBusName: default
+            Pattern:
+              source:
+                - aws.s3
+              detail-type:
+                - Object Created
+              detail:
+                bucket:
+                  name:
+                    - !Ref ContentBucket
+                object:
+                  key:
+                    - prefix: !Ref RawPrefix
+      DefinitionUri: statemachine/statemachine.asl.json
+    DependsOn:
+      - IngestTextFunction
+      - IngestPDFFunction
+      - IngestDocFunction
+      - SummarizeTextFileFunction
+  StateMachineLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: !Sub
+        - /aws/vendedlogs/states/${AWS::StackName}-${ResourceId}-Logs
+        - ResourceId: StateMachineLG
+  StateMachineRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: states.amazonaws.com
+            Action: sts:AssumeRole
+      Policies:
+        - PolicyName: InvokeLambdaPolicy
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action:
+                  - lambda:InvokeFunction
+                Resource:
+                  - !GetAtt IngestTextFunction.Arn
+                  - !GetAtt IngestPDFFunction.Arn
+                  - !GetAtt IngestDocFunction.Arn
+                  - !GetAtt SummarizeTextFileFunction.Arn
+        - PolicyName: CloudWatchLogsPolicy
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action:
+                  - logs:CreateLogDelivery
+                  - logs:GetLogDelivery
+                  - logs:UpdateLogDelivery
+                  - logs:DeleteLogDelivery
+                  - logs:ListLogDeliveries
+                  - logs:PutResourcePolicy
+                  - logs:DescribeResourcePolicies
+                  - logs:DescribeLogGroups
+                Resource: '*'

@@ -9,7 +9,7 @@ CloudFrontOriginAccessControl:
       SigningProtocol: sigv4
   
 
-hexaDistribution:
+genaiDistribution:
   Type: AWS::CloudFront::Distribution
   # DependsOn: CloudFrontOriginAccessControl
   Properties:
@@ -18,7 +18,7 @@ hexaDistribution:
       #  Ref: dispatcherWebACL
       OriginGroups: 
         Items:
-          - Id: hexa_failover_api_${self:provider.stage}
+          - Id: genai_failover_api_${self:provider.stage}
             FailoverCriteria: 
               StatusCodes: #403, 404, 500, 502, 503, 504
                 Items:
@@ -28,21 +28,21 @@ hexaDistribution:
                 Quantity: 3
             Members: 
               Items: 
-                - OriginId: hexa_api_primary_${self:provider.stage}
-                - OriginId: hexa_api_secondary_${self:provider.stage}
+                - OriginId: genai_api_primary_${self:provider.stage}
+                - OriginId: genai_api_secondary_${self:provider.stage}
               Quantity: 2
         Quantity: 1
       Origins:
-        - DomainName: ${self:custom.api_region.${self:provider.region}.hexa_gw_primary_ids.${self:provider.stage}}
-          Id: hexa_api_primary_${self:provider.stage}
+        - DomainName: ${self:custom.api_region.${self:provider.region}.genai_api_primary.${self:provider.stage}}
+          Id: genai_api_primary_${self:provider.stage}
         #  OriginPath: /${self:provider.stage}
           CustomOriginConfig:
             HTTPSPort: 443
             OriginProtocolPolicy: https-only
             OriginSSLProtocols: 
               - TLSv1.2
-        - DomainName: ${self:custom.api_region.${self:provider.region}.hexa_gw_secondary_ids.${self:provider.stage}}
-          Id: hexa_api_secondary_${self:provider.stage}
+        - DomainName: ${self:custom.api_region.${self:provider.region}.genai_api_secondary.${self:provider.stage}}
+          Id: genai_api_secondary_${self:provider.stage}
         #  OriginPath: /${self:provider.stage}
           CustomOriginConfig:
             HTTPSPort: 443
@@ -52,7 +52,7 @@ hexaDistribution:
       
       Enabled: 'true'
       HttpVersion: http2
-      Comment: Edge distribution for Hexa (${self:provider.stage}) in ( ${self:provider.region} as primary region)
+      Comment: Edge distribution for genai (${self:provider.stage}) in ( ${self:provider.region} as primary region)
       DefaultCacheBehavior:
         AllowedMethods:
           - GET
@@ -67,7 +67,7 @@ hexaDistribution:
           - GET
           - HEAD
         
-        TargetOriginId: hexa_api_primary_${self:provider.stage}
+        TargetOriginId: genai_api_primary_${self:provider.stage}
         FunctionAssociations:
           - EventType: viewer-request
             FunctionARN: arn:aws:cloudfront::178934116267:function/perimeter-authorizer-${self:provider.stage}   # !GetAtt identityEdgeAuthorizer.FunctionMetadata.FunctionARN
@@ -76,7 +76,7 @@ hexaDistribution:
           Headers: ["Authorization"]
           Cookies:
             Forward: none
-        ViewerProtocolPolicy: https-only
+        ViewerProtocolPolicy: redirect-to-https #https-only
         Compress: true
         MinTTL: 0
         MaxTTL: 0
