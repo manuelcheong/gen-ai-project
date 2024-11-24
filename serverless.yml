@@ -60,6 +60,7 @@ resources:
     DefaultRouteIntegration: '${file(./iac/api/websocket_api.yml):DefaultRouteIntegration}'
     DefaultRouteResponse: '${file(./iac/api/websocket_api.yml):DefaultRouteResponse}'
     DefaultRouteIntegrationResponse: '${file(./iac/api/websocket_api.yml):DefaultRouteIntegrationResponse}'
+    ConnectRoute: '${file(./iac/api/websocket_api.yml):ConnectRoute}'
 
     # ------------ CDN 🤨 ------------------
     genaiDistribution: '${file(./iac/cdn/cdn.yml):genaiDistribution}'

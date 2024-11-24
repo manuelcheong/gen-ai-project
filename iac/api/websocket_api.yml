@@ -73,6 +73,13 @@ DefaultRoute:
       - - integrations
         - !Ref DefaultRouteIntegration
 
+ConnectRoute:
+  Type: AWS::ApiGatewayV2::Route
+  Properties:
+    ApiId: !Ref WebSocketApi
+    RouteKey: $connect
+    ApiKeyRequired: true
+
 
 DefaultRouteIntegration:
   Type: AWS::ApiGatewayV2::Integration
@@ -83,16 +90,6 @@ DefaultRouteIntegration:
       Fn::GetAtt: [WebSocketApiIntegrationRole, Arn]
     IntegrationMethod: POST
     IntegrationUri: !Sub "arn:aws:apigateway:${AWS::Region}:sqs:path/${AWS::AccountId}/${genaiQueue.QueueName}"
-    #    Fn::Join:
-    #      - ""
-    #      - - "arn:aws:apigateway:"
-    #        - Ref: AWS::Region
-    #        - :sqs:path/
-    #        - Ref: AWS::AccountId
-    #        - /
-    #        - Fn::GetAtt:
-    #            - genaiQueue
-    #            - QueueName
     PassthroughBehavior: NEVER
     RequestParameters:
       integration.request.header.Content-Type: "'application/x-www-form-urlencoded'"
