@@ -120,3 +120,24 @@ WebSocketApiLogGroup:
   Properties:
     LogGroupName: !Join [ "/", [ "api-hackethon23-${self:provider.stage}", WebSocketApiLogGroup]]
     RetentionInDays: 90
+
+ApiKey:
+  Type: AWS::ApiGateway::ApiKey
+  Properties: 
+    Enabled: True
+    Name: genai-api-key-${self:provider.stage}
+    Value: x4YZeZ67um1UL5GXJiyPIlPVisH8XkuaMFJwbkXj
+
+UsagePlanKey:
+  Type: AWS::ApiGateway::UsagePlanKey
+  Properties:
+    KeyId: !Ref ApiKey
+    KeyType: API_KEY
+    UsagePlanId: !Ref UsagePlan
+
+UsagePlan:
+  Type: AWS::ApiGateway::UsagePlan
+  Properties: 
+    ApiStages: 
+      - ApiId: !Ref WebSocketApi
+        Stage: ${self:provider.stage}

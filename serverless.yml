@@ -68,9 +68,9 @@ resources:
     ##restApiDeploy: '${file(./iac/api/rest_api.yml):restApiDeploy}'
     ##restApiRole: '${file(./iac/api/rest_api.yml):restApiRole}'
 
-    #ApiKey: '${file(./iac/api/rest_api.yml):ApiKey}'
-    #UsagePlanKey: '${file(./iac/api/rest_api.yml):UsagePlanKey}'
-    #UsagePlan: '${file(./iac/api/rest_api.yml):UsagePlan}'
+    ApiKey: '${file(./iac/api/websocket_api.yml):ApiKey}'
+    UsagePlanKey: '${file(./iac/api/websocket_api.yml):UsagePlanKey}'
+    UsagePlan: '${file(./iac/api/websocket_api.yml):UsagePlan}'
 
     ##queueEventResource: '${file(./iac/api/definitions/queue_event.yml):queueEventResource}'
     ##queueEventMethodPost: '${file(./iac/api/definitions/queue_event.yml):queueEventMethodPost}'

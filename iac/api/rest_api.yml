@@ -45,22 +45,3 @@ restApiRole:
                 - sqs:*
               Resource: "*"
 
-ApiKey:
-  Type: AWS::ApiGateway::ApiKey
-  Properties: 
-    Enabled: True
-    Name: genai-api-key-${self:provider.stage}
-
-UsagePlanKey:
-  Type: AWS::ApiGateway::UsagePlanKey
-  Properties:
-    KeyId: !Ref ApiKey
-    KeyType: API_KEY
-    UsagePlanId: !Ref UsagePlan
-
-UsagePlan:
-  Type: AWS::ApiGateway::UsagePlan
-  Properties: 
-    ApiStages: 
-      - ApiId: !Ref WebSocketApi
-        Stage: ${self:provider.stage}
