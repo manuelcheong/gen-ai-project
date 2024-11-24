@@ -66,6 +66,7 @@ genaiDistribution:
         CachedMethods:
           - GET
           - HEAD
+          - OPTIONS
         
         TargetOriginId: genai_api_primary_${self:provider.stage}
         FunctionAssociations:

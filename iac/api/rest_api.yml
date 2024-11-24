@@ -49,7 +49,7 @@ ApiKey:
   Type: AWS::ApiGateway::ApiKey
   Properties: 
     Enabled: True
-    Name: core-exposition-api-key-${self:provider.stage}
+    Name: genai-api-key-${self:provider.stage}
 
 UsagePlanKey:
   Type: AWS::ApiGateway::UsagePlanKey

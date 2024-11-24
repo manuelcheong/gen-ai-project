@@ -65,6 +65,7 @@ DefaultRoute:
   Properties:
     ApiId: !Ref WebSocketApi
     RouteKey: $default
+    ApiKeyRequired: true
     AuthorizationType: NONE
     OperationName: DefaultRoute
     Target: !Join 
