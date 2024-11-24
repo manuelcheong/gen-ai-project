@@ -62,5 +62,5 @@ UsagePlan:
   Type: AWS::ApiGateway::UsagePlan
   Properties: 
     ApiStages: 
-      - ApiId: !Ref restApi
+      - ApiId: !Ref WebSocketApi
         Stage: ${self:provider.stage}
