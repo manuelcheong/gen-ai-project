@@ -123,7 +123,7 @@ ApiKey:
   Properties: 
     Enabled: True
     Name: genai-api-key-${self:provider.stage}
-    Value: ${ssm:genaiapikey} #x4YZeZ67um1UL5GXJiyPIlPVisH8XkuaMFJwbkXj
+    Value: "${ssm:/genaiapikey}" #x4YZeZ67um1UL5GXJiyPIlPVisH8XkuaMFJwbkXj
 
 UsagePlanKey:
   Type: AWS::ApiGateway::UsagePlanKey
