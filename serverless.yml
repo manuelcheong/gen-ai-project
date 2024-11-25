@@ -34,6 +34,11 @@ provider:
       - "secretsmanager:*"
     Resource: "*"
 
+  - Effect: "Allow"
+    Action:
+      - "ssm:*"
+    Resource: "*"
+
 #functions:
 #  createsession: '${file(./iac/lambda/createsession.yml):createsession}'
 
