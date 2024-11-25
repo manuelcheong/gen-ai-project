@@ -114,3 +114,6 @@ plugins:
   - serverless-prune-plugin
   - serverless-ssm-fetch
   #- serverless-rust-plugin
+
+params:
+  API_KEY: ${ssm(raw):/gen-ai-apikey-secret-pre~true} 
