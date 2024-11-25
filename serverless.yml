@@ -15,7 +15,8 @@ provider:
     SERVICE: ${self:service}
     AWS_NODEJS_CONNECTION_REUSE_ENABLED: 1
     GLOBAL_TIMEOUT: 15000
-    KEY: ${ssm(raw):gen-ai-apikey-secret-pre~true}
+    ssmToEnvironment:
+      - API_KEY
   lambdaHashingVersion: 20201221
   architecture: arm64
 
@@ -102,8 +103,8 @@ custom:
         b: subnet-04f586497beeb857d
         c: subnet-0c988a98bea52667d
   
-  #serverlessSsmFetch:
-  #  API_KEY: gen-ai-apikey-secret-pre~true
+  serverlessSsmFetch:
+    API_KEY: gen-ai-apikey-secret-pre~true
 
 
   prune:    
@@ -116,6 +117,3 @@ plugins:
   - serverless-ssm-fetch
   #- serverless-rust-plugin
 
-params:
-  default:
-    API_KEY: ${ssm(raw):/gen-ai-apikey-secret-pre~true} 
