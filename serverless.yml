@@ -104,7 +104,7 @@ custom:
         c: subnet-0c988a98bea52667d
   
   serverlessSsmFetch:
-    API_KEY: gen-ai-apikey-secret-pre~true
+    API_KEY: /aws/ssm/parameter/gen-ai-apikey-secret-pre~true
 
 
   prune:    
