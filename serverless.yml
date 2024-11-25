@@ -101,8 +101,8 @@ custom:
         b: subnet-04f586497beeb857d
         c: subnet-0c988a98bea52667d
   
-  serverlessSsmFetch:
-    API_KEY: gen-ai-apikey-secret-pre~true
+  #serverlessSsmFetch:
+  #  API_KEY: gen-ai-apikey-secret-pre~true
 
 
   prune:    
@@ -112,5 +112,5 @@ custom:
 
 plugins:
   - serverless-prune-plugin
-  - serverless-ssm-fetch
+  #- serverless-ssm-fetch
   #- serverless-rust-plugin
