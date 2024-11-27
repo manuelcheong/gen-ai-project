@@ -15,8 +15,7 @@ provider:
     SERVICE: ${self:service}
     AWS_NODEJS_CONNECTION_REUSE_ENABLED: 1
     GLOBAL_TIMEOUT: 15000
-    ssmToEnvironment:
-      - API_KEY
+    KEY_SSM: /aws/ssm/parameter/gen-ai-apikey-secret-${self:provider.stage}~true~true
   lambdaHashingVersion: 20201221
   architecture: arm64
 
