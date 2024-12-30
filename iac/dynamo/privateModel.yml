@@ -19,13 +19,14 @@ privateModel:
           ProjectionType: ALL
     BillingMode: PAY_PER_REQUEST
     ResourcePolicy:
-      Version: 2012-10-17
-      Statement:
-        - Effect: Deny
-          Action:
-            - "dynamodb:*"
-          Principal: "*"
-          Resource: "arn:aws:dynamodb:${self:provider.region}:178934116267:table/privateTable-${self:provider.stage}"
-          Condition:
-            StringNotEquals:
-              "aws:sourceVpce": "vpce-025698fb63bd31a78"
+      PolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Effect: Deny
+            Action:
+              - "dynamodb:*"
+            Principal: "*"
+            Resource: "arn:aws:dynamodb:${self:provider.region}:178934116267:table/privateTable-${self:provider.stage}"
+            Condition:
+              StringNotEquals:
+                "aws:sourceVpce": "vpce-025698fb63bd31a78"
