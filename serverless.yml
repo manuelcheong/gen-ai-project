@@ -83,6 +83,8 @@ resources:
     ##queueEventResource: '${file(./iac/api/definitions/queue_event.yml):queueEventResource}'
     ##queueEventMethodPost: '${file(./iac/api/definitions/queue_event.yml):queueEventMethodPost}'
 
+    # ---------- DYNAMO 🫡 ---------------
+    privateModel: '${file(./iac/dynamo/privateModel.yml):privateModel}'
 
     
 

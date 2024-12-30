@@ -1,0 +1,31 @@
+privateModel:
+  Type: "AWS::DynamoDB::Table"
+  Properties:
+    TableName: privateTable-${self:provider.stage}
+    AttributeDefinitions:
+      - AttributeName: idnot
+        AttributeType: S
+      - AttributeName: ownernot
+        AttributeType: S
+    KeySchema:
+      - AttributeName: idnot
+        KeyType: HASH
+    GlobalSecondaryIndexes:
+      - IndexName: ownerIndex
+        KeySchema:
+          - AttributeName: ownernot
+            KeyType: HASH
+        Projection:
+          ProjectionType: ALL
+    BillingMode: PAY_PER_REQUEST
+    ResourcePolicy:
+      Version: 2012-10-17
+      Statement:
+        - Effect: Deny
+          Action:
+            - "dynamodb:*"
+          Principal: "*"
+          Resource: "arn:aws:dynamodb:${self:provider.region}:178934116267:table/privateTable-${self:provider.stage}"
+          Condition:
+            StringNotEquals:
+              "aws:sourceVpce": "vpce-025698fb63bd31a78"
