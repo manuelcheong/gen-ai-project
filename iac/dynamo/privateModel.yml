@@ -32,6 +32,17 @@ privateModel:
                 "aws:sourceVpce": "vpce-025698fb63bd31a78"
               }
             }
+          }, 
+          {
+            "Action": "dynamodb:*",
+            "Effect": "Allow",
+            "Resource": "arn:aws:dynamodb:${self:provider.region}:178934116267:table/privateTable-${self:provider.stage}",
+            "Principal": "*",
+            "Condition": {
+              "StringEquals": {
+                "aws:sourceVpce": "vpce-025698fb63bd31a78"
+              }
+            }
           }
         ]
       } 
