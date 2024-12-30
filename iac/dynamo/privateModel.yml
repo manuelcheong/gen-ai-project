@@ -21,29 +21,19 @@ privateModel:
     ResourcePolicy:
       PolicyDocument: {
         "Version": "2012-10-17",
+        "Id": "PolicyId",
         "Statement": [
           {
-            "Action": "dynamodb:*",
-            "Effect": "Deny",
-            "Resource": "arn:aws:dynamodb:${self:provider.region}:178934116267:table/privateTable-${self:provider.stage}",
+            "Sid": "AccessToSpecificVPCEOnly",
+            "Effect": "Allow",
             "Principal": "*",
+            "Action": "dynamodb:*",
+            "Resource": "arn:aws:dynamodb:eu-west-1:178934116267:table/privateTable-pre",
             "Condition": {
-              "StringNotEquals": {
+              "StringEquals": {
                 "aws:sourceVpce": "vpce-025698fb63bd31a78"
               }
             }
           }
-          
         ]
-      } 
-
-  #      Version: "2012-10-17"
-  #      Statement:
-  #        - Effect: Deny
-  #          Action:
-  #            - "dynamodb:*"
-  #          Principal: "*"
-  #          Resource: "arn:aws:dynamodb:${self:provider.region}:178934116267:table/privateTable-${self:provider.stage}"
-  #          Condition:
-  #            StringNotEquals:
-  #              "aws:sourceVpce": "vpce-025698fb63bd31a78"
+      }
