@@ -18,35 +18,24 @@ privateModel:
         Projection:
           ProjectionType: ALL
     BillingMode: PAY_PER_REQUEST
-    ResourcePolicy:
-      PolicyDocument: {
-        "Version": "2012-10-17",
-        "Statement": [
-          {
-            "Action": "dynamodb:*",
-            "Effect": "Allow",
-            "Resource": "arn:aws:dynamodb:${self:provider.region}:178934116267:table/privateTable-${self:provider.stage}",
-            "Principal": "*",
-            "Condition": {
-              "StringEquals": {
-                "aws:sourceVpce": "vpce-025698fb63bd31a78"
-              }
-            }
-          },
-          {
-            "Action": "dynamodb:*",
-            "Effect": "Deny",
-            "Resource": "arn:aws:dynamodb:${self:provider.region}:178934116267:table/privateTable-${self:provider.stage}",
-            "Principal": "*",
-            "Condition": {
-              "StringNotEquals": {
-                "aws:sourceVpce": "vpce-025698fb63bd31a78"
-              }
-            }
-          }
-          
-        ]
-      } 
+#    ResourcePolicy:
+#      PolicyDocument: {
+#        "Version": "2012-10-17",
+#        "Statement": [
+#          {
+#            "Action": "dynamodb:*",
+#            "Effect": "Deny",
+#            "Resource": "arn:aws:dynamodb:${self:provider.region}:178934116267:table/privateTable-${self:provider.stage}",
+#            "Principal": "*",
+#            "Condition": {
+#              "StringNotEquals": {
+#                "aws:sourceVpce": "vpce-025698fb63bd31a78"
+#              }
+#            }
+#          }
+#          
+#        ]
+#      } 
 
   #      Version: "2012-10-17"
   #      Statement:
