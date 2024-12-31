@@ -87,7 +87,7 @@ resources:
     privateModel: '${file(./iac/dynamo/privateModel.yml):privateModel}'
 
     # ---------- S3 TABLE 🫡 ---------------
-    s3Table: '${file(./iac/s3/tables.yml):s3Table}'
+    #s3Table: '${file(./iac/s3/tables.yml):s3Table}'
 
     
 
@@ -110,6 +110,8 @@ custom:
   
   serverlessSsmFetch:
     API_KEY: gen-ai-apikey-secret-${self:provider.stage}~true
+
+  #s3-table: arn:aws:s3tables:us-east-1:178934116267:bucket/test-table-bucket
 
 
   prune:    
