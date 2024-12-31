@@ -1,0 +1,193 @@
+notificationResource:
+  Type: 'AWS::ApiGateway::Resource'
+  Properties:
+    RestApiId: !Ref Api
+    ParentId: !GetAtt Api.RootResourceId
+    PathPart: 'notification'
+
+#   -----  CREATE-----------
+
+notificationMethodPost:
+  Type: 'AWS::ApiGateway::Method'
+  Properties:
+    RestApiId: !Ref Api
+    ResourceId: !Ref notificationResource
+    HttpMethod: POST
+    #ApiKeyRequired: true
+    #AuthorizationType: NONE
+    AuthorizationType: CUSTOM
+    AuthorizerId: !Ref authorizerdefinition
+    Integration:
+      Type: AWS
+      Credentials: !GetAtt APIGatewayRole.Arn
+      IntegrationHttpMethod: POST
+      Uri: !Sub 'arn:aws:apigateway:${self:provider.region}:dynamodb:action/PutItem'
+      PassthroughBehavior: WHEN_NO_TEMPLATES
+      RequestTemplates:
+            # Build the structure of the request that is sent when calling DynamoDB PutItem
+            # Using single-line, stringified JSON as the mapping template
+            # Example body when making API request: {"artist": "The Beatles", "album": "Abbey Road"}
+            # Use the unique id of the API context variable (eg: $context.requestId) as the DynamoDB item id
+        application/json: "{\"TableName\":\"notificationTable-${self:provider.stage}\",\"Item\":{\"idnot\":{\"S\":\"$context.requestId\"},\"ownernot\":{\"S\":\"$input.path('$.owner')\"},\"createdAt\":{\"S\":\"$context.requestTimeEpoch\"}}}"
+      IntegrationResponses:
+        - StatusCode: '201'
+          ResponseTemplates:
+            application/json: "{\"id\":\"$context.requestId\",\"createdAt\"::\"$context.requestTimeEpoch\"}" #"{}"
+    MethodResponses:
+      - StatusCode: '201'
+        #ResponseModels:
+        #  application/json: 'Empty'
+
+
+notificationOwnerResource:
+  Type: 'AWS::ApiGateway::Resource'
+  Properties:
+    RestApiId: !Ref Api
+    ParentId: !Ref notificationResource
+    PathPart: 'owner'
+
+notificationOwnerPathResource:
+  Type: 'AWS::ApiGateway::Resource'
+  Properties:
+    RestApiId: !Ref Api
+    ParentId: !Ref notificationOwnerResource
+    PathPart: '{owner}'
+
+
+# -------- QUERY INDEX ----------------------
+
+notificationOwnerMethodGet:
+  Type: 'AWS::ApiGateway::Method'
+  Properties:
+    RestApiId: !Ref Api
+    ResourceId: !Ref notificationOwnerPathResource
+    HttpMethod: GET
+    #ApiKeyRequired: true
+    AuthorizationType: NONE
+    RequestParameters:
+          # Determines whether the path parameter (eg: artist) is required
+      method.request.path.owner: true
+    Integration:
+      Type: AWS
+      Credentials: !GetAtt APIGatewayRole.Arn
+          # Should always be POST when integrating with AWS services
+      IntegrationHttpMethod: POST
+      # More info: https://docs.aws.amazon.com/apigateway/api-reference/resource/integration/
+      Uri: !Sub 'arn:aws:apigateway:${self:provider.region}:dynamodb:action/Query'
+      PassthroughBehavior: WHEN_NO_TEMPLATES
+      RequestParameters:
+        integration.request.path.artist: method.request.path.owner
+      RequestTemplates:
+            # Build the structure of the request that is sent when calling DynamoDB Query
+            # Using single-line, stringified JSON as the mapping template
+            # Use $util.urlDecode($input.params('pathname')) to decode if the url path value contains spaces
+            # A + or %20 may be used as a space in the url
+        application/json: "{\"TableName\":\"notificationTable-${self:provider.stage}\",\"IndexName\":\"ownerIndex\",\"KeyConditionExpression\":\"ownernot=:v1\",\"ExpressionAttributeValues\":{\":v1\":{\"S\":\"$util.urlDecode($input.params('owner'))\"}}}"
+      IntegrationResponses:
+        - StatusCode: '200'
+          ResponseTemplates:
+                # Modify the response of the DynamoDB Query before sending back to the caller
+                # Using single-line Velocity Template Language (VTL) code as the mapping template
+                # \n represents a new line, \t represents a tab character, \" represents a single quote character
+                # Example response: {"notification":[{"id":"38bfb57e-a5a8-4fed-9a4f-391d66d5e987","artist":"The Beatles","album":"Abbey Road"}]}
+            application/json: "#set($inputRoot = $input.path('$'))\n{\n\t\"notification\": [\n\t\t#foreach($field in $inputRoot.Items) {\n\t\t\t\"id\": \"$field.idnot.S\",\n\t\t\t\"owner\": \"$field.ownernot.S\",}#if($foreach.hasNext),#end\n\t\t#end\n\t]\n}"
+    MethodResponses:
+      - StatusCode: '200'
+
+notificationGetItemResource:
+  Type: 'AWS::ApiGateway::Resource'
+  Properties:
+    RestApiId: !Ref Api
+    ParentId: !Ref notificationResource
+    PathPart: '{idnot}'
+
+# -------- GET ITEM ----------------------
+
+notificationItemMethodGet:
+  Type: 'AWS::ApiGateway::Method'
+  Properties:
+    RestApiId: !Ref Api
+    ResourceId: !Ref notificationGetItemResource
+    HttpMethod: GET
+    #ApiKeyRequired: true
+    AuthorizationType: NONE
+    RequestParameters:
+          # Determines whether the path parameter (eg: artist) is required
+      method.request.path.idnot: true
+    Integration:
+      Type: AWS
+      Credentials: !GetAtt APIGatewayRole.Arn
+          # Should always be POST when integrating with AWS services
+      IntegrationHttpMethod: POST
+      # More info: https://docs.aws.amazon.com/apigateway/api-reference/resource/integration/
+      Uri: !Sub 'arn:aws:apigateway:${self:provider.region}:dynamodb:action/GetItem'
+      PassthroughBehavior: WHEN_NO_TEMPLATES
+      RequestParameters:
+        integration.request.path.idnot: method.request.path.idnot
+      RequestTemplates:
+            # Build the structure of the request that is sent when calling DynamoDB Query
+            # Using single-line, stringified JSON as the mapping template
+            # Use $util.urlDecode($input.params('pathname')) to decode if the url path value contains spaces
+            # A + or %20 may be used as a space in the url
+        application/json: "{\"TableName\":\"notificationTable-${self:provider.stage}\",\"Key\":{\"idnot\":{\"S\":\"$util.urlDecode($input.params('idnot'))\"}}}"
+      IntegrationResponses:
+        - StatusCode: '200'
+          #ResponseTemplates:
+                # Modify the response of the DynamoDB Query before sending back to the caller
+                # Using single-line Velocity Template Language (VTL) code as the mapping template
+                # \n represents a new line, \t represents a tab character, \" represents a single quote character
+                # Example response: {"notification":[{"id":"38bfb57e-a5a8-4fed-9a4f-391d66d5e987","artist":"The Beatles","album":"Abbey Road"}]}
+            #application/json: "#set($root = $input.path('$'))\n{\n\"notification\": \n$root\n}"
+          #  application/json: |
+          #    $util.base64Decode( $input.path('$.body') )
+    MethodResponses:
+      - StatusCode: '200'
+      #  ResponseModels: { "application/json": "Empty" }
+        ResponseModels:
+          application/json: 'Empty'
+
+
+# -------- DELETE ITEM ----------------------
+
+notificationItemMethodDelete:
+  Type: 'AWS::ApiGateway::Method'
+  Properties:
+    RestApiId: !Ref Api
+    ResourceId: !Ref notificationGetItemResource
+    HttpMethod: DELETE
+    #ApiKeyRequired: true
+    AuthorizationType: NONE
+    RequestParameters:
+          # Determines whether the path parameter (eg: artist) is required
+      method.request.path.idnot: true
+    Integration:
+      Type: AWS
+      Credentials: !GetAtt APIGatewayRole.Arn
+          # Should always be POST when integrating with AWS services
+      IntegrationHttpMethod: POST
+      # More info: https://docs.aws.amazon.com/apigateway/api-reference/resource/integration/
+      Uri: !Sub 'arn:aws:apigateway:${self:provider.region}:dynamodb:action/DeleteItem'
+      PassthroughBehavior: WHEN_NO_TEMPLATES
+      RequestParameters:
+        integration.request.path.idnot: method.request.path.idnot
+      RequestTemplates:
+            # Build the structure of the request that is sent when calling DynamoDB Query
+            # Using single-line, stringified JSON as the mapping template
+            # Use $util.urlDecode($input.params('pathname')) to decode if the url path value contains spaces
+            # A + or %20 may be used as a space in the url
+        application/json: "{\"TableName\":\"notificationTable-${self:provider.stage}\",\"Key\":{\"idnot\":{\"S\":\"$util.urlDecode($input.params('idnot'))\"}}}"
+      IntegrationResponses:
+        - StatusCode: '204'
+          #ResponseTemplates:
+                # Modify the response of the DynamoDB Query before sending back to the caller
+                # Using single-line Velocity Template Language (VTL) code as the mapping template
+                # \n represents a new line, \t represents a tab character, \" represents a single quote character
+                # Example response: {"notification":[{"id":"38bfb57e-a5a8-4fed-9a4f-391d66d5e987","artist":"The Beatles","album":"Abbey Road"}]}
+            #application/json: "#set($root = $input.path('$'))\n{\n\"notification\": \n$root\n}"
+          #  application/json: |
+          #    $util.base64Decode( $input.path('$.body') )
+    MethodResponses:
+      - StatusCode: '204'
+      #  ResponseModels: { "application/json": "Empty" }
+      #  ResponseModels:
+      #    application/json: 'Empty'

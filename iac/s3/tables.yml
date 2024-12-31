@@ -1,0 +1,5 @@
+s3Table:
+  Type: AWS::S3Tables::TableBucket
+  Properties:
+    TableBucketName: s3table-genai-${self:provider.stage}
+    
