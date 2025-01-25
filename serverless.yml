@@ -41,8 +41,8 @@ provider:
       - "ssm:*"
     Resource: "*"
 
-#functions:
-#  createsession: '${file(./iac/lambda/createsession.yml):createsession}'
+functions:
+  createIteminTable: '${file(./iac/lambda/createIteminTable.yml):createIteminTable}'
 
 resources:
   Resources:
