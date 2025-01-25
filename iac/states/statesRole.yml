@@ -52,5 +52,10 @@ statesRole:
                 - execute-api:*
               Resource: "*"
 
+            - Effect: Allow
+              Action:
+                - dynamodb:*
+              Resource: "*"
+
 
 

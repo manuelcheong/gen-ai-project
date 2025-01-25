@@ -55,6 +55,21 @@ genaiState:
                         AuthType: IAM_ROLE
                       End: true
             
+                - StartAt: insertItem
+                  States:
+                    insertItem:
+                      Type: Task
+                      Resource: arn:aws:states:::dynamodb:putItem
+                      Parameters:
+                        TableName: !Ref privateModel
+                        Item:
+                          idnot:
+                            S.$: $.messageId
+                          ownernot:
+                            S.$: $.messageAttributes.connectionId.stringValue
+                          body:
+                            M.$: $.body
+                      End: true    
           End: True
 
 statesLogGroup:
