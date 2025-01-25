@@ -16,9 +16,7 @@ async fn main() -> Result<(), Error> {
 }
 
 async fn func(event: LambdaEvent<Value>) -> Result<Value, Error> {
-    
+    let (event, _context) = event.into_parts();
 
-    Ok(json!({
-        "table": "s3table-genai-pre.namespace1.people",
-        }))
+    Ok(event)
 }
