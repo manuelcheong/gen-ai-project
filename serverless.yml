@@ -87,7 +87,7 @@ resources:
     privateModel: '${file(./iac/dynamo/privateModel.yml):privateModel}'
 
     # ---------- S3 TABLE 🫡 ---------------
-    #s3Table: '${file(./iac/s3/tables.yml):s3Table}'
+    s3Table: '${file(./iac/s3/tables.yml):s3Table}'
 
     
 
