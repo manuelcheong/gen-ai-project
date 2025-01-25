@@ -7,13 +7,7 @@ use serde_json::json;
 
 use core::result::Result;
 
-use spark_connect_rs::{SparkSession, SparkSessionBuilder};
-
-use spark_connect_rs::functions as F;
-
-use spark_connect_rs::dataframe::SaveMode;
-use spark_connect_rs::types::DataType;
-
+use spark::session::SparkSession;
 
 
 #[tokio::main]
@@ -24,26 +18,37 @@ async fn main() -> Result<(), Error> {
 }
 
 async fn func(event: LambdaEvent<Value>) -> Result<Value, Error> {
-    // let (event, _context) = event.into_parts();
-    
+    // Initialize Spark session
+    let spark = SparkSession::builder()
+        .app_name("RustIcebergWrite")
+        .config("spark.master", "local")
+        .config("spark.sql.extensions", "org.apache.iceberg.spark.extensions.IcebergSparkSessionExtensions")
+        .config("spark.sql.catalog.my_catalog", "org.apache.iceberg.spark.SparkCatalog")
+        .config("spark.sql.catalog.my_catalog.type", "hadoop")
+        .config("spark.sql.catalog.my_catalog.warehouse", "s3a://s3table-genai-pre/iceberg")
+        .get_or_create()
+        .unwrap();
 
-    let spark: SparkSession = SparkSessionBuilder::default().build().await?;
+    // Create a DataFrame with sample data
+    let data = vec![
+        ("1", "Alice", 100.5),
+        ("2", "Bob", 200.0),
+        ("3", "Charlie", 300.75),
+    ];
 
+    let df = spark.create_data_frame(data)
+        .unwrap()
+        .columns(vec!["id", "name", "amount"]);
 
-    spark.sql("CREATE NAMESPACE IF NOT EXISTS s3table-genai-pre.namespace1").await?;          
-    //spark.sql("CREATE DATABASE IF NOT EXISTS demo").await?;
-    //spark.sql("USE demo").await?;
-    //spark.sql("DROP TABLE IF EXISTS people").await?;
-    spark.sql("CREATE TABLE s3table-genai-pre.namespace1.people (name STRING, age_int INT)").await?;
-    spark.sql("INSERT INTO s3table-genai-pre.namespace1.people VALUES ('John', 30), ('Anna', 20), ('Peter', 25)").await?;
-    spark.sql("SELECT * FROM s3table-genai-pre.namespace1.people").await?.show(Some(5), None, None).await?;
-    // spark.sql("SELECT * FROM people WHERE age_int > 20").await?.show(Some(5), None, None).await?;
-    //spark.sql("SELECT * FROM people WHERE age_int > 20 ORDER BY name DESC").await?.show(Some(5), None, None).await?;
-    //spark.sql("SELECT COUNT(*) FROM people").await?.show(Some(5), None, None).await?;
-    //spark.sql("SELECT SUM(age_int) FROM people").await?.show(Some(5), None, None).await?;
-    //spark.sql("SELECT AVG(age_int) FROM people").await?.show(Some(5), None, None).await?;
-    //spark.sql("SELECT MAX(age_int) FROM people").await?.show(Some(5), None, None).await?;
-    //spark.sql("SELECT MIN(age_int) FROM people").await?.show(Some(5), None, None).await?;
+    // Write the DataFrame to the Iceberg table
+    df.write()
+        .format("iceberg")
+        .mode("append")
+        .save("my_catalog.iceberg_table")
+        .unwrap();
+
+    // Stop the Spark session
+    spark.stop().unwrap();
 
     Ok(json!({
         "table": "s3table-genai-pre.namespace1.people",
