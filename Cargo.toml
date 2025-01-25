@@ -2,7 +2,7 @@
 name = "multi-binary"
 version = "0.1.0"
 authors = ["manuel cheong <mcheong@soaint.com>"]
-edition = "2025"
+edition = "2024"
 
 [[bin]]
 name = "createitem"
