@@ -69,7 +69,16 @@ genaiState:
                             S.$: $.messageAttributes.connectionId.stringValue
                           body:
                             S.$: $.body
-                      End: true    
+                      Next: createSession
+
+                    createSession:
+                      Type: Task
+                      Resource: arn:aws:states:::lambda:invoke
+                      Parameters:
+                        FunctionName: arn:aws:lambda:${self:provider.region}:178934116267:function:gen-ai-service-${self:provider.stage}-createIteminTable
+                        Payload.$: "$.body"
+                      OutputPath: "$.Payload"
+                      End: true   
           End: True
 
 statesLogGroup:

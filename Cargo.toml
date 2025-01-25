@@ -1,0 +1,19 @@
+[package]
+name = "multi-binary"
+version = "0.1.0"
+authors = ["manuel cheong <mcheong@soaint.com>"]
+edition = "2025"
+
+[[bin]]
+name = "createitem"
+path = "src/rs/createitem.rs"
+
+
+
+[dependencies]
+lambda_runtime = "0.7"
+serde_json = "1.0"
+tokio = { version = "1", features = ["macros"] }
+serde = { version = "1.0", features = ["derive"] }
+chrono = "0.4"
+spark-connect-rs = "0.0.1-beta.5"

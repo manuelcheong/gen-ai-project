@@ -1,0 +1,5 @@
+createIteminTable:
+  handler: multi-binary.createitem
+  runtime: provided.al2023
+  environment:
+    RUST_BACKTRACE: full
