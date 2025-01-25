@@ -68,7 +68,7 @@ genaiState:
                           ownernot:
                             S.$: $.messageAttributes.connectionId.stringValue
                           body:
-                            M.$: $.body
+                            S.$: $.body
                       End: true    
           End: True
 
