@@ -7,7 +7,7 @@ use serde_json::json;
 
 use core::result::Result;
 
-use spark_connect_rs::{SparkSession, SparkSessionBuilder};
+//use spark_connect_rs::{SparkSession, SparkSessionBuilder};
 
 
 #[tokio::main]
@@ -19,7 +19,7 @@ async fn main() -> Result<(), Error> {
 
 async fn func(event: LambdaEvent<Value>) -> Result<Value, Error> {
     // Initialize Spark session
-    let spark = SparkSession::builder()
+   /*  let spark = SparkSession::builder()
         .app_name("RustIcebergWrite")
         .config("spark.sql.extensions", "org.apache.iceberg.spark.extensions.IcebergSparkSessionExtensions")
         .config("spark.sql.catalog.my_catalog", "org.apache.iceberg.spark.SparkCatalog")
@@ -47,7 +47,7 @@ async fn func(event: LambdaEvent<Value>) -> Result<Value, Error> {
         .unwrap();
 
     // Stop the Spark session
-    spark.stop().unwrap();
+    spark.stop().unwrap(); */
 
     Ok(json!({
         "table": "s3table-genai-pre.namespace1.people",
