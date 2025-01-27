@@ -55,28 +55,29 @@ genaiState:
                         AuthType: IAM_ROLE
                       End: true
             
-                - StartAt: insertItem
+                - StartAt: Athena StartSyncExecution
                   States:
-                    insertItem:
-                      Type: Task
-                      Resource: arn:aws:states:::dynamodb:putItem
-                      Parameters:
-                        TableName: !Ref privateModel
-                        Item:
-                          idnot:
-                            S.$: $.messageId
-                          ownernot:
-                            S.$: $.messageAttributes.connectionId.stringValue
-                          body:
-                            S.$: $.body
-                      ResultPath: null
-                      Next: Athena StartSyncExecution
+                    #insertItem:
+                    #  Type: Task
+                    #  Resource: arn:aws:states:::dynamodb:putItem
+                    #  Parameters:
+                    #    TableName: !Ref privateModel
+                    #    Item:
+                    #      idnot:
+                    #        S.$: $.messageId
+                    #      ownernot:
+                    #        S.$: $.messageAttributes.connectionId.stringValue
+                    #      body:
+                    #        S.$: $.body
+                    #  ResultPath: null
+                    #  Next: Athena StartSyncExecution
 
                     Athena StartSyncExecution:
                       Type: Task
                       Resource: arn:aws:states:::athena:startQueryExecution.sync
                       Parameters:
-                        QueryString: "SELECT * FROM \"database1\".\"tabla1\" limit 1"
+                        #QueryString: "SELECT * FROM \"database1\".\"tabla1\" limit 1"
+                        QueryString: "INSERT INTO \"database1\".\"tabla1\" VALUES ('$.messageId', '$.eventSource', '$.body', '$$.Execution.StartTime')"
                         WorkGroup: "primary"
                         ResultConfiguration:
                           OutputLocation: "s3://s3table-output-${self:provider.stage}/athena/"
