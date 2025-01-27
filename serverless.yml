@@ -88,6 +88,7 @@ resources:
 
     # ---------- S3 TABLE 🫡 ---------------
     s3Table: '${file(./iac/s3/tables.yml):s3Table}'
+    s3TableOutput: '${file(./iac/s3/tables.yml):s3TableOutput}'
 
     
 
