@@ -62,5 +62,10 @@ statesRole:
                 - athena:*
               Resource: "*"
 
+            - Effect: Allow
+              Action:
+                - s3:*
+              Resource: "*"
+
 
 
