@@ -41,8 +41,8 @@ provider:
       - "ssm:*"
     Resource: "*"
 
-functions:
-  createIteminTable: '${file(./iac/lambda/createIteminTable.yml):createIteminTable}'
+#functions:
+#  createIteminTable: '${file(./iac/lambda/createIteminTable.yml):createIteminTable}'
 
 resources:
   Resources:
@@ -123,5 +123,5 @@ custom:
 plugins:
   - serverless-prune-plugin
   - serverless-ssm-fetch
-  - serverless-rust-plugin
+#  - serverless-rust-plugin
 

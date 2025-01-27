@@ -81,16 +81,16 @@ genaiState:
                         ResultConfiguration:
                           OutputLocation: "s3://s3table-output-${self:provider.stage}/athena/"
                       ResultPath: "$.queryResult"
-                      Next: createSession
+                      End: true
 
-                    createSession:
-                      Type: Task
-                      Resource: arn:aws:states:::lambda:invoke
-                      Parameters:
-                        FunctionName: arn:aws:lambda:${self:provider.region}:178934116267:function:gen-ai-service-${self:provider.stage}-createIteminTable
-                        Payload.$: "$"
-                      OutputPath: "$.Payload"
-                      End: true   
+                    #createSession:
+                    #  Type: Task
+                    #  Resource: arn:aws:states:::lambda:invoke
+                    #  Parameters:
+                    #    FunctionName: arn:aws:lambda:${self:provider.region}:178934116267:function:gen-ai-service-${self:provider.stage}-createIteminTable
+                    #    Payload.$: "$"
+                    #  OutputPath: "$.Payload"
+                    #  End: true   
           End: True
 
 statesLogGroup:
