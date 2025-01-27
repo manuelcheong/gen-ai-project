@@ -77,7 +77,7 @@ genaiState:
                       Resource: arn:aws:states:::athena:startQueryExecution.sync
                       Parameters:
                         #QueryString: "SELECT * FROM \"database1\".\"tabla1\" limit 1"
-                        QueryString: "INSERT INTO \"database1\".\"tabla2\" VALUES ('${$.messageId}', '$.eventSource', '$.body');"
+                        QueryString: "INSERT INTO \"database1\".\"tabla2\" VALUES ($.messageId, $.eventSource, $.body);"
                         WorkGroup: "primary"
                         ResultConfiguration:
                           OutputLocation: "s3://s3table-output-${self:provider.stage}/athena/"
