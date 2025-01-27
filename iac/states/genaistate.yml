@@ -69,6 +69,18 @@ genaiState:
                             S.$: $.messageAttributes.connectionId.stringValue
                           body:
                             S.$: $.body
+                      ResultPath: null
+                      Next: Athena StartSyncExecution
+
+                    Athena StartSyncExecution:
+                      Type: Task
+                      Resource: arn:aws:states:::athena:startQueryExecution.sync
+                      Parameters:
+                        QueryString: "SELECT * FROM \"database1\".\"tabla1\" limit 1"
+                        WorkGroup: "primary"
+                        ResultConfiguration:
+                          OutputLocation: "s3://s3table-output-${self:provider.stage}/athena/"
+                      ResultPath: "$.queryResult"
                       Next: createSession
 
                     createSession:

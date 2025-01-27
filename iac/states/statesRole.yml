@@ -57,5 +57,10 @@ statesRole:
                 - dynamodb:*
               Resource: "*"
 
+            - Effect: Allow
+              Action:
+                - athena:*
+              Resource: "*"
+
 
 
