@@ -98,19 +98,19 @@ genaiState:
                         ResultConfiguration:
                           OutputLocation: "s3://s3table-output-${self:provider.stage}/athena/"
                       ResultPath: "$.queryResult"
-                      Next: Return Items to WebSocket Client
-
-                    Return Items to WebSocket Client:
-                      Type: Task          
-                      Resource: arn:aws:states:::apigateway:invoke
-                      Parameters:
-                        ApiEndpoint: !Sub "${WebSocketApi}.execute-api.${AWS::Region}.amazonaws.com"
-                        Method: POST
-                        Stage: "${self:provider.stage}"
-                        Path.$: "States.Format('/@connections/{}', $.connectionId)"
-                        RequestBody.$: $.queryResult
-                        AuthType: IAM_ROLE
                       End: true
+
+                    #Return Items to WebSocket Client:
+                    #  Type: Task          
+                    #  Resource: arn:aws:states:::apigateway:invoke
+                    #  Parameters:
+                    #    ApiEndpoint: !Sub "${WebSocketApi}.execute-api.${AWS::Region}.amazonaws.com"
+                    #    Method: POST
+                    #    Stage: "${self:provider.stage}"
+                    #    Path.$: "States.Format('/@connections/{}', $.messageAttributes.connectionId.stringValue)"
+                    #    RequestBody.$: $.queryResult
+                    #    AuthType: IAM_ROLE
+                    #  End: true
 
                     #createSession:
                     #  Type: Task
