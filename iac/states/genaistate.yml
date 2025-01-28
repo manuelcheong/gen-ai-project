@@ -84,6 +84,32 @@ genaiState:
                         ResultConfiguration:
                           OutputLocation: "s3://s3table-output-${self:provider.stage}/athena/"
                       ResultPath: "$.queryResult"
+                      Next: ReturnTableItems
+
+                    ReturnTableItems:
+                      Type: Task
+                      Resource: arn:aws:states:::athena:startQueryExecution.sync
+                      Parameters:
+                        QueryString: "SELECT * FROM tabla1;"
+                        #QueryString.$:  "States.Format('INSERT INTO tabla1 (messageid, eventsource, body, createdat)  VALUES (\\'{}\\', \\'{}\\', \\'{}\\', CURRENT_DATE);', $.messageId, $.eventSource, $.body)"    # "INSERT INTO \"database1\".\"tabla2\" VALUES ('$.messageId', '$.eventSource', '$.body')"
+                        QueryExecutionContext:
+                          Database: "database1"
+                        WorkGroup: "primary"
+                        ResultConfiguration:
+                          OutputLocation: "s3://s3table-output-${self:provider.stage}/athena/"
+                      ResultPath: "$.queryResult"
+                      Next: Send Message to WebSocket Client
+
+                    Send Message to WebSocket Client:
+                      Type: Task          
+                      Resource: arn:aws:states:::apigateway:invoke
+                      Parameters:
+                        ApiEndpoint: !Sub "${WebSocketApi}.execute-api.${AWS::Region}.amazonaws.com"
+                        Method: POST
+                        Stage: "${self:provider.stage}"
+                        Path.$: "States.Format('/@connections/{}', $.connectionId)"
+                        RequestBody.$: $.queryResult
+                        AuthType: IAM_ROLE
                       End: true
 
                     #createSession:
