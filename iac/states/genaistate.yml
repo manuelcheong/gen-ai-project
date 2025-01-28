@@ -98,9 +98,9 @@ genaiState:
                         ResultConfiguration:
                           OutputLocation: "s3://s3table-output-${self:provider.stage}/athena/"
                       ResultPath: "$.queryResult"
-                      Next: Send Message to WebSocket Client
+                      Next: Return Items to WebSocket Client
 
-                    Send Message to WebSocket Client:
+                    Return Items to WebSocket Client:
                       Type: Task          
                       Resource: arn:aws:states:::apigateway:invoke
                       Parameters:
