@@ -70,7 +70,7 @@ genaiState:
                       Resource: arn:aws:states:::athena:startQueryExecution.sync
                       Parameters:
                         #QueryString: "SELECT * FROM \"database1\".\"tabla1\" limit 1"
-                        QueryString.$:  "States.Format('INSERT INTO tabla1 (messageid, eventsource, body, createdat)  VALUES (\\'{}\\', \\'{}\\', \\'{}\\', CURRENT_DATE);', $.messageId, $.body.index, States.JsonToString($.body))"    # "INSERT INTO \"database1\".\"tabla2\" VALUES ('$.messageId', '$.eventSource', '$.body')"
+                        QueryString.$:  "States.Format('INSERT INTO dominos (messageid, eventsource, body, createdat, status, statustext, storeorderid, servicemethod, unidad, storeid)  VALUES (\\'{}\\', \\'{}\\', \\'{}\\', CURRENT_DATE, {}, \\'{}\\', \\'{}\\', \\'{}\\', \\'{}\\', {});', $.messageId, $.body.index, States.JsonToString($.body), $.body.Status, $.body.StatusText, $.body.StoreID, $.body.ServiceMethod, $.body.Unidad, $.body.StoreID)"    # "INSERT INTO \"database1\".\"tabla2\" VALUES ('$.messageId', '$.eventSource', '$.body')"
                         QueryExecutionContext:
                           Database: "database1"
                         WorkGroup: "primary"
