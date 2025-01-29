@@ -46,15 +46,39 @@ genaiState:
           Branches:
           - StartAt: filterPedidosPulseEcommerce
             States:
-              "filterPedidosPulseEcommerce": 
-                "Type": "Pass"
-                "ResultPath": "$.items"
-                "InputPath": "$.body[?(@.index == 'pedidos-pulse-ecom-pro')]"
-                "Next": "showItems"
+              filterPedidosPulseEcommerce: 
+                Type: "Pass"
+                InputPath: "$.[?(@.body.index == 'pedidos-pulse-ecom-pro')]"
+                Next: "handleItem"
 
-              "showItems":
-                "Type": "Pass"
-                "End": true
+
+              handleItem:
+                Type: Map
+                ItemsPath: $
+                #ResultPath: "$.items"
+                MaxConcurrency: 100
+                ItemProcessor:
+                  StartAt: showItems
+                  States:
+                    showItems:
+                    Type: "Pass"
+                    End: true
+
+              #Athena StartSyncExecution:
+              #  Type: Task
+              #  Resource: arn:aws:states:::athena:startQueryExecution.sync
+              #  Parameters:
+                        #QueryString: "SELECT * FROM \"database1\".\"tabla1\" limit 1"
+              #    QueryString.$:  "States.Format('INSERT INTO tabla1 (messageid, eventsource, body, createdat)  VALUES (\\'{}\\', \\'{}\\', \\'{}\\', CURRENT_DATE);', $.messageId, $.eventSource, $.body)"    # "INSERT INTO \"database1\".\"tabla2\" VALUES ('$.messageId', '$.eventSource', '$.body')"
+              #    QueryExecutionContext:
+              #      Database: "database1"
+              #    WorkGroup: "primary"
+              #    ResultConfiguration:
+              #      OutputLocation: "s3://s3table-output-${self:provider.stage}/athena/"
+              #  ResultPath: "$.queryResult"
+              #  End: true
+
+              
                   
 
 
@@ -114,19 +138,7 @@ genaiState:
                     #  ResultPath: null
                     #  Next: Athena StartSyncExecution
 
-      #              Athena StartSyncExecution:
-      #                Type: Task
-      #                Resource: arn:aws:states:::athena:startQueryExecution.sync
-      #                Parameters:
-                        #QueryString: "SELECT * FROM \"database1\".\"tabla1\" limit 1"
-      #                  QueryString.$:  "States.Format('INSERT INTO tabla1 (messageid, eventsource, body, createdat)  VALUES (\\'{}\\', \\'{}\\', \\'{}\\', CURRENT_DATE);', $.messageId, $.eventSource, $.body)"    # "INSERT INTO \"database1\".\"tabla2\" VALUES ('$.messageId', '$.eventSource', '$.body')"
-      #                  QueryExecutionContext:
-      #                    Database: "database1"
-      #                  WorkGroup: "primary"
-      #                  ResultConfiguration:
-      #                    OutputLocation: "s3://s3table-output-${self:provider.stage}/athena/"
-      #                ResultPath: "$.queryResult"
-      #                Next: ReturnTableItems
+                    
 
       #              ReturnTableItems:
       #                Type: Task
