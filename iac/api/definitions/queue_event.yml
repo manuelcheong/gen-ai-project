@@ -3,7 +3,7 @@ queueEventResource:
   Properties:
     RestApiId: !Ref restApi
     ParentId: !GetAtt restApi.RootResourceId
-    PathPart: 'queue'
+    PathPart: 'queuevent'
 
 #   -----  CREATE-----------
 
