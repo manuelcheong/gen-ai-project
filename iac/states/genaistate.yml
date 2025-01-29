@@ -16,47 +16,89 @@ genaiState:
       Enabled: true
 
     Definition:
-      Comment: "GEN AI Orquestation"
-      StartAt: processItems
+      Comment: "GEN AI Orquestation to save analitycs in S3 tables"
+      StartAt: createItemsList
       States:
-        processItems:
+        parserInput:
           Type: Map
-          ItemsPath: "$"
-          MaxConcurrency: 50
-          Iterator:
-            StartAt: parallelProcesor
+          ItemsPath: $
+          ResultPath: "$.items"
+          MaxConcurrency: 100
+          ItemProcessor:
+            StartAt: parser
             States:
-              parallelProcesor:
-                Type: Parallel
-                OutputPath: "$[0]"
+              parser:
+                Type: Pass
+                Parameters:
+                  messageId.$: $.messageId
+                  body.$: States.StringToJson($.body)
                 End: true
-                Branches:
-                - StartAt: parseItem
-                  States:
-                    parseItem:
-                      Type: Pass
-                      Parameters:
-                        messageId.$: $.messageId
-                        body.$: "States.StringToJson($.body)"
-                        executionTime.$: "$$.Execution.StartTime"
-                        connectionId.$: $.messageAttributes.connectionId.stringValue
-                      Next: Send Message to WebSocket Client
+            ProcessorConfig:
+              Mode: DISTRIBUTED
+              ExecutionType: STANDARD
+          Next: parallelFilterbyTables
+        
+              
 
-                    Send Message to WebSocket Client:
-                      Type: Task          
-                      Resource: arn:aws:states:::apigateway:invoke
-                      Parameters:
-                        ApiEndpoint: !Sub "${WebSocketApi}.execute-api.${AWS::Region}.amazonaws.com"
-                        Method: POST
-                        Stage: "${self:provider.stage}"
-                        Path.$: "States.Format('/@connections/{}', $.connectionId)"
-                        RequestBody:
-                          Message.$: $
-                        AuthType: IAM_ROLE
-                      End: true
+        parallelFilterbyTables:
+          Type: Parallel
+          End: true
+          Branches:
+          - StartAt: filterPedidosPulseEcommerce
+            States:
+              "filterPedidosPulseEcommerce": 
+                "Type": "Pass"
+                "ResultPath": "$.items"
+                "InputPath": "$.[?(@.body.index in ['pedidos-pulse-ecom-pro'])]"
+                "Next": "showItems"
+
+              "showItems":
+                "Type": "Pass"
+                "End": true
+                  
+
+
+
+
+
+      #  processItems:
+      #    Type: Map
+      #    ItemsPath: "$"   # "ItemsPath": "$.data[?(@.type == 'important')]"
+      #    MaxConcurrency: 50
+      #    Iterator:
+      #      StartAt: parallelProcesor
+      #      States:
+      #        parallelProcesor:
+      #          Type: Parallel
+      #          OutputPath: "$[0]"
+      #          End: true
+      #          Branches:
+      #          - StartAt: parseItem
+      #            States:
+      #              parseItem:
+      #                Type: Pass
+      #                Parameters:
+      #                  messageId.$: $.messageId
+      #                  body.$: "States.StringToJson($.body)"
+      #                  executionTime.$: "$$.Execution.StartTime"
+      #                  connectionId.$: $.messageAttributes.connectionId.stringValue
+      #                Next: Send Message to WebSocket Client
+
+      #              Send Message to WebSocket Client:
+      #                Type: Task          
+      #                Resource: arn:aws:states:::apigateway:invoke
+      #                Parameters:
+      #                  ApiEndpoint: !Sub "${WebSocketApi}.execute-api.${AWS::Region}.amazonaws.com"
+      #                  Method: POST
+      #                  Stage: "${self:provider.stage}"
+      #                  Path.$: "States.Format('/@connections/{}', $.connectionId)"
+      #                  RequestBody:
+      #                    Message.$: $
+      ##                  AuthType: IAM_ROLE
+      #                End: true
             
-                - StartAt: Athena StartSyncExecution
-                  States:
+      #          - StartAt: Athena StartSyncExecution
+      #            States:
                     #insertItem:
                     #  Type: Task
                     #  Resource: arn:aws:states:::dynamodb:putItem
@@ -72,33 +114,33 @@ genaiState:
                     #  ResultPath: null
                     #  Next: Athena StartSyncExecution
 
-                    Athena StartSyncExecution:
-                      Type: Task
-                      Resource: arn:aws:states:::athena:startQueryExecution.sync
-                      Parameters:
+      #              Athena StartSyncExecution:
+      #                Type: Task
+      #                Resource: arn:aws:states:::athena:startQueryExecution.sync
+      #                Parameters:
                         #QueryString: "SELECT * FROM \"database1\".\"tabla1\" limit 1"
-                        QueryString.$:  "States.Format('INSERT INTO tabla1 (messageid, eventsource, body, createdat)  VALUES (\\'{}\\', \\'{}\\', \\'{}\\', CURRENT_DATE);', $.messageId, $.eventSource, $.body)"    # "INSERT INTO \"database1\".\"tabla2\" VALUES ('$.messageId', '$.eventSource', '$.body')"
-                        QueryExecutionContext:
-                          Database: "database1"
-                        WorkGroup: "primary"
-                        ResultConfiguration:
-                          OutputLocation: "s3://s3table-output-${self:provider.stage}/athena/"
-                      ResultPath: "$.queryResult"
-                      Next: ReturnTableItems
+      #                  QueryString.$:  "States.Format('INSERT INTO tabla1 (messageid, eventsource, body, createdat)  VALUES (\\'{}\\', \\'{}\\', \\'{}\\', CURRENT_DATE);', $.messageId, $.eventSource, $.body)"    # "INSERT INTO \"database1\".\"tabla2\" VALUES ('$.messageId', '$.eventSource', '$.body')"
+      #                  QueryExecutionContext:
+      #                    Database: "database1"
+      #                  WorkGroup: "primary"
+      #                  ResultConfiguration:
+      #                    OutputLocation: "s3://s3table-output-${self:provider.stage}/athena/"
+      #                ResultPath: "$.queryResult"
+      #                Next: ReturnTableItems
 
-                    ReturnTableItems:
-                      Type: Task
-                      Resource: arn:aws:states:::athena:startQueryExecution.sync
-                      Parameters:
-                        QueryString: "SELECT * FROM tabla1;"
+      #              ReturnTableItems:
+      #                Type: Task
+      #                Resource: arn:aws:states:::athena:startQueryExecution.sync
+      #                Parameters:
+      #                  QueryString: "SELECT * FROM tabla1;"
                         #QueryString.$:  "States.Format('INSERT INTO tabla1 (messageid, eventsource, body, createdat)  VALUES (\\'{}\\', \\'{}\\', \\'{}\\', CURRENT_DATE);', $.messageId, $.eventSource, $.body)"    # "INSERT INTO \"database1\".\"tabla2\" VALUES ('$.messageId', '$.eventSource', '$.body')"
-                        QueryExecutionContext:
-                          Database: "database1"
-                        WorkGroup: "primary"
-                        ResultConfiguration:
-                          OutputLocation: "s3://s3table-output-${self:provider.stage}/athena/"
-                      ResultPath: "$.queryResult"
-                      End: true
+      #                  QueryExecutionContext:
+      #                    Database: "database1"
+      #                  WorkGroup: "primary"
+      #                  ResultConfiguration:
+      #                    OutputLocation: "s3://s3table-output-${self:provider.stage}/athena/"
+      #                ResultPath: "$.queryResult"
+      #                End: true
 
                     #Return Items to WebSocket Client:
                     #  Type: Task          
@@ -120,6 +162,27 @@ genaiState:
                     #    Payload.$: "$"
                     #  OutputPath: "$.Payload"
                     #  End: true   
+
+
+                    #"Get query results": {
+                    #  "Resource": "arn:aws:states:::athena:getQueryResults",
+                    #  "Arguments": {
+                    #    "QueryExecutionId": "{% $states.input.QueryExecution.QueryExecutionId %}"
+                    #  },
+                    #  "Type": "Task",
+                    #  "Next": "Send query results"
+                    #},
+                    #"Send query results": {
+                    #  "Resource": "arn:aws:states:::sns:publish",
+                    #  "Arguments": {
+                    #    "TopicArn": "arn:aws:sns:eu-west-1:<ACCOUNT_ID>:MySnsTopic",
+                    #    "Message": {
+                    #      "Input": "{% $states.input.ResultSet.Rows %}"
+                    #    }
+                    #  },
+                    #  "Type": "Task",
+                    #  "End": true
+                    #}
           End: True
 
 statesLogGroup:
