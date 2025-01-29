@@ -49,10 +49,10 @@ genaiState:
               filterPedidosPulseEcommerce: 
                 Type: "Pass"
                 InputPath: "$.[?(@.body.index == 'pedidos-pulse-ecom-pro')]"
-                Next: "handleItem"
+                Next: "handleCommerceItem"
 
 
-              handleItem:
+              handleCommerceItem:
                 Type: Map
                 End: true
                 ItemsPath: $
@@ -84,10 +84,10 @@ genaiState:
               filterPedidosPulseAggregator: 
                 Type: "Pass"
                 InputPath: "$.[?(@.body.index == 'pedidos-pulse-agg-pro')]"
-                Next: "handleItem"
+                Next: "handleAggItem"
   
   
-              handleItem:
+              handleAggItem:
                 Type: Map
                 End: true
                 ItemsPath: $
