@@ -54,6 +54,7 @@ genaiState:
 
               handleItem:
                 Type: Map
+                End: true
                 ItemsPath: $
                 #ResultPath: "$.items"
                 MaxConcurrency: 100
