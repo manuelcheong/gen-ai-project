@@ -73,7 +73,7 @@ resources:
 
     restApi: '${file(./iac/api/rest_api.yml):restApi}'
     Stage: '${file(./iac/api/rest_api.yml):Stage}'
-    restApiDeploy: '${file(./iac/api/rest_api.yml):restApiDeploy}'
+    #restApiDeploy: '${file(./iac/api/rest_api.yml):restApiDeploy}'
     restApiRole: '${file(./iac/api/rest_api.yml):restApiRole}'
 
     ## ---------- RESOURCES - REST API 🫡 ----------------
