@@ -61,8 +61,8 @@ genaiState:
                   StartAt: showItems
                   States:
                     showItems:
-                    Type: "Pass"
-                    End: true
+                      Type: "Pass"
+                      End: true
 
               #Athena StartSyncExecution:
               #  Type: Task
