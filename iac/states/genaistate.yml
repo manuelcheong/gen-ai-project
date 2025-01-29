@@ -78,7 +78,7 @@ genaiState:
             States:
               filterPedidosPulseAggregator: 
                 Type: "Pass"
-                InputPath: "$.[?(@.body.index == 'pedidos-pulse-agg-pro2')]"
+                InputPath: "$.[?(@.body.index == 'pedidos-pulse-agg-pro')]"
                 Next: "handleAggItem"
   
   
@@ -89,11 +89,21 @@ genaiState:
                   #ResultPath: "$.items"
                 MaxConcurrency: 100
                 ItemProcessor:
-                  StartAt: showItems
+                  StartAt: Athena StartSyncExecutionAgg
                   States:
-                    showItems:
-                      Type: "Pass"
+                    Athena StartSyncExecutionAgg:
+                      Type: Task
+                      Resource: arn:aws:states:::athena:startQueryExecution.sync
+                      Parameters:
+                        QueryString.$:  "States.Format('INSERT INTO dominos (messageid, eventsource, body, createdat, status, statustext, storeorderid, servicemethod, unidad, storeid)  VALUES (\\'{}\\', \\'{}\\', \\'{}\\', CURRENT_DATE, {}, \\'{}\\', \\'{}\\', \\'{}\\', \\'{}\\', {});', $.messageId, $.body.index, States.JsonToString($.body), $.body.body.Status, $.body.body.StatusText, $.body.body.StoreID, $.body.body.ServiceMethod, $.body.body.Unidad, $.body.body.StoreID)"    # "INSERT INTO \"database1\".\"tabla2\" VALUES ('$.messageId', '$.eventSource', '$.body')"
+                        QueryExecutionContext:
+                          Database: "database1"
+                        WorkGroup: "primary"
+                        ResultConfiguration:
+                          OutputLocation: "s3://s3table-output-${self:provider.stage}/athena/"
+                      ResultPath: "$.queryResult"
                       End: true
+                    
   
                 #Athena StartSyncExecution:
                 #  Type: Task
