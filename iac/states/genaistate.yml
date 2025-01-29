@@ -183,7 +183,7 @@ genaiState:
                     #  "Type": "Task",
                     #  "End": true
                     #}
-          End: True
+          #End: True
 
 statesLogGroup:
   Type: AWS::Logs::LogGroup
