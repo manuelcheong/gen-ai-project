@@ -17,7 +17,7 @@ genaiState:
 
     Definition:
       Comment: "GEN AI Orquestation to save analitycs in S3 tables"
-      StartAt: createItemsList
+      StartAt: parserInput
       States:
         parserInput:
           Type: Map
