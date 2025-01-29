@@ -49,7 +49,7 @@ genaiState:
               "filterPedidosPulseEcommerce": 
                 "Type": "Pass"
                 "ResultPath": "$.items"
-                "InputPath": "$.[?(@.body.index in ['pedidos-pulse-ecom-pro'])]"
+                "InputPath": "$.body[?(@.index == 'pedidos-pulse-ecom-pro')]"
                 "Next": "showItems"
 
               "showItems":
