@@ -72,19 +72,18 @@ resources:
     # ---------- REST API 🫡 ----------------
 
     restApi: '${file(./iac/api/rest_api.yml):restApi}'
-    Stage: '${file(./iac/api/rest_api.yml):Stage}'
+    #Stage: '${file(./iac/api/rest_api.yml):Stage}'
     #restApiDeploy: '${file(./iac/api/rest_api.yml):restApiDeploy}'
     restApiRole: '${file(./iac/api/rest_api.yml):restApiRole}'
 
     ## ---------- RESOURCES - REST API 🫡 ----------------
-
+    queueEventResource: '${file(./iac/api/definitions/queue_event.yml):queueEventResource}'
+    queueEventMethodPost: '${file(./iac/api/definitions/queue_event.yml):queueEventMethodPost}'
 
     # ------------ CDN 🤨 ------------------
     genaiDistribution: '${file(./iac/cdn/cdn.yml):genaiDistribution}'
 
-    queueEventResource: '${file(./iac/api/definitions/queue_event.yml):queueEventResource}'
-    queueEventMethodPost: '${file(./iac/api/definitions/queue_event.yml):queueEventMethodPost}'
-
+  
 
     # ---------- API KEYS 🫡 ----------------
     ApiKey: '${file(./iac/api/websocket_api.yml):ApiKey}'
