@@ -48,8 +48,8 @@ genaiState:
             States:
               filterPedidosPulseEcommerce: 
                 Type: "Pass"
-                InputPath: "$.[?(@.body.index == 'pedidos-pulse-ecom-pro')]"
-                #InputPath: "$.[?(@.body.index in ['pedidos-pulse-ecom-pro','pedidos-pulse-agg-pro'])]"
+                #InputPath: "$.[?(@.body.index == 'pedidos-pulse-ecom-pro')]"
+                InputPath: "$[?.body.index in ['pedidos-pulse-ecom-pro','pedidos-pulse-agg-pro']]"
                 Next: "handleCommerceItem"
 
 
