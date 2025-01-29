@@ -15,7 +15,7 @@ queueEventMethodPost:
     RestApiId:
       Ref: restApi
     HttpMethod: POST
-    #ApiKeyRequired: true
+    ApiKeyRequired: true
     AuthorizationType: NONE
     #AuthorizationType: CUSTOM
     #AuthorizerId: !Ref authorizerdefinition
