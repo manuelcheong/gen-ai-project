@@ -138,3 +138,6 @@ UsagePlan:
     ApiStages: 
       - ApiId: !Ref WebSocketApi
         Stage: ${self:provider.stage}
+
+      - ApiId: !Ref restApi
+        Stage: ${self:provider.stage}
