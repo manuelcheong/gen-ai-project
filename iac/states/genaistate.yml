@@ -48,7 +48,8 @@ genaiState:
             States:
               filterPedidosPulseEcommerce: 
                 Type: "Pass"
-                InputPath: "$.[?(@.body.index == 'pedidos-pulse-ecom-pro')]"
+                #InputPath: "$.[?(@.body.index == 'pedidos-pulse-ecom-pro')]"
+                InputPath: "$.[?(@.body.index in ['pedidos-pulse-ecom-pro', 'pedidos-pulse-agg-pro'])]"
                 Next: "handleCommerceItem"
 
 
@@ -56,20 +57,14 @@ genaiState:
                 Type: Map
                 End: true
                 ItemsPath: $
-                #ResultPath: "$.items"
                 MaxConcurrency: 100
                 ItemProcessor:
                   StartAt: Athena StartSyncExecution
                   States:
-                    #showItems:
-                    #  Type: "Pass"
-                    #  End: true
-
                     Athena StartSyncExecution:
                       Type: Task
                       Resource: arn:aws:states:::athena:startQueryExecution.sync
                       Parameters:
-                        #QueryString: "SELECT * FROM \"database1\".\"tabla1\" limit 1"
                         QueryString.$:  "States.Format('INSERT INTO dominos (messageid, eventsource, body, createdat, status, statustext, storeorderid, servicemethod, unidad, storeid)  VALUES (\\'{}\\', \\'{}\\', \\'{}\\', CURRENT_DATE, {}, \\'{}\\', \\'{}\\', \\'{}\\', \\'{}\\', {});', $.messageId, $.body.index, States.JsonToString($.body), $.body.body.Status, $.body.body.StatusText, $.body.body.StoreID, $.body.body.ServiceMethod, $.body.body.Unidad, $.body.body.StoreID)"    # "INSERT INTO \"database1\".\"tabla2\" VALUES ('$.messageId', '$.eventSource', '$.body')"
                         QueryExecutionContext:
                           Database: "database1"
@@ -83,7 +78,7 @@ genaiState:
             States:
               filterPedidosPulseAggregator: 
                 Type: "Pass"
-                InputPath: "$.[?(@.body.index == 'pedidos-pulse-agg-pro')]"
+                InputPath: "$.[?(@.body.index == 'pedidos-pulse-agg-pro2')]"
                 Next: "handleAggItem"
   
   
