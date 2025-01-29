@@ -22,7 +22,7 @@ genaiState:
         parserInput:
           Type: Map
           ItemsPath: $
-          ResultPath: "$.items"
+          #ResultPath: "$.items"
           MaxConcurrency: 100
           ItemProcessor:
             StartAt: parser
