@@ -143,18 +143,18 @@ genaiState:
                         connectionId.$: $.messageAttributes.connectionId.stringValue
                       Next: Send Message to WebSocket Client
 
-              Send Message to WebSocket Client:
-                Type: Task          
-                Resource: arn:aws:states:::apigateway:invoke
-                Parameters:
-                  ApiEndpoint: !Sub "${WebSocketApi}.execute-api.${AWS::Region}.amazonaws.com"
-                  Method: POST
-                  Stage: "${self:provider.stage}"
-                  Path.$: "States.Format('/@connections/{}', $.connectionId)"
-                  RequestBody:
-                    Message.$: $
-                  AuthType: IAM_ROLE
-                End: true
+                    Send Message to WebSocket Client:
+                      Type: Task          
+                      Resource: arn:aws:states:::apigateway:invoke
+                      Parameters:
+                        ApiEndpoint: !Sub "${WebSocketApi}.execute-api.${AWS::Region}.amazonaws.com"
+                        Method: POST
+                        Stage: "${self:provider.stage}"
+                        Path.$: "States.Format('/@connections/{}', $.connectionId)"
+                        RequestBody:
+                          Message.$: $
+                        AuthType: IAM_ROLE
+                      End: true
   
       #  processItems:
       #    Type: Map
