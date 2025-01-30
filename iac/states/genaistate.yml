@@ -124,16 +124,24 @@ genaiState:
               filterCustomEvents: 
                 Type: "Pass"
                 InputPath: "$.[?(@.body.index == 'custom')]"
-                Next: "parseCustomItem"
+                Next: "handleCustomItems"
 
-              parseCustomItem:
-                Type: Pass
-                Parameters:
-                  messageId.$: $.messageId
-                  body.$: "States.StringToJson($.body)"
-                  executionTime.$: "$$.Execution.StartTime"
-                  connectionId.$: $.messageAttributes.connectionId.stringValue
-                Next: Send Message to WebSocket Client
+              handleCustomItems:
+                Type: Map
+                End: true
+                ItemsPath: $
+                MaxConcurrency: 100
+                ItemProcessor:
+                  StartAt: parseCustomItem
+                  States:
+                    parseCustomItem:
+                      Type: Pass
+                      Parameters:
+                        messageId.$: $.messageId
+                        body.$: "States.StringToJson($.body)"
+                        executionTime.$: "$$.Execution.StartTime"
+                        connectionId.$: $.messageAttributes.connectionId.stringValue
+                      Next: Send Message to WebSocket Client
 
               Send Message to WebSocket Client:
                 Type: Task          
