@@ -119,7 +119,35 @@ genaiState:
                 #  ResultPath: "$.queryResult"
                 #  End: true
 
+          - StartAt: filterCustomEvents
+            States:
+              filterCustomEvents: 
+                Type: "Pass"
+                InputPath: "$.[?(@.body.index == 'custom')]"
+                Next: "parseCustomItem"
 
+              parseCustomItem:
+                Type: Pass
+                Parameters:
+                  messageId.$: $.messageId
+                  body.$: "States.StringToJson($.body)"
+                  executionTime.$: "$$.Execution.StartTime"
+                  connectionId.$: $.messageAttributes.connectionId.stringValue
+                Next: Send Message to WebSocket Client
+
+              Send Message to WebSocket Client:
+                Type: Task          
+                Resource: arn:aws:states:::apigateway:invoke
+                Parameters:
+                  ApiEndpoint: !Sub "${WebSocketApi}.execute-api.${AWS::Region}.amazonaws.com"
+                  Method: POST
+                  Stage: "${self:provider.stage}"
+                  Path.$: "States.Format('/@connections/{}', $.connectionId)"
+                  RequestBody:
+                    Message.$: $
+                  AuthType: IAM_ROLE
+                End: true
+  
       #  processItems:
       #    Type: Map
       #    ItemsPath: "$"   # "ItemsPath": "$.data[?(@.type == 'important')]"
