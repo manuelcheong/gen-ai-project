@@ -9,6 +9,13 @@ provider:
   region: ${opt:region, "eu-west-1"}
   memorySize: 512
   logRetentionInDays: 90
+  apiGateway: 
+    request:
+      schemas:
+        readyForPickupModel:
+          schema: ${file(./iac/api/schemas/schema-messages.json)}
+          name: messagesModel
+          description: 'Schema for MessageModel'
   environment:
     STAGE: ${self:provider.stage}
     REGION: ${self:provider.region}
