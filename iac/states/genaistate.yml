@@ -66,7 +66,7 @@ genaiState:
                       Type: Task
                       Resource: arn:aws:states:::athena:startQueryExecution.sync
                       Parameters:
-                        QueryString.$:  "States.Format('INSERT INTO dominos (messageid, eventsource, body, createdat, status, statustext, storeorderid, servicemethod, unidad, storeid)  VALUES (\\'{}\\', \\'{}\\', \\'{}\\', CURRENT_DATE, {}, \\'{}\\', \\'{}\\', \\'{}\\', \\'{}\\', {});', $.messageId, $.body.index, States.JsonToString($.body), $.body.body.Status, $.body.body.StatusText, $.body.body.StoreID, $.body.body.ServiceMethod, $.body.body.Unidad, $.body.body.StoreID)"    # "INSERT INTO \"database1\".\"tabla2\" VALUES ('$.messageId', '$.eventSource', '$.body')"
+                        QueryString.$:  "States.Format('INSERT INTO dominos (messageid, eventsource, body, createdat, status, statustext, storeorderid, servicemethod, unidad, storeid)  VALUES (\\'{}\\', \\'{}\\', \\'{}\\', CURRENT_DATE, {}, \\'{}\\', \\'{}\\', \\'{}\\', \\'{}\\', {});', $.messageId, $.body.index, States.JsonToString($.body), $.body.body.Status, $.body.body.StatusText, $.body.body.StoreOrderID, $.body.body.ServiceMethod, $.body.body.Unidad, $.body.body.StoreID)"    # "INSERT INTO \"database1\".\"tabla2\" VALUES ('$.messageId', '$.eventSource', '$.body')"
                         QueryExecutionContext:
                           Database: "database1"
                         WorkGroup: "primary"
