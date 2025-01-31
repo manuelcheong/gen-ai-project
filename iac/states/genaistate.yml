@@ -32,6 +32,7 @@ genaiState:
                 Parameters:
                   messageId.$: $.messageId
                   body.$: States.StringToJson($.body)
+                  connectionId.$: $.messageAttributes.['connectionId'].stringValue
                 End: true
             ProcessorConfig:
               Mode: DISTRIBUTED
@@ -138,7 +139,7 @@ genaiState:
                       Type: Pass
                       Parameters:
                         messageId.$: $.messageId
-                        body.$: "States.StringToJson($.body)"
+                        body.$: "States.StringToJson($.body.body)"
                         executionTime.$: "$$.Execution.StartTime"
                         connectionId.$: $.messageAttributes.connectionId.stringValue
                       Next: Send Message to WebSocket Client
