@@ -39,8 +39,8 @@ jobs:
       - name: Setting home 🏠 ...
         run: source $HOME/.cargo/env
 
-      - name: Setting Rust 🦀 ...
-        run: rustup target add aarch64-unknown-linux-musl
+      #- name: Setting Rust 🦀 ...
+      #  run: rustup target add aarch64-unknown-linux-musl
       
       - name: Install Cargo Lambda Plugin 🦀 👾
         run: pip3 install cargo-lambda
