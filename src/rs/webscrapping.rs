@@ -43,8 +43,11 @@ async fn function_handler(event: LambdaEvent<Value>) -> Result<String, Error> {
     urls.into_par_iter().enumerate().for_each(|(index, url)| {
         let s3_client_clone = s3_client.clone();
         let bucket_name_clone = bucket_name.to_string();
-        tokio::spawn(async move {
-            let _ = scrape_and_upload(url, index, &bucket_name_clone, &s3_client_clone).await;
+        tokio::task::spawn_blocking(move || {
+            let rt = tokio::runtime::Runtime::new().unwrap();
+            rt.block_on(async {
+                let _ = scrape_and_upload(url, index, &bucket_name_clone, &s3_client_clone).await;
+            });
         });
     });
     
