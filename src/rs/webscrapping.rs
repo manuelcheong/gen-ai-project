@@ -6,7 +6,7 @@ use rusoto_core::Region;
 use rusoto_s3::{PutObjectRequest, S3Client, S3};
 use std::collections::HashMap;
 use tokio::io::AsyncWriteExt;
-use rayo::prelude::*;
+use rayon::prelude::*;
 
 async fn scrape_and_upload(url: String, index: usize, bucket_name: &str, s3_client: &S3Client) -> Result<(), Error> {
     let response = reqwest::get(&url).await?.text().await?;
@@ -31,8 +31,6 @@ async fn scrape_and_upload(url: String, index: usize, bucket_name: &str, s3_clie
 }
 
 async fn function_handler(event: LambdaEvent<Value>) -> Result<String, Error> {
-    // let dummy_event = LambdaEvent::new(serde_json::json!({"urls": ["https://example.com", "https://another.com"]}), serde_json::json!({}));
-
     let urls: Vec<String> = event.payload["urls"].as_array()
         .unwrap_or(&vec![])
         .iter()
@@ -42,16 +40,13 @@ async fn function_handler(event: LambdaEvent<Value>) -> Result<String, Error> {
     let bucket_name = "gen-ai-content-pre";
     let s3_client = S3Client::new(Region::default());
     
-    let mut tasks = Vec::new();
-    for (index, url) in urls.into_iter().enumerate() {
+    urls.into_par_iter().enumerate().for_each(|(index, url)| {
         let s3_client_clone = s3_client.clone();
         let bucket_name_clone = bucket_name.to_string();
-        tasks.push(rayo::spawn(scrape_and_upload(url, index, &bucket_name_clone, &s3_client_clone)));
-    }
-    
-    for task in tasks {
-        task.await.unwrap()?;
-    }
+        tokio::spawn(async move {
+            let _ = scrape_and_upload(url, index, &bucket_name_clone, &s3_client_clone).await;
+        });
+    });
     
     Ok("Scraping complete and uploaded to S3".to_string())
 }
