@@ -48,8 +48,8 @@ provider:
       - "ssm:*"
     Resource: "*"
 
-#functions:
-#  createIteminTable: '${file(./iac/lambda/createIteminTable.yml):createIteminTable}'
+functions:
+  webscrapping: '${file(./iac/lambda/webscrapping.yml):webscrapping}'
 
 resources:
   Resources:
@@ -106,6 +106,8 @@ resources:
     s3Table: '${file(./iac/s3/tables.yml):s3Table}'
     s3TableOutput: '${file(./iac/s3/tables.yml):s3TableOutput}'
 
+    contentBucket: '${file(./iac/s3/content.yml):contentBucket}'
+
     
 
 custom:
@@ -139,5 +141,5 @@ custom:
 plugins:
   - serverless-prune-plugin
   - serverless-ssm-fetch
-#  - serverless-rust-plugin
+  - serverless-rust-plugin
 

@@ -1,0 +1,14 @@
+contentBucket:
+  Type: AWS::S3::Bucket
+  Properties:
+    BucketName: gen-ai-content-${self:provider.stage}
+    AccessControl: Private
+    PublicAccessBlockConfiguration:
+      BlockPublicAcls: true
+      BlockPublicPolicy: true
+      IgnorePublicAcls: true
+      RestrictPublicBuckets: true
+    BucketEncryption:
+      ServerSideEncryptionConfiguration:
+        - ServerSideEncryptionByDefault:
+            SSEAlgorithm: AES256
