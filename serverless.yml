@@ -49,7 +49,7 @@ provider:
     Resource: "*"
 
 functions:
-  createIteminTable: '${file(./iac/lambda/createIteminTable.yml):createIteminTable}'
+  # createIteminTable: '${file(./iac/lambda/createIteminTable.yml):createIteminTable}'
   scrapper: '${file(./iac/lambda/scrapper.yml):scrapper}'
 
 resources:
@@ -141,7 +141,7 @@ custom:
 
 plugins:
   - serverless-prune-plugin
-  - serverless-rust-plugin
+#  - serverless-rust-plugin
   - serverless-ssm-fetch
 
 
