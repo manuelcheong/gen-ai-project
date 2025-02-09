@@ -16,9 +16,12 @@ path = "src/rs/webscrapping.rs"
 
 [dependencies]
 lambda_runtime = "0.8"
+rayon = "1.10.0"
+reqwest = "0.12.12"
+scraper = "0.22.0"
 serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"
-tokio = { version = "1", features = ["full"] }
+tokio = { version = "1", features = ["macros"] }
 
 
 
