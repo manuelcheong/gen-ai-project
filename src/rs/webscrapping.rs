@@ -29,18 +29,18 @@ async fn scrape_and_upload(index: usize, url: String) -> Result<(), Error> {
     Ok(())
 }
 
-async fn function_handler(_event: LambdaEvent<Value>)-> Result<(), Error> {
-    let urls = vec![
+async fn function_handler(event: LambdaEvent<Value>)-> Result<(), Error> {
+    /* let urls = vec![
         "https://example.com",
         "https://www.rust-lang.org",
         "https://www.wikipedia.org",
-    ];
+    ]; */
 
-    /* let urls: Vec<String> = event.payload["urls"].as_array()
+    let urls: Vec<String> = event.payload["urls"].as_array()
         .unwrap_or(&vec![])
         .iter()
         .filter_map(|u| u.as_str().map(String::from))
-        .collect(); */
+        .collect(); 
 
     // let bucket_name = "gen-ai-content-pre";
 
