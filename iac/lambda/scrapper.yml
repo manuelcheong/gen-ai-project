@@ -1,6 +1,7 @@
 scrapper:
   handler: scrapper.handler
-  runtime: provided.al2
+  runtime: provided.al2023
   package:
     artifact: src/llrt/scrapper/scrapper.zip
   timeout: 15 
+  architecture: x86_64

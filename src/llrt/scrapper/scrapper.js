@@ -44,7 +44,7 @@ export const handler = async (event) => {
   const urls = event.urls || [];
   const promises = urls.map((url, index) => scrapeAndUpload(url, index));
   await Promise.all(promises);
-  return { message: 'Scraping complete and uploaded to S3' }; 
+  // return { message: 'Scraping complete and uploaded to S3' }; 
 
   return true;
 };
