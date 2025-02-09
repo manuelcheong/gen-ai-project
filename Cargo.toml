@@ -8,9 +8,7 @@ edition = "2021"
 name = "createitem"
 path = "src/rs/createitem.rs"
 
-[[bin]]
-name = "webscrapping"
-path = "src/rs/webscrapping.rs"
+
 
 
 
