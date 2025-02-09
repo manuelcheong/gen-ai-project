@@ -44,6 +44,9 @@ jobs:
       
       - name: Install Cargo Lambda Plugin 🦀 👾
         run: pip3 install cargo-lambda
+
+      - name: Install OpenSSL 🔑 🚀
+        run: sudo apt install -y pkg-config libssl-dev
       
       - name: Deploy GEN-AI reference 🚀 🔥
         run: serverless deploy --stage ${{ env.STAGE }} --region ${{ env.AWS_REGION }}
