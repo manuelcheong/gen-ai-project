@@ -44,6 +44,8 @@ async fn function_handler(event: LambdaEvent<Value>)-> Result<(), Error> {
 
     // let bucket_name = "gen-ai-content-pre";
 
+    println!("URLs {:?}", urls);
+
     urls.into_par_iter().enumerate().for_each(|(index, url)| {
         tokio::spawn(async move {
             let _ = scrape_and_upload(index, url.to_string()).await;
