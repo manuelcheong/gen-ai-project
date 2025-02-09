@@ -3,8 +3,8 @@ use serde_json::Value;
 use rayon::prelude::*;
 use reqwest::blocking::get;
 use scraper::{Html, Selector};
-use rusoto_core::Region;
-use rusoto_s3::{PutObjectRequest, S3Client, S3};
+/* use rusoto_core::Region;
+use rusoto_s3::{PutObjectRequest, S3Client, S3}; */
 
 
 fn scrape_url(url: &str) -> String {
@@ -25,7 +25,7 @@ fn scrape_url(url: &str) -> String {
     "".to_string()
 }
 
-
+/* 
 async fn upload_to_s3(bucket: &str, key: &str, data: String) -> Result<(), Error> {
     let s3_client = S3Client::new(Region::default());
 
@@ -39,7 +39,7 @@ async fn upload_to_s3(bucket: &str, key: &str, data: String) -> Result<(), Error
     s3_client.put_object(request).await?;
     Ok(())
 }
-
+ */
 async fn function_handler(_event: LambdaEvent<Value>) -> Result<String, Error> {
     let urls = vec![
         "https://example.com",
