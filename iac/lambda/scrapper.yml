@@ -1,0 +1,6 @@
+scrapper:
+  handler: scrapper.handler
+  runtime: provided.al2
+  package:
+    artifact: src/llrt/scrapper/scrapper.zip
+  timeout: 15 

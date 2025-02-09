@@ -45,8 +45,11 @@ jobs:
       - name: Install Cargo Lambda Plugin 🦀 👾
         run: pip3 install cargo-lambda
 
-      #- name: Install OpenSSL 🔑 🚀
-      #  run: sudo apt install -y pkg-config libssl-dev
+      - name: Copy bootstrap to packages 👾
+        run: cp -r src/llrt/bootstrap src/llrt/scrapper
+
+      - name: Create package Scrapper LLRT 😎
+        run: cd src/llrt/scrapper && zip -r scrapper.zip . && cd ../..
       
       - name: Deploy GEN-AI reference 🚀 🔥
         run: serverless deploy --stage ${{ env.STAGE }} --region ${{ env.AWS_REGION }}

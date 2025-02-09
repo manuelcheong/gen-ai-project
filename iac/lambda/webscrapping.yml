@@ -1,5 +1,0 @@
-webscrapping:
-  handler: multi-binary.webscrapping
-  runtime: provided.al2023
-  environment:
-    RUST_BACKTRACE: full
