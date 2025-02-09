@@ -48,9 +48,9 @@ provider:
       - "ssm:*"
     Resource: "*"
 
-#functions:
+functions:
   #createIteminTable: '${file(./iac/lambda/createIteminTable.yml):createIteminTable}'
-  #scrapper: '${file(./iac/lambda/scrapper.yml):scrapper}'
+  scrapper: '${file(./iac/lambda/scrapper.yml):scrapper}'
 
 resources:
   Resources:
