@@ -48,8 +48,8 @@ provider:
       - "ssm:*"
     Resource: "*"
 
-#functions:
-#  webscrapping: '${file(./iac/lambda/webscrapping.yml):webscrapping}'
+functions:
+  webscrapping: '${file(./iac/lambda/webscrapping.yml):webscrapping}'
 
 resources:
   Resources:
@@ -141,5 +141,5 @@ custom:
 plugins:
   - serverless-prune-plugin
   - serverless-ssm-fetch
-#  - serverless-rust-plugin
+  - serverless-rust-plugin
 
