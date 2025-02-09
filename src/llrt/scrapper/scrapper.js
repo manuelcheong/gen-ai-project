@@ -40,7 +40,7 @@ const scrapeAndUpload = async (url, index) =>{
 
 export const handler = async (event) => {
   console.log('------ WEBSCRAPPING LLRT 😎 CANARY DEPLOYMENT 🐙 AND LLRT WITH SDK 🐀 -----------');
-  console.log('event', JSON.stringify(event));
+  console.log(JSON.stringify(event));
   /* const urls = event.urls || [];
   const promises = urls.map((url, index) => scrapeAndUpload(url, index));
   await Promise.all(promises);
