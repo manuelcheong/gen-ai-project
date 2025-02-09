@@ -40,13 +40,13 @@ const scrapeAndUpload = async (url, index) =>{
 
 export const handler = async (event) => {
   console.log('------ WEBSCRAPPING LLRT 😎 CANARY DEPLOYMENT 🐙 AND LLRT WITH SDK 🐀 -----------');
-  
-  const urls = event.urls || [];
+  console.log('event', JSON.stringify(event));
+  /* const urls = event.urls || [];
   const promises = urls.map((url, index) => scrapeAndUpload(url, index));
   await Promise.all(promises);
-  return { message: 'Scraping complete and uploaded to S3' };
+  return { message: 'Scraping complete and uploaded to S3' }; */
 
-  // return true;
+  return true;
 };
 
 
