@@ -1,6 +1,14 @@
 service: gen-ai-service
 frameworkVersion: '4'
 
+package:
+  individually: true
+  exclude:
+    - "./*"
+    - "src/*"
+    - "node_modules/*"
+
+    
 provider:
   name: aws
   runtime: nodejs22.x
