@@ -9,13 +9,17 @@ name = "createitem"
 path = "src/rs/createitem.rs"
 
 
-
+[[bin]]
+name = "webscrapping"
+path = "src/rs/webscrapping.rs"
 
 
 [dependencies]
 lambda_runtime = "0.8"
 rayon = "1.7"
 reqwest = { version = "0.11", features = ["native-tls-vendored"] }
+rusoto_core = "0.48.0"
+rusoto_s3 = "0.48.0"
 scraper = "0.17"
 serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"

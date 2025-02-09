@@ -49,7 +49,7 @@ provider:
     Resource: "*"
 
 functions:
-  #webscrapping: '${file(./iac/lambda/webscrapping.yml):webscrapping}'
+  webscrapping: '${file(./iac/lambda/webscrapping.yml):webscrapping}'
   createIteminTable: '${file(./iac/lambda/createIteminTable.yml):createIteminTable}'
 
 resources:

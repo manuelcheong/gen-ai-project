@@ -1,46 +1,34 @@
 use lambda_runtime::{run, service_fn, Error, LambdaEvent};
 use serde_json::Value;
 use rayon::prelude::*;
-use reqwest::blocking::get;
+use reqwest;
 use scraper::{Html, Selector};
-/* use rusoto_core::Region;
-use rusoto_s3::{PutObjectRequest, S3Client, S3}; */
 
-
-fn scrape_url(url: &str) -> String {
-    match get(url) {
-        Ok(response) => {
-            if let Ok(body) = response.text() {
-                let document = Html::parse_document(&body);
-                let selector = Selector::parse("h1").unwrap();
-                let extracted_text: Vec<String> = document
-                    .select(&selector)
-                    .map(|element| element.text().collect::<String>())
-                    .collect();
-                return format!("URL: {}\nExtracted H1: {:?}\n", url, extracted_text);
-            }
-        }
-        Err(err) => return format!("Failed to fetch {}: {}\n", url, err),
+async fn scrape_and_upload(url: String) -> Result<(), Error> {
+    let response = reqwest::get(&url).await?.text().await?;
+    let document = Html::parse_document(&response);
+    let selector = Selector::parse("h1").unwrap(); // Example: Extracting <h1> tags
+    
+    let mut scraped_data = String::new();
+    for element in document.select(&selector) {
+        scraped_data.push_str(&format!("{}\n", element.text().collect::<Vec<_>>().join(" ")));
     }
-    "".to_string()
-}
-
-/* 
-async fn upload_to_s3(bucket: &str, key: &str, data: String) -> Result<(), Error> {
-    let s3_client = S3Client::new(Region::default());
-
-    let request = PutObjectRequest {
-        bucket: bucket.to_string(),
-        key: key.to_string(),
-        body: Some(data.into_bytes().into()),
+    
+    /* let s3_key = format!("scraped-data-{}.txt", index);
+    let put_request = PutObjectRequest {
+        bucket: bucket_name.to_string(),
+        key: s3_key.to_string(),
+        body: Some(scraped_data.into_bytes().into()),
         ..Default::default()
     };
+    
+    s3_client.put_object(put_request).await?; */
 
-    s3_client.put_object(request).await?;
+    println!("{}", scraped_data);
     Ok(())
 }
- */
-async fn function_handler(_event: LambdaEvent<Value>) -> Result<String, Error> {
+
+async fn function_handler(_event: LambdaEvent<Value>)-> Result<(), Error> {
     let urls = vec![
         "https://example.com",
         "https://www.rust-lang.org",
@@ -48,22 +36,15 @@ async fn function_handler(_event: LambdaEvent<Value>) -> Result<String, Error> {
     ];
     // let bucket_name = "gen-ai-content-pre";
 
-    let results: Vec<String> = urls.par_iter().map(|url| scrape_url(url)).collect();
-
-    for result in results {
-        println!("{}", result);
-    }
-
-    /* for (index, result) in results.iter().enumerate() {
-        let key = format!("scraped_data_{}.txt", index);
-        if let Err(e) = upload_to_s3(bucket_name, &key, result.clone()).await {
-            eprintln!("Failed to upload {}: {}", key, e);
-        } else {
-            println!("Uploaded {} to S3", key);
-        }
-    } */
+    urls.into_par_iter().enumerate().for_each(|(index, url)| {
+        
+        tokio::spawn(async move {
+            let _ = scrape_and_upload(url.to_string()).await;
+        });
+    });
     
-    Ok("Scraping complete and uploaded to S3".to_string())
+    Ok(())
+
 }
 
 #[tokio::main]
