@@ -3,7 +3,7 @@ use serde_json::Value;
 use rayon::prelude::*;
 use reqwest;
 use scraper::{Html, Selector};
-use tokio::io::AsyncWriteExt;
+// use tokio::io::AsyncWriteExt;
 
 async fn scrape_and_upload(index: usize, url: String) -> Result<(), Error> {
     let response = reqwest::get(&url).await?.text().await?;
