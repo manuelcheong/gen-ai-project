@@ -97,6 +97,10 @@ resources:
     queueEventResource: '${file(./iac/api/definitions/queue_event.yml):queueEventResource}'
     queueEventMethodPost: '${file(./iac/api/definitions/queue_event.yml):queueEventMethodPost}'
 
+    RequestBodyModel: '${file(./iac/api/definitions/queue_event.yml):RequestBodyModel}'
+    POSTValidator: '${file(./iac/api/definitions/queue_event.yml):POSTValidator}'
+    
+
     # ------------ CDN 🤨 ------------------
     genaiDistribution: '${file(./iac/cdn/cdn.yml):genaiDistribution}'
 

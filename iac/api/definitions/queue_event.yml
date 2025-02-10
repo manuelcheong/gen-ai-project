@@ -19,6 +19,9 @@ queueEventMethodPost:
     AuthorizationType: NONE
     #AuthorizationType: CUSTOM
     #AuthorizerId: !Ref authorizerdefinition
+    RequestValidatorId: !Ref POSTValidator
+    RequestModels:
+      application/json : !Ref RequestBodyModel
     Integration:
       Type: AWS
       Credentials: !GetAtt restApiRole.Arn
@@ -41,3 +44,36 @@ queueEventMethodPost:
       - ResponseModels:
           application/json: Empty
         StatusCode: "200"
+
+
+RequestBodyModel:
+  Type: 'AWS::ApiGateway::Model'
+  Properties:
+    RestApiId: !Ref restApi
+    ContentType: application/json
+    Description: Request body model for INGEST DATA.
+    Schema:
+      $schema: 'http://json-schema.org/draft-04/schema#'
+      title: RequestBodyModel
+      required:
+          - index
+          - body
+      type: object
+      properties:
+        index:
+          type: string
+          enum:
+            - "pedidos-pulse-ecom-pro"
+            - "pedidos-pulse-agg-pro"
+        
+        body:
+          type: object
+
+
+POSTValidator:
+  Type: AWS::ApiGateway::RequestValidator
+  Properties:
+    Name: body-only
+    RestApiId: !Ref Api
+    ValidateRequestBody: True
+    ValidateRequestParameters: False
