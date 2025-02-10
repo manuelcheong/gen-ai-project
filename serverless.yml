@@ -86,7 +86,7 @@ resources:
     DefaultRouteIntegrationResponse: '${file(./iac/api/websocket_api.yml):DefaultRouteIntegrationResponse}'
     ConnectRoute: '${file(./iac/api/websocket_api.yml):ConnectRoute}'
 
-    socketPOSTValidator: '${file(./iac/api/websocket_api.yml):socketPOSTValidator}'
+   
 
     # ---------- REST API 🫡 ----------------
 
