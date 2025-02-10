@@ -23,12 +23,9 @@ const scrapeAndUpload = async (url, index) =>{
       try {
         response = await fetch(url);
         
-        if (!response.ok) {
-            throw new Error(`HTTP error! Status: ${response.status}`);
-        }
-
-        response = await response.json(); // Convert response to JSON
-        console.log(data);
+      
+        response = await response.text(); // Convert response to JSON
+        console.log(response);
       } catch (error) {
           console.error('Error fetching data:', error);
       }
