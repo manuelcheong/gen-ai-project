@@ -86,6 +86,9 @@ DefaultRouteIntegration:
   Properties:
     ApiId: !Ref WebSocketApi
     IntegrationType: AWS
+    RequestValidatorId: !Ref socketPOSTValidator
+    RequestModels:
+      application/json : !Ref RequestBodyModel
     CredentialsArn: 
       Fn::GetAtt: [WebSocketApiIntegrationRole, Arn]
     IntegrationMethod: POST
@@ -141,3 +144,11 @@ UsagePlan:
 
       - ApiId: !Ref restApi
         Stage: ${self:provider.stage}
+
+socketPOSTValidator:
+  Type: AWS::ApiGateway::RequestValidator
+  Properties:
+    Name: body-only
+    RestApiId: !Ref WebSocketApi
+    ValidateRequestBody: True
+    ValidateRequestParameters: False
