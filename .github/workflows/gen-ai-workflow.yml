@@ -40,16 +40,16 @@ jobs:
         run: source $HOME/.cargo/env
 
       - name: Setting Rust 🦀 ...
-        run: rustup target add aarch64-unknown-linux-musl
+        run: rustup target add x86_64-unknown-linux-musl #aarch64-unknown-linux-musl
       
       - name: Install Cargo Lambda Plugin 🦀 👾
         run: pip3 install cargo-lambda
 
-      - name: Copy bootstrap to packages 👾
-        run: cp src/llrt/bootstrap src/llrt/scrapper
+      #- name: Copy bootstrap to packages 👾
+      #  run: cp src/llrt/bootstrap src/llrt/scrapper
 
-      - name: Create package Scrapper LLRT 😎
-        run: cd src/llrt/scrapper && yarn install && zip -r scrapper.zip . && cd ../../..
+      #- name: Create package Scrapper LLRT 😎
+      #  run: cd src/llrt/scrapper && yarn install && zip -r scrapper.zip . && cd ../../..
       
       - name: Deploy GEN-AI reference 🚀 🔥
         run: serverless deploy --stage ${{ env.STAGE }} --region ${{ env.AWS_REGION }}
