@@ -65,7 +65,6 @@ RequestBodyModel:
           enum:
             - "pedidos-pulse-ecom-pro"
             - "pedidos-pulse-agg-pro"
-        
         body:
           type: object
 
@@ -74,6 +73,6 @@ POSTValidator:
   Type: AWS::ApiGateway::RequestValidator
   Properties:
     Name: body-only
-    RestApiId: !Ref Api
+    RestApiId: !Ref restApi
     ValidateRequestBody: True
     ValidateRequestParameters: False
