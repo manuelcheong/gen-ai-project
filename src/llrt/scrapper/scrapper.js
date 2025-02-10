@@ -13,20 +13,16 @@ const bucketName = 'gen-ai-content-pre';
 
 
 const scrapeAndUpload = async (url, index) =>{
+  let response = "empty";
   try {
-      let response;
+      
 
       try {
         response = await fetch(url);
-        
-      
-        response = await response.text(); // Convert response to JSON
-        console.log(response);
+        response = await response.text(); 
       } catch (error) {
           console.error('Error fetching data:', error);
       }
-
-      
   } catch (error) {
       console.error(`Error scraping ${url}:`, error);
   }
@@ -53,9 +49,6 @@ export const handler = async (event) => {
 
   const command = new PutObjectCommand(params);
   await client.send(command);
-
-  console.log(`Successfully uploaded data from ${url} to ${s3Key}`);
-  // return { message: 'Scraping complete and uploaded to S3' }; 
 
   return true;
   
