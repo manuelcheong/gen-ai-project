@@ -4,7 +4,7 @@
  * @param {Object} event - The event object.
  * @returns {boolean} - Returns true.
  */
-
+/* 
 const axios = require('axios');
 const cheerio = require('cheerio');
 const { S3Client, PutObjectCommand } = require('@aws-sdk/client-s3');
@@ -35,18 +35,31 @@ const scrapeAndUpload = async (url, index) =>{
   } catch (error) {
       console.error(`Error scraping ${url}:`, error);
   }
-}
+} */
+
+  const https = require("https");
+
+
 
 
 export const handler = async (event) => {
-  console.log('------ WEBSCRAPPING LLRT 😎 CANARY DEPLOYMENT 🐙 AND LLRT WITH SDK 🐀 -----------');
+  /* console.log('------ WEBSCRAPPING LLRT 😎 CANARY DEPLOYMENT 🐙 AND LLRT WITH SDK 🐀 -----------');
   console.log(JSON.stringify(event));
   const urls = event.urls || [];
   const promises = urls.map((url, index) => scrapeAndUpload(url, index));
-  await Promise.all(promises);
+  await Promise.all(promises); */
   // return { message: 'Scraping complete and uploaded to S3' }; 
 
-  return true;
+  //return true;
+  const url = event.url || "https://jsonplaceholder.typicode.com/todos/1";
+
+    return new Promise((resolve, reject) => {
+        https.get(url, (res) => {
+            let data = "";
+            res.on("data", (chunk) => { data += chunk; });
+            res.on("end", () => resolve(data));
+        }).on("error", (err) => reject(err));
+    });
 };
 
 

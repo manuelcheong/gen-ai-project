@@ -56,8 +56,8 @@ provider:
       - "ssm:*"
     Resource: "*"
 
-#functions:
-  #scrapper: '${file(./iac/lambda/scrapper.yml):scrapper}'
+functions:
+  scrapper: '${file(./iac/lambda/scrapper.yml):scrapper}'
   #createIteminTable: '${file(./iac/lambda/createIteminTable.yml):createIteminTable}'
   
 
@@ -86,7 +86,7 @@ resources:
     DefaultRouteIntegrationResponse: '${file(./iac/api/websocket_api.yml):DefaultRouteIntegrationResponse}'
     ConnectRoute: '${file(./iac/api/websocket_api.yml):ConnectRoute}'
 
-   
+
 
     # ---------- REST API 🫡 ----------------
 
