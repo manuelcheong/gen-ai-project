@@ -8,7 +8,7 @@ package:
     - "src/*"
     - "node_modules/*"
 
-    
+
 provider:
   name: aws
   runtime: nodejs22.x
@@ -56,8 +56,8 @@ provider:
       - "ssm:*"
     Resource: "*"
 
-functions:
-  scrapper: '${file(./iac/lambda/scrapper.yml):scrapper}'
+#functions:
+  #scrapper: '${file(./iac/lambda/scrapper.yml):scrapper}'
   #createIteminTable: '${file(./iac/lambda/createIteminTable.yml):createIteminTable}'
   
 

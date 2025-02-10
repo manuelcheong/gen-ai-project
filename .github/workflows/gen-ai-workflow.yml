@@ -31,19 +31,19 @@ jobs:
         run: npm install -g serverless
 
       - name: Install NPM dependencies 📦
-        run: npm install
+        run: yarn install
 
-      - name: Install Rust 🦀  
-        run: curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
+      #- name: Install Rust 🦀  
+      #  run: curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
 
-      - name: Setting home 🏠 ...
-        run: source $HOME/.cargo/env
+      #- name: Setting home 🏠 ...
+      #  run: source $HOME/.cargo/env
 
-      - name: Setting Rust 🦀 ...
-        run: rustup target add x86_64-unknown-linux-musl #aarch64-unknown-linux-musl
+      #- name: Setting Rust 🦀 ...
+      #  run: rustup target add x86_64-unknown-linux-musl #aarch64-unknown-linux-musl
       
-      - name: Install Cargo Lambda Plugin 🦀 👾
-        run: pip3 install cargo-lambda
+      #- name: Install Cargo Lambda Plugin 🦀 👾
+      #  run: pip3 install cargo-lambda
 
       #- name: Copy bootstrap to packages 👾
       #  run: cp src/llrt/bootstrap src/llrt/scrapper
