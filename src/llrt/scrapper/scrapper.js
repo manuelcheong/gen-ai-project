@@ -4,11 +4,7 @@
  * @param {Object} event - The event object.
  * @returns {boolean} - Returns true.
  */
-/* 
-const axios = require('axios');
-const cheerio = require('cheerio');
 
-*/
 const { S3Client, PutObjectCommand } = require('@aws-sdk/client-s3');
 
 const client = new S3Client({ REGION: process.env.REGION });
@@ -30,21 +26,11 @@ const scrapeAndUpload = async (url, index) =>{
           console.error('Error fetching data:', error);
       }
 
-      const s3Key = `scraped-data-${index}.txt`;
-      const params = {
-          Bucket: bucketName,
-          Key: s3Key,
-          Body: response,
-          ContentType: 'text/plain'
-      };
-
-      const command = new PutObjectCommand(params);
-      await client.send(command);
-
-      console.log(`Successfully uploaded data from ${url} to ${s3Key}`);
+      
   } catch (error) {
       console.error(`Error scraping ${url}:`, error);
   }
+  return response;
 } 
 
 
@@ -54,8 +40,21 @@ export const handler = async (event) => {
   console.log('------ WEBSCRAPPING LLRT 😎 CANARY DEPLOYMENT 🐙 AND LLRT WITH SDK 🐀 -----------');
   console.log(JSON.stringify(event));
   const urls = event.urls || [];
-  const promises = urls.map((url, index) => scrapeAndUpload(url, index));
-  await Promise.all(promises); 
+  const promises = urls.map((url) => scrapeAndUpload(url));
+  const scrap_all = await Promise.all(promises); 
+
+  const s3Key = `scraped-data.txt`;
+  const params = {
+      Bucket: bucketName,
+      Key: s3Key,
+      Body: scrap_all.flat().join('\n'),
+      ContentType: 'text/plain'
+  };
+
+  const command = new PutObjectCommand(params);
+  await client.send(command);
+
+  console.log(`Successfully uploaded data from ${url} to ${s3Key}`);
   // return { message: 'Scraping complete and uploaded to S3' }; 
 
   return true;
