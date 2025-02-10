@@ -7,6 +7,8 @@
 /* 
 const axios = require('axios');
 const cheerio = require('cheerio');
+
+*/
 const { S3Client, PutObjectCommand } = require('@aws-sdk/client-s3');
 
 const client = new S3Client({ REGION: process.env.REGION });
@@ -16,15 +18,26 @@ const bucketName = 'gen-ai-content-pre';
 
 const scrapeAndUpload = async (url, index) =>{
   try {
-      const response = await axios.get(url);
-      const $ = cheerio.load(response.data);
-      const scrapedData = $('body').text(); // Example: Extracting text from <body> tag
+      let response;
+
+      try {
+        response = await fetch(url);
+        
+        if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+
+        response = await response.json(); // Convert response to JSON
+        console.log(data);
+      } catch (error) {
+          console.error('Error fetching data:', error);
+      }
 
       const s3Key = `scraped-data-${index}.txt`;
       const params = {
           Bucket: bucketName,
           Key: s3Key,
-          Body: scrapedData,
+          Body: response,
           ContentType: 'text/plain'
       };
 
@@ -35,31 +48,21 @@ const scrapeAndUpload = async (url, index) =>{
   } catch (error) {
       console.error(`Error scraping ${url}:`, error);
   }
-} */
-
-  const https = require("https");
+} 
 
 
 
 
 export const handler = async (event) => {
-  /* console.log('------ WEBSCRAPPING LLRT 😎 CANARY DEPLOYMENT 🐙 AND LLRT WITH SDK 🐀 -----------');
+  console.log('------ WEBSCRAPPING LLRT 😎 CANARY DEPLOYMENT 🐙 AND LLRT WITH SDK 🐀 -----------');
   console.log(JSON.stringify(event));
   const urls = event.urls || [];
   const promises = urls.map((url, index) => scrapeAndUpload(url, index));
-  await Promise.all(promises); */
+  await Promise.all(promises); 
   // return { message: 'Scraping complete and uploaded to S3' }; 
 
   //return true;
-  const url = event.url || "https://jsonplaceholder.typicode.com/todos/1";
-
-    return new Promise((resolve, reject) => {
-        https.get(url, (res) => {
-            let data = "";
-            res.on("data", (chunk) => { data += chunk; });
-            res.on("end", () => resolve(data));
-        }).on("error", (err) => reject(err));
-    });
+  
 };
 
 
