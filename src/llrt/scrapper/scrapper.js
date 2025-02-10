@@ -61,7 +61,7 @@ export const handler = async (event) => {
   await Promise.all(promises); 
   // return { message: 'Scraping complete and uploaded to S3' }; 
 
-  //return true;
+  return true;
   
 };
 
