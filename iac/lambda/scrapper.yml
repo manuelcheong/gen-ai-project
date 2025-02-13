@@ -1,6 +1,5 @@
-scrapper:
-  handler: scrapper.handler
+scrapperrs:
+  handler: multi-binary.scrapperrs
   runtime: provided.al2023
-  package:
-    artifact: src/llrt/scrapper/scrapper.zip
-  timeout: 15
+  environment:
+    RUST_BACKTRACE: full

@@ -161,7 +161,7 @@ custom:
 
 plugins:
   - serverless-prune-plugin
-#  - serverless-rust-plugin
+  - serverless-rust-plugin
   - serverless-ssm-fetch
 
 
