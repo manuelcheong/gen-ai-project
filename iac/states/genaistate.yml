@@ -185,8 +185,8 @@ genaiState:
                       Type: Task
                       Resource: arn:aws:states:::bedrock:invokeModel
                       Parameters:
-                        modelId: "anthropic.claude-3-5-sonnet-20240620-v1:0"
-                        body:
+                        ModelId: "anthropic.claude-3-5-sonnet-20240620-v1:0"
+                        Body:
                           messages:
                             - role: "user"
                               content:
@@ -198,6 +198,13 @@ genaiState:
                         accept: "application/json"
                       ResultPath: $.genContent
                       Next: Send Message to WebSocket Client Prompt
+
+                      #"Parameters": {
+                      #    "ModelId": "arn:aws:bedrock:eu-west-1::foundation-model/anthropic.claude-3-sonnet-20240229-v1:0",
+                      #    "Input": {
+                      #      "S3Uri.$": "$.inputS3"
+                      #    }
+                      #  }
 
                     Send Message to WebSocket Client Prompt:
                       Type: Task          
