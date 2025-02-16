@@ -65,6 +65,7 @@ RequestBodyModel:
           enum:
             - "pedidos-pulse-ecom-pro"
             - "pedidos-pulse-agg-pro"
+            - "gen-prompt-content"
         body:
           type: object
 
