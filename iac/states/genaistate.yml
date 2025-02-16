@@ -194,8 +194,7 @@ genaiState:
                                   text.$: $.prompt
                                   #text: !Sub "Dame un resumen de los siguientes pedidos: ${$.body}"
                           max_tokens: 200
-                        contentType: "application/json"
-                        accept: "application/json"
+                        
                       ResultPath: $.genContent
                       Next: Send Message to WebSocket Client Prompt
 
