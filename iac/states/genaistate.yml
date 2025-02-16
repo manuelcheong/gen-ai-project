@@ -193,7 +193,7 @@ genaiState:
                           max_tokens: 300
                         contentType: "application/json"
                         accept: "application/json"
-                      ResultPath: genContent
+                      ResultPath: $.genContent
                       Next: Send Message to WebSocket Client Prompt
 
                     Send Message to WebSocket Client Prompt:
