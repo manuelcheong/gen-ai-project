@@ -159,7 +159,7 @@ genaiState:
   
           - StartAt: filterEventToPromptBedrock
             States:
-              filterCustomEvents: 
+              filterEventToPromptBedrock: 
                 Type: "Pass"
                 InputPath: "$.[?(@.body.index == 'gen-prompt-content')]"
                 Next: "handlePrompCustomItems"
@@ -189,8 +189,11 @@ genaiState:
                         body:
                           messages:
                             - role: "user"
-                              content.$: $.body.prompt
-                          max_tokens: 300
+                              content:
+                                - type: "text"
+                                  text.$: $.prompt
+                                  #text: !Sub "Dame un resumen de los siguientes pedidos: ${$.body}"
+                          max_tokens: 200
                         contentType: "application/json"
                         accept: "application/json"
                       ResultPath: $.genContent
