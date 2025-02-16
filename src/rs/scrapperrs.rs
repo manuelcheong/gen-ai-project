@@ -18,13 +18,19 @@ async fn main() -> Result<(), Error> {
     Ok(())
 }
 
-async fn func(_event: LambdaEvent<Value>) -> Result<Value, Error> {
+async fn func(event: LambdaEvent<Value>) -> Result<Value, Error> {
     // List of URLs to scrape
-    let urls: Vec<String> = vec![
+    /* let urls: Vec<String> = vec![
         "https://example.com/1".to_string(),
         "https://example.com/2".to_string(),
         // Add more URLs here
-    ];
+    ]; */
+
+    let urls: Vec<String> = event.payload["urls"].as_array()
+        .unwrap_or(&vec![])
+        .iter()
+        .filter_map(|u| u.as_str().map(String::from))
+        .collect(); 
 
     // Vector to store tasks
     let mut tasks = vec![];
