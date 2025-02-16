@@ -45,16 +45,19 @@ async fn func(event: LambdaEvent<Value>) -> Result<Value, Error> {
     let results: Result<Vec<Result<String, Error>>, JoinError> = futures_util::future::try_join_all(joined_tasks).await;
 
     // Process the results
+    let mut output = String::from("");
+
     match results {
         Ok(bodies) => {
             for body in bodies.into_iter() {
-                println!("Success: {:?}", body);
+                // println!("Success: {:?}", body);
+                output.push_str(&body.unwrap());
             }
         },
         Err(err) => eprintln!("Failed to join all tasks: {:?}", err),
     }
 
     Ok(json!({
-        "output": "OK",
+        "content": &output,
         }))
 }
