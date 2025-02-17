@@ -32,7 +32,7 @@ genaiState:
                 Parameters:
                   messageId.$: $.messageId
                   body.$: States.StringToJson($.body)
-                  #connectionId.$: $.messageAttributes.['connectionId'].stringValue
+                  connectionId.$: "States.Array($.messageAttributes['connectionId'].stringValue ? $.messageAttributes['connectionId'].stringValue : 'default_connection_id')"
                 End: true
             ProcessorConfig:
               Mode: DISTRIBUTED
@@ -178,7 +178,7 @@ genaiState:
                         messageId.$: $.messageId
                         body.$: "$.body.body"
                         executionTime.$: "$$.Execution.StartTime"
-                        connectionId.$: $$.Execution.Input.context.connectionId
+                        connectionId.$: $.connectionId
                       Next: promtBedrock
 
                     promtBedrock:
