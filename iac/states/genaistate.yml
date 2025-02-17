@@ -32,7 +32,8 @@ genaiState:
                 Parameters:
                   messageId.$: $.messageId
                   body.$: States.StringToJson($.body)
-                  connectionId: "States.JsonMerge({}, $.messageAttributes.connectionId.stringValue ? $.messageAttributes.connectionId.stringValue : '')"    # States.Array($.messageAttributes['connectionId'].stringValue ? $.messageAttributes['connectionId'].stringValue: 'default_connection_id')
+                  messageAttributes.$: $.messageAttributes
+                  #connectionId: "States.JsonMerge({}, $.messageAttributes.connectionId.stringValue ? $.messageAttributes.connectionId.stringValue : '')"    # States.Array($.messageAttributes['connectionId'].stringValue ? $.messageAttributes['connectionId'].stringValue: 'default_connection_id')
                 End: true
             ProcessorConfig:
               Mode: DISTRIBUTED
@@ -178,7 +179,7 @@ genaiState:
                         messageId.$: $.messageId
                         body.$: "$.body.body"
                         executionTime.$: "$$.Execution.StartTime"
-                        connectionId.$: $.connectionId
+                        connectionId.$: $.messageAttributes.connectionId.stringValue
                       Next: promtBedrock
 
                     promtBedrock:
