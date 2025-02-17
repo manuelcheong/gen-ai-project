@@ -176,7 +176,7 @@ genaiState:
                       Type: Pass
                       Parameters:
                         messageId.$: $.messageId
-                        body.$: "States.StringToJson($.body.body)"
+                        body.$: "$.body.body"
                         executionTime.$: "$$.Execution.StartTime"
                         connectionId.$: $.context.connectionId
                       Next: promtBedrock
