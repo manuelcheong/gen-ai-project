@@ -178,7 +178,7 @@ genaiState:
                         messageId.$: $.messageId
                         body.$: "States.StringToJson($.body.body)"
                         executionTime.$: "$$.Execution.StartTime"
-                        connectionId.$: $.messageAttributes.connectionId.stringValue
+                        connectionId.$: $.context.connectionId
                       Next: promtBedrock
 
                     promtBedrock:
