@@ -33,7 +33,7 @@ genaiState:
                   messageId.$: $.messageId
                   body.$: States.StringToJson($.body)
                   messageAttributes.$: $.messageAttributes
-                  #connectionId: "States.JsonMerge({}, $.messageAttributes.connectionId.stringValue ? $.messageAttributes.connectionId.stringValue : '')"    # States.Array($.messageAttributes['connectionId'].stringValue ? $.messageAttributes['connectionId'].stringValue: 'default_connection_id')
+                  
                 End: true
             ProcessorConfig:
               Mode: DISTRIBUTED
@@ -192,7 +192,7 @@ genaiState:
                             - role: "user"
                               content:
                                 - type: "text"
-                                  text.$: $.prompt
+                                  text.$: $.body.prompt
                                   #text: !Sub "Dame un resumen de los siguientes pedidos: ${$.body}"
                           max_tokens: 200
                         
