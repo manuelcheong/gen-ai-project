@@ -187,7 +187,7 @@ genaiState:
                       Resource: arn:aws:states:::bedrock:invokeModel
                       Parameters:
                         ModelId: "anthropic.claude-3-sonnet-20240229-v1:0" #"anthropic.claude-3-5-sonnet-20240620-v1:0"
-                        AnthropicVersion: "bedrock-2023-05-31"
+                        anthropic_version: "bedrock-2023-05-31"
                         Body:
                           messages:
                             - role: "user"
