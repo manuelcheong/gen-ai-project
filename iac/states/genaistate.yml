@@ -180,6 +180,16 @@ genaiState:
                         body.$: "$.body.body"
                         executionTime.$: "$$.Execution.StartTime"
                         connectionId.$: $.messageAttributes.connectionId.stringValue
+                      Next: invokeParser
+
+                    invokeParser:
+                      Type: Task
+                      Resource: arn:aws:states:::lambda:invoke
+                      Parameters:
+                        FunctionName: arn:aws:lambda:${self:provider.region}:178934116267:function:gen-ai-service-${self:provider.stage}-scrapperrs
+                        Payload.$: "$.body"
+                      OutputPath: "$.Payload"
+                      ResultPath: "$.allContent"
                       Next: promtBedrock
 
                     promtBedrock:
@@ -193,8 +203,8 @@ genaiState:
                             - role: "user"
                               content:
                                 - type: "text"
-                                  text.$: $.body.prompt
-                                  #text: !Sub "Dame un resumen de los siguientes pedidos: ${$.body}"
+                                  #text.$: $.body.prompt
+                                  text: !Sub "Dame un resumen del siguiente contenido: ${$.allContent}"
                           max_tokens: 500
                         
                       ResultPath: $.genContent
