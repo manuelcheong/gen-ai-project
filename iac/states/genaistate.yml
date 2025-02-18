@@ -186,7 +186,7 @@ genaiState:
                       Type: Task
                       Resource: arn:aws:states:::bedrock:invokeModel
                       Parameters:
-                        ModelId: "anthropic.claude-3-sonnet-20240229-v1:0" #"anthropic.claude-3-5-sonnet-20240620-v1:0"
+                        ModelId: "anthropic.claude-3-sonnet-20240229-v1:0" #arn:aws:bedrock:eu-west-1::foundation-model/anthropic.claude-3-sonnet-20240229-v1:0    #"anthropic.claude-3-5-sonnet-20240620-v1:0"
                         Body:
                           anthropic_version: "bedrock-2023-05-31"
                           messages:
@@ -195,7 +195,7 @@ genaiState:
                                 - type: "text"
                                   text.$: $.body.prompt
                                   #text: !Sub "Dame un resumen de los siguientes pedidos: ${$.body}"
-                          max_tokens: 200
+                          max_tokens: 500
                         
                       ResultPath: $.genContent
                       Next: Send Message to WebSocket Client Prompt
