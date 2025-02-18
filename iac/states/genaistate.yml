@@ -189,7 +189,16 @@ genaiState:
                         FunctionName: arn:aws:lambda:${self:provider.region}:178934116267:function:gen-ai-service-${self:provider.stage}-scrapperrs
                         Payload.$: "$.body"
                       OutputPath: "$.Payload"
+                      ResultPath: "$.outputUrlContent"
+                      Next: getContent
+
+                    getContent:
+                      Type: Task
+                      Parameters:
+                        Bucket: gen-ai-content-${self:provider.stage}
+                        Key.$: "output123.txt"
                       ResultPath: "$.allContent"
+                      Resource: arn:aws:states:::aws-sdk:s3:getObject
                       Next: promtBedrock
 
                     promtBedrock:

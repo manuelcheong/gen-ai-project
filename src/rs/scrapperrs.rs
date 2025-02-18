@@ -4,6 +4,21 @@ use reqwest::{Client};
 use serde_json::Value;
 use tokio::task::JoinError;
 use serde_json::json;
+use uuid::Uuid;
+use serde::{Deserialize, Serialize};
+use aws_sdk_s3::{Client as S3Client};
+
+async fn put_item_to_s3(bucket: &str, key: &str, body: &str, client: &S3Client) -> Result<(), Error> {
+    client
+        .put_object()
+        .bucket(bucket)
+        .key(key)
+        .body(body.into())
+        .send()
+        .await?;
+    Ok(())
+}
+
 
 async fn fetch_url(url: String) -> Result<String, Error> {
     let client = Client::new();
@@ -56,6 +71,16 @@ async fn func(event: LambdaEvent<Value>) -> Result<Value, Error> {
         },
         Err(err) => eprintln!("Failed to join all tasks: {:?}", err),
     }
+
+    let region_provider = aws_config::meta::region::RegionProviderChain::default_provider();
+    let config = aws_config::from_env().region(region_provider).load().await;
+    let client = S3Client::new(&config);
+
+    let bucket = "gen-ai-content-pre";
+    let key = "output123.txt";
+    let body = &output;
+
+    put_item_to_s3(bucket, key, body, &client).await?;
 
     Ok(json!({
         "content": &output,
