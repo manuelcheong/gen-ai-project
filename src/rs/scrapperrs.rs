@@ -5,7 +5,7 @@ use reqwest::{Client};
 use serde_json::Value;
 use tokio::task::JoinError;
 use serde_json::json;
-
+use uuid::Uuid;
 
 async fn fetch_url(url: String) -> Result<String, Error> {
     let client = Client::new();
@@ -62,30 +62,36 @@ async fn func(event: LambdaEvent<Value>) -> Result<Value, Error> {
     let config = aws_config::load_from_env().await;
     let s3_client = aws_sdk_s3::Client::new(&config);
 
-    upload_content(&s3_client, &output).await?;
+    let my_uuid = Uuid::new_v4();
+    let uuid_string = my_uuid.to_string();
 
+    upload_content(&s3_client, &output, &uuid_string).await?;
+
+    let prefix = "s3://gen-ai-content-pre/".to_string();
+    let result = prefix + &uuid_string;
     Ok(json!({
-        "content": &output,
+        "url": result  // "s3://gen-ai-content-pre/filename.txt",
         }))
 }
 
 pub async fn upload_content(
     client: &aws_sdk_s3::Client,
     content: &str,
+    uuid_string: &String,
 ) -> Result<(), Error> {
-    println!("{:?}", content);
+    // println!("{:?}", content);
 
     let bucket = std::env::var("BUCKET_NAME").expect("BUCKET_NAME must be set");
 
     let result = client
         .put_object()
         .bucket(bucket)
-        .key("filename.txt")
+        .key(uuid_string)
         .body(ByteStream::from(String::from(content).into_bytes()))
         .send()
         .await?;
 
-    println!("{:?}", result);
+    // println!("{:?}", result);
 
     Ok(())
 }
