@@ -213,7 +213,7 @@ genaiState:
                               content:
                                 - type: "text"
                                   #text.$: $.body.prompt
-                                  text.$: "States.Format('Dame un resumen del siguiente contenido:  {}', $.body.prompt)"
+                                  text.$: "States.Format('Genera un resumen promocional con este contenido:  {}', $.body.prompt)"
                           max_tokens: 500
                         
                       ResultPath: $.genContent
