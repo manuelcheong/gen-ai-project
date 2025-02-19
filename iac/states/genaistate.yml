@@ -188,7 +188,7 @@ genaiState:
                       Parameters:
                         FunctionName: arn:aws:lambda:${self:provider.region}:178934116267:function:gen-ai-service-${self:provider.stage}-scrapperrs
                         Payload.$: "$.body"
-                      OutputPath: "$.Payload"
+                      #OutputPath: "$.Payload"
                       ResultPath: "$.outputUrlContent"
                       Next: getContent
 
