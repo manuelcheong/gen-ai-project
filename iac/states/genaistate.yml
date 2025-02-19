@@ -239,6 +239,45 @@ genaiState:
                         AuthType: IAM_ROLE
                       End: true
     
+          - StartAt: filterNotificationEmail
+            States:
+              filterNotificationEmail: 
+                Type: "Pass"
+                InputPath: "$.[?(@.body.index == 'notification-email')]"
+                Next: "handleNotificationsEmail"
+
+
+              handleNotificationsEmail:
+                Type: Map
+                End: true
+                ItemsPath: $
+                MaxConcurrency: 10
+                ItemProcessor:
+                  StartAt: parseNotificationItem
+                  States:
+                    parseNotificationItem:
+                      Type: Pass
+                      Parameters:
+                        body.$: "$.body.body"
+                      Next: sendEmail
+
+                    sendEmail:
+                      Type: Task
+                      Resource: arn:aws:states:::aws-sdk:ses:sendEmail
+                      End: true
+                      Parameters:
+                        Source: "$.from"
+                        Destination:
+                          ToAddresses:
+                            - "$.to"
+                        Message:
+                          Subject:
+                            Data: "$.subject"
+                          Body:
+                            Html:
+                              Data.$: "$.data"
+
+
       #  processItems:
       #    Type: Map
       #    ItemsPath: "$"   # "ItemsPath": "$.data[?(@.type == 'important')]"

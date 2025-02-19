@@ -77,5 +77,10 @@ statesRole:
                 - bedrock:InvokeModel
               Resource: "*"
 
+            - Effect: Allow
+              Action:
+                - ses:sendEmail
+              Resource: "*"
+
 
 
