@@ -268,8 +268,7 @@ genaiState:
                       Parameters:
                         Source.$: "$.body.from"
                         Destination:
-                          ToAddresses.$:
-                            - "$.body.to"
+                          ToAddresses.$: "$.body.to"
                         Message:
                           Subject:
                             Data.$: "$.body.subject"
