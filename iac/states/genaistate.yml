@@ -195,8 +195,8 @@ genaiState:
                     getContent:
                       Type: Task
                       Parameters:
-                        Bucket.$: $.outputUrlContent.bucket   # gen-ai-content-${self:provider.stage}
-                        Key.$: $.outputUrlContent.key   #"output123.txt"
+                        Bucket.$: $.outputUrlContent.Payload.bucket   # gen-ai-content-${self:provider.stage}
+                        Key.$: $.outputUrlContent.Payload.key   #"output123.txt"
                       ResultPath: "$.allContent"
                       Resource: arn:aws:states:::aws-sdk:s3:getObject
                       Next: promtBedrock
