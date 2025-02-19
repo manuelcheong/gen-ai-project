@@ -268,8 +268,7 @@ genaiState:
                       Parameters:
                         Source.$: "$.body.from"
                         Destination:
-                          ToAddresses: 
-                            - "manuel.cheong.gomez@gmail.com"
+                          ToAddresses.$: ["$.body.to"] 
                         Message:
                           Subject:
                             Data.$: "$.body.subject"
