@@ -1,3 +1,4 @@
+use aws_sdk_s3::primitives::ByteStream;
 use lambda_runtime::{service_fn, LambdaEvent, Error};
 use tokio;
 use reqwest::{Client};
@@ -58,7 +59,33 @@ async fn func(event: LambdaEvent<Value>) -> Result<Value, Error> {
         Err(err) => eprintln!("Failed to join all tasks: {:?}", err),
     }
 
+    let config = aws_config::load_from_env().await;
+    let s3_client = aws_sdk_s3::Client::new(&config);
+
+    upload_content(&s3_client, &output).await?;
+
     Ok(json!({
         "content": &output,
         }))
+}
+
+pub async fn upload_content(
+    client: &aws_sdk_s3::Client,
+    content: &str,
+) -> Result<(), Error> {
+    println!("{:?}", content);
+
+    let bucket = std::env::var("BUCKET_NAME").expect("BUCKET_NAME must be set");
+
+    let result = client
+        .put_object()
+        .bucket(bucket)
+        .key("filename.txt")
+        .body(ByteStream::from(String::from(content).into_bytes()))
+        .send()
+        .await?;
+
+    println!("{:?}", result);
+
+    Ok(())
 }
