@@ -70,7 +70,9 @@ async fn func(event: LambdaEvent<Value>) -> Result<Value, Error> {
     let prefix = "s3://gen-ai-content-pre/".to_string();
     let result = prefix + &uuid_string;
     Ok(json!({
-        "url": result  // "s3://gen-ai-content-pre/filename.txt",
+        "url": result,  // "s3://gen-ai-content-pre/filename.txt",
+        "bucket": std::env::var("BUCKET_NAME").expect("BUCKET_NAME must be set"),
+        "key": uuid_string,
         }))
 }
 
@@ -83,7 +85,7 @@ pub async fn upload_content(
 
     let bucket = std::env::var("BUCKET_NAME").expect("BUCKET_NAME must be set");
 
-    let result = client
+    let _result = client
         .put_object()
         .bucket(bucket)
         .key(uuid_string)
