@@ -180,26 +180,26 @@ genaiState:
                         body.$: "$.body.body"
                         executionTime.$: "$$.Execution.StartTime"
                         connectionId.$: $.messageAttributes.connectionId.stringValue
+                      Next: invokeParser
+
+                    invokeParser:
+                      Type: Task
+                      Resource: arn:aws:states:::lambda:invoke
+                      Parameters:
+                        FunctionName: arn:aws:lambda:${self:provider.region}:178934116267:function:gen-ai-service-${self:provider.stage}-scrapperrs
+                        Payload.$: "$.body"
+                      OutputPath: "$.Payload"
+                      ResultPath: "$.outputUrlContent"
+                      Next: getContent
+
+                    getContent:
+                      Type: Task
+                      Parameters:
+                        Bucket.$: $.outputUrlContent.bucket   # gen-ai-content-${self:provider.stage}
+                        Key.$: $.outputUrlContent.key   #"output123.txt"
+                      ResultPath: "$.allContent"
+                      Resource: arn:aws:states:::aws-sdk:s3:getObject
                       Next: promtBedrock
-
-                  #  invokeParser:
-                  #    Type: Task
-                  #    Resource: arn:aws:states:::lambda:invoke
-                  #    Parameters:
-                  #      FunctionName: arn:aws:lambda:${self:provider.region}:178934116267:function:gen-ai-service-${self:provider.stage}-scrapperrs
-                  #      Payload.$: "$.body"
-                  #    OutputPath: "$.Payload"
-                  #    ResultPath: "$.outputUrlContent"
-                  #    Next: getContent
-
-                  #  getContent:
-                  #    Type: Task
-                  #    Parameters:
-                  #      Bucket: gen-ai-content-${self:provider.stage}
-                  #      Key: "output123.txt"
-                  #    ResultPath: "$.allContent"
-                  #    Resource: arn:aws:states:::aws-sdk:s3:getObject
-                  #    Next: promtBedrock
 
                     promtBedrock:
                       Type: Task
@@ -213,7 +213,7 @@ genaiState:
                               content:
                                 - type: "text"
                                   #text.$: $.body.prompt
-                                  text.$: "States.Format('Genera un resumen promocional con este contenido:  {}', $.body.prompt)"
+                                  text.$: "States.Format('Genera un resumen promocional con este contenido:  {}', $.allContent)"
                           max_tokens: 500
                         
                       ResultPath: $.genContent
