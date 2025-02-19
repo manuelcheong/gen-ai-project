@@ -66,6 +66,7 @@ RequestBodyModel:
             - "pedidos-pulse-ecom-pro"
             - "pedidos-pulse-agg-pro"
             - "gen-prompt-content"
+            - "notification-email"
         body:
           type: object
 
