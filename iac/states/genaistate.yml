@@ -266,13 +266,13 @@ genaiState:
                       Resource: arn:aws:states:::aws-sdk:ses:sendEmail
                       End: true
                       Parameters:
-                        Source: "$.body.from"
+                        Source.$: "$.body.from"
                         Destination:
-                          ToAddresses:
+                          ToAddresses.$:
                             - "$.body.to"
                         Message:
                           Subject:
-                            Data: "$.body.subject"
+                            Data.$: "$.body.subject"
                           Body:
                             Html:
                               Data.$: "$.body.data"
