@@ -4,3 +4,11 @@ genaiQueue:
     QueueName: gen-ai-queue-${self:provider.stage}
     VisibilityTimeout: 15 
     MessageRetentionPeriod: 60
+
+
+genaiNotificationsQueue:
+  Type: "AWS::SQS::Queue"
+  Properties:
+    QueueName: gen-ai-notifications-queue-${self:provider.stage}
+    VisibilityTimeout: 15 
+    MessageRetentionPeriod: 60

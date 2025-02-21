@@ -1,0 +1,77 @@
+queueEventResource:
+  Type: 'AWS::ApiGateway::Resource'
+  Properties:
+    RestApiId: !Ref restApi
+    ParentId: !GetAtt restApi.RootResourceId
+    PathPart: 'queuenotification'
+
+#   -----  CREATE-----------
+
+queueEventMethodPost:
+  Type: AWS::ApiGateway::Method
+  Properties:
+    ResourceId:
+      Ref: queueEventResource
+    RestApiId:
+      Ref: restApi
+    HttpMethod: POST
+    ApiKeyRequired: true
+    AuthorizationType: NONE
+    #AuthorizationType: CUSTOM
+    #AuthorizerId: !Ref authorizerdefinition
+    RequestValidatorId: !Ref POSTValidator
+    RequestModels:
+      application/json : !Ref RequestNotificationModel
+    Integration:
+      Type: AWS
+      Credentials: !GetAtt restApiRole.Arn
+      IntegrationHttpMethod: POST
+      Uri: !Sub "arn:aws:apigateway:${self:provider.region}:sqs:action/SendMessage"
+      RequestParameters:
+        integration.request.header.Content-Type: "'application/x-www-form-urlencoded'"
+        integration.request.querystring.QueueUrl: "'https://sqs.${self:provider.region}.amazonaws.com/178934116267/gen-ai-notifications-queue-${self:provider.stage}'"
+      RequestTemplates:
+        application/json: Action=SendMessage&MessageBody=$util.urlEncode($input.body)
+      IntegrationResponses:
+        - StatusCode: '200'
+          ResponseTemplates:
+              application/json: |
+                {
+                  "requestid": "$context.requestId"
+                }
+      PassthroughBehavior: NEVER
+    MethodResponses:
+      - ResponseModels:
+          application/json: Empty
+        StatusCode: "200"
+
+
+RequestNotificationModel:
+  Type: 'AWS::ApiGateway::Model'
+  Properties:
+    RestApiId: !Ref restApi
+    ContentType: application/json
+    Description: Request body model for INGEST NOTIFICATIONS.
+    Schema:
+      $schema: 'http://json-schema.org/draft-04/schema#'
+      title: RequestNotificationModel
+      required:
+          - channel
+          - body
+      type: object
+      properties:
+        channel:
+          type: string
+          enum:
+            - "notification-email"
+        body:
+          type: object
+
+
+#POSTValidator:
+#  Type: AWS::ApiGateway::RequestValidator
+#  Properties:
+#    Name: body-only
+#    RestApiId: !Ref restApi
+#    ValidateRequestBody: True
+#    ValidateRequestParameters: False

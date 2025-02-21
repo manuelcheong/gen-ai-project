@@ -70,6 +70,7 @@ resources:
   Resources:
     # ---------- QUEUE 🫡 ----------------
     genaiQueue: '${file(./iac/queues/genaiQueue.yml):genaiQueue}'
+    genaiNotificationsQueue: '${file(./iac/queues/genaiQueue.yml):genaiNotificationsQueue}'
 
     # ---------- PIPES 🫡 ----------------
     genaiPipeRole: '${file(./iac/pipes/genaiPipe.yml):genaiPipeRole}'
