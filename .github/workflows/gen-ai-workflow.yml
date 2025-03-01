@@ -33,11 +33,8 @@ jobs:
       - name: Install NPM dependencies 📦
         run: yarn install
 
-      - name: Move to Frontend Project 😎
-        run: cd src/menu-app
-
       - name: Build Frontend 🚀 🔥
-        run: ls && yarn install && yarn build
+        run: cd src/menuapp && ls && yarn install && yarn build
 
       - name: Deploy Frontend 🚀 🔥
         run: aws s3 cp --recursive --acl public-read --exclude *.map --exclude build/index.html --expires '2031-01-01T00:00:00Z'  build/ s3://gen-ai-website-${{ env.STAGE }} && aws s3 cp --acl public-read build/index.html s3://gen-ai-website-${{ env.STAGE }}/index.html && cd ../..
