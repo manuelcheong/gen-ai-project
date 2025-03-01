@@ -63,8 +63,8 @@ RequestBodyModel:
         index:
           type: string
           enum:
-            - "pedidos-pulse-ecom-pro"
-            - "pedidos-pulse-agg-pro"
+            #- "pedidos-pulse-ecom-pro"
+            #- "pedidos-pulse-agg-pro"
             - "gen-prompt-content"
             - "notification-email"
         body:
