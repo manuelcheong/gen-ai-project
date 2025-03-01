@@ -1,6 +1,5 @@
 // import logo from './logo.svg';
 import './App.css';
-import { Card, CardContent } from "./components/ui/card";
 import { Button } from "./components/ui/button";
 
 const menu = [
@@ -35,9 +34,9 @@ function App() {
         <div key={section.category} className="mb-6">
           <h2 className="text-xl font-semibold mb-4">{section.category}</h2>
           {section.items.map((item) => (
-            <Card key={item.name} className="mb-4 p-4 flex items-center">
+            <p className="mb-4 p-4 flex items-center">
               <img src={item.image} alt={item.name} className="w-20 h-20 rounded-lg mr-4" />
-              <CardContent className="flex-1">
+              <p className="flex-1">
                 <div className="flex justify-between items-center">
                   <div>
                     <h3 className="text-lg font-medium">{item.name}</h3>
@@ -45,8 +44,8 @@ function App() {
                   </div>
                   <span className="font-bold text-green-600">{item.price}</span>
                 </div>
-              </CardContent>
-            </Card>
+              </p>
+            </p>
           ))}
         </div>
       ))}
