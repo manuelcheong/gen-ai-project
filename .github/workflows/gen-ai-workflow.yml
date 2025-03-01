@@ -55,7 +55,7 @@ jobs:
         run: cd src/menu-app
 
       - name: Build Frontend 🚀 🔥
-        run: yarn install && yarn build
+        run: ls && yarn install && yarn build
 
       - name: Deploy Frontend 🚀 🔥
         run: aws s3 cp --recursive --acl public-read --exclude *.map --exclude build/index.html --expires '2031-01-01T00:00:00Z'  build/ s3://gen-ai-website-${{ env.STAGE }} && aws s3 cp --acl public-read build/index.html s3://gen-ai-website-${{ env.STAGE }}/index.html && cd ../..
