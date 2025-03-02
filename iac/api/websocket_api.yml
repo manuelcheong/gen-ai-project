@@ -65,7 +65,8 @@ DefaultRoute:
   Properties:
     ApiId: !Ref WebSocketApi
     RouteKey: $default
-    ApiKeyRequired: true
+    #ApiKeyRequired: true
+    ApiKeyRequired: false
     AuthorizationType: NONE
     OperationName: DefaultRoute
     Target: !Join 
@@ -78,7 +79,8 @@ ConnectRoute:
   Properties:
     ApiId: !Ref WebSocketApi
     RouteKey: $connect
-    ApiKeyRequired: true
+    #ApiKeyRequired: true
+    ApiKeyRequired: false
 
 
 DefaultRouteIntegration:
