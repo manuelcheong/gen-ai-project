@@ -34,10 +34,10 @@ jobs:
         run: yarn install
 
       - name: Build Frontend 🚀 🔥
-        run: cd src/menuapp && ls && yarn install && yarn build && ls
+        run: cd src/menuapp && ls && yarn install && yarn build && cd build 
 
       - name: Deploy Frontend 🚀 🔥
-        run: aws s3 cp --recursive --acl public-read --exclude *.map --exclude build/index.html --expires '2031-01-01T00:00:00Z'  build/ s3://gen-ai-website-${{ env.STAGE }} && aws s3 cp --acl public-read build/index.html s3://gen-ai-website-${{ env.STAGE }}/index.html && cd ../..
+        run: aws s3 cp --recursive --acl public-read --exclude *.map --exclude index.html --expires '2031-01-01T00:00:00Z' . s3://gen-ai-website-${{ env.STAGE }} && aws s3 cp --acl public-read index.html s3://gen-ai-website-${{ env.STAGE }}/index.html && cd ../../..
       
 
       - name: Install Rust 🦀  
