@@ -2,6 +2,9 @@ WebsiteBucket:
   Type: 'AWS::S3::Bucket'
   Properties:
     BucketName: gen-ai-website-${self:provider.stage}
+    OwnershipControls:
+      Rules:
+        - ObjectOwnership: public-read
     WebsiteConfiguration:
       IndexDocument: index.html
       ErrorDocument: error.html
