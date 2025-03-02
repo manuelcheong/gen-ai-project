@@ -51,6 +51,13 @@
             form.addEventListener('submit', (e) => {
                 e.preventDefault();
                 if (input.value) {
+                    const content = '<p>Generando contenido ...</p>';
+                    const iframe = document.getElementById('responseFrame');
+                    iframe.contentWindow.document.open();
+                    iframe.contentWindow.document.write(content);
+                    iframe.contentWindow.document.close();
+
+
                     socket.send(JSON.stringify({
                                                     "index": "gen-prompt-content",
                                                     "body": {
