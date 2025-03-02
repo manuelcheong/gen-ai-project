@@ -23,11 +23,17 @@
 
             socket.onmessage = (event) => {
                 const msg = JSON.parse(event.data);
-                if (msg.type === 'response') {
-                    const item = document.createElement('li');
-                    item.textContent = msg.data;
-                    document.getElementById('messages').appendChild(item);
-                    window.scrollTo(0, document.body.scrollHeight);
+                console.log('WebSocket event received:');
+                console.log(event);
+                console.log('WebSocket message received:');
+                console.log(msg);  
+                 
+                if (msg.Message?.Body?.content) {
+                    const content = msg.Message.Body.content[0].text;
+                    const iframe = document.getElementById('responseFrame');
+                    iframe.contentWindow.document.open();
+                    iframe.contentWindow.document.write(content);
+                    iframe.contentWindow.document.close();
                 }
             };
 
@@ -45,7 +51,13 @@
             form.addEventListener('submit', (e) => {
                 e.preventDefault();
                 if (input.value) {
-                    socket.send(JSON.stringify({ type: 'prompt', data: input.value }));
+                    socket.send(JSON.stringify({
+                                                    "index": "gen-prompt-content",
+                                                    "body": {
+                                                        "userContent": input.value
+                                                        
+                                                    }
+                                                } ));
                     input.value = '';
                 }
             });
@@ -55,7 +67,9 @@
 <body>
     <ul id="messages"></ul>
     <form id="promptForm" action="">
-        <input id="promptInput" autocomplete="off" /><button>Send</button>
+        <input id="promptInput" autocomplete="off" /><button type="submit">Send</button>
     </form>
+
+    <iframe id="responseFrame" style="width: 100%; height: 600px;"></iframe>
 </body>
 </html>

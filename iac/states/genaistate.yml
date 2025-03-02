@@ -180,6 +180,23 @@ genaiState:
                         body.$: "$.body.body"
                         executionTime.$: "$$.Execution.StartTime"
                         connectionId.$: $.messageAttributes.connectionId.stringValue
+                      Next: promtBedrockbyUrls
+
+                    promtBedrockbyUrls:
+                      Type: Task
+                      Resource: arn:aws:states:::bedrock:invokeModel
+                      Parameters:
+                        ModelId: "anthropic.claude-3-sonnet-20240229-v1:0" #arn:aws:bedrock:eu-west-1::foundation-model/anthropic.claude-3-sonnet-20240229-v1:0    #"anthropic.claude-3-5-sonnet-20240620-v1:0"
+                        Body:
+                          anthropic_version: "bedrock-2023-05-31"
+                          messages:
+                            - role: "user"
+                              content:
+                                - type: "text"
+                                  text.$: "States.Format('return an array value in urls variable with 3 urls about: {}', $.body.userContent)"
+                          max_tokens: 200
+                        
+                      ResultPath: $.urlsContent
                       Next: invokeParser
 
                     invokeParser:
@@ -187,7 +204,7 @@ genaiState:
                       Resource: arn:aws:states:::lambda:invoke
                       Parameters:
                         FunctionName: arn:aws:lambda:${self:provider.region}:178934116267:function:gen-ai-service-${self:provider.stage}-scrapperrs
-                        Payload.$: "$.body"
+                        Payload.$: "$.urlsContent"
                       #OutputPath: "$.Payload"
                       ResultPath: "$.outputUrlContent"
                       Next: getContent
