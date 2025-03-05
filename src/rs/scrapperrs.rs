@@ -22,7 +22,9 @@ fn extract_urls(text: &str) -> Vec<String> {
 async fn fetch_url(url: String) -> Result<String, Error> {
     let client = Client::new();
     let response = client.get(&url).send().await?;
-    Ok(response.text().await?)
+    let mut final_response = response.text().await?;
+    final_response = final_response.replace(" ", "");
+    Ok(final_response)
     // let client = Client::new();
     // let response = client.get(&url).send().await?;
 
