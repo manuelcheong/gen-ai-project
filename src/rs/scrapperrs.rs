@@ -6,7 +6,17 @@ use serde_json::Value;
 use tokio::task::JoinError;
 use serde_json::json;
 use uuid::Uuid;
+use regex::Regex;
 
+fn extract_urls(text: &str) -> Vec<String> {
+    let url_pattern = r#"https?://[a-zA-Z0-9.-]+(?:\.[a-zA-Z]{2,})(?:/[^\s"']*)?"#;
+    let re = Regex::new(url_pattern).unwrap();
+
+    re.find_iter(text)
+        .map(|m| m.as_str().to_string()) // Convert matches to String
+        .collect()
+}
+        
 async fn fetch_url(url: String) -> Result<String, Error> {
     let client = Client::new();
     let response = client.get(&url).send().await?;
@@ -28,11 +38,17 @@ async fn func(event: LambdaEvent<Value>) -> Result<Value, Error> {
         // Add more URLs here
     ]; */
 
-    let urls: Vec<String> = event.payload["urls"].as_array()
+    let raw_content = event.payload["content"].as_str().unwrap_or("");
+
+    let full_content = format!("r#{}#", raw_content);
+
+    let urls = extract_urls(&full_content);
+
+    /* let urls: Vec<String> = event.payload["urls"].as_array()
         .unwrap_or(&vec![])
         .iter()
         .filter_map(|u| u.as_str().map(String::from))
-        .collect(); 
+        .collect(); */ 
 
     // Vector to store tasks
     let mut tasks = vec![];
