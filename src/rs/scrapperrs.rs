@@ -7,6 +7,8 @@ use tokio::task::JoinError;
 use serde_json::json;
 use uuid::Uuid;
 use regex::Regex;
+use scraper::{Html, Selector};
+
 
 fn extract_urls(text: &str) -> Vec<String> {
     let url_pattern = r#"https?://[a-zA-Z0-9.-]+(?:\.[a-zA-Z]{2,})(?:/[^\s"']*)?"#;
@@ -18,9 +20,25 @@ fn extract_urls(text: &str) -> Vec<String> {
 }
         
 async fn fetch_url(url: String) -> Result<String, Error> {
-    let client = Client::new();
-    let response = client.get(&url).send().await?;
-    Ok(response.text().await?)
+    // let client = Client::new();
+    // let response = client.get(&url).send().await?;
+
+    let response = reqwest::get(&url).await?.text().await?;
+    // ---- parsing ----
+    
+    let document = Html::parse_document(&response);
+    let selector = Selector::parse("body").unwrap();
+
+    let mut text_content = String::new();
+
+    if let Some(body) = document.select(&selector).next() {
+        text_content = body.text().collect::<Vec<_>>().join(" ");
+        println!("{}", text_content);
+    } else {
+        println!("No <body> found!");
+    } 
+    // --------
+    Ok(text_content)
 }
 
 #[tokio::main]
