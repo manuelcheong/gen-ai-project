@@ -193,7 +193,7 @@ genaiState:
                             - role: "user"
                               content:
                                 - type: "text"
-                                  text.$: "States.Format('return only an array values parsed in urls variable with 1 urls about: {}', $.body.userContent)"
+                                  text.$: "States.Format('return an array, with 1 elements, with most popular url about: {}', $.body.userContent)"
                           max_tokens: 200
                         
                       ResultPath: $.urlsContent
