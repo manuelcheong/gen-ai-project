@@ -202,7 +202,7 @@ genaiState:
                     parseUrlsContent:
                       Type: Pass
                       Parameters:
-                        urlsContent: { content.$: $.urlsContent.Body.content[0].text }
+                        urlsContent.$: $.urlsContent.Body.content[0].text
                       End: true
 
                     invokeParser:
