@@ -199,18 +199,18 @@ genaiState:
                       ResultPath: $.urlsContent
                       Next: invokeParser
 
-                    parseUrlsContent:
-                      Type: Pass
-                      Parameters:
-                        urlsContent.$: $.urlsContent.Body.content[0].text
-                      End: true
+                    #parseUrlsContent:
+                    #  Type: Pass
+                    #  Parameters:
+                    #    urlsContent.$: $.urlsContent.Body.content[0].text
+                    #  Next: true
 
                     invokeParser:
                       Type: Task
                       Resource: arn:aws:states:::lambda:invoke
                       Parameters:
                         FunctionName: arn:aws:lambda:${self:provider.region}:178934116267:function:gen-ai-service-${self:provider.stage}-scrapperrs
-                        Payload.$: "$.urlsContent"
+                        Payload.$: "$.urlsContent.Body.content[0].text"
                       #OutputPath: "$.Payload"
                       ResultPath: "$.outputUrlContent"
                       Next: getContent
