@@ -64,9 +64,9 @@ async fn func(event: LambdaEvent<Value>) -> Result<Value, Error> {
 
     let raw_content = event.payload["content"].as_str().unwrap_or("");
 
-    let full_content = format!("r#{}#", raw_content);
+    // let full_content = format!("r#{}#", raw_content);
 
-    let urls = extract_urls(&full_content);
+    let urls = extract_urls(&raw_content);
 
     /* let urls: Vec<String> = event.payload["urls"].as_array()
         .unwrap_or(&vec![])
