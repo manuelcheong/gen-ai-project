@@ -363,7 +363,8 @@ genaiState:
                               Item: {
                                 "sessionId": { "S.$": "$.connectionId" },
                                 "timestamp": { "S.$": "$$.State.EnteredTime" },
-                                "messages": { "S.$": "$.body.prompt" }
+                                "messages": { "S.$": "$.body.prompt" },
+                                "ttl": { "N.$": "States.Format('{}', States.MathAdd(States.TimestampFromString($$.State.EnteredTime), 7200))" }
                               }
                             End: true
 
@@ -420,7 +421,8 @@ genaiState:
                               Item: {
                                 "sessionId": { "S.$": "$.connectionId" },
                                 "timestamp": { "S.$": "$$.State.EnteredTime" },
-                                "messages": { "S.$": "$.menuContent.Body" }
+                                "messages": { "S.$": "$.menuContent.Body" },
+                                "ttl": { "N.$": "States.Format('{}', States.MathAdd(States.TimestampFromString($$.State.EnteredTime), 7200))" }
                               }
                             End: true
 
