@@ -6,18 +6,18 @@ use serde_json::Value;
 use tokio::task::JoinError;
 use serde_json::json;
 use uuid::Uuid;
-use regex::Regex;
+// use regex::Regex;
 // use scraper::{Html, Selector};
 
 
-fn extract_urls(text: &str) -> Vec<String> {
+/* fn extract_urls(text: &str) -> Vec<String> {
     let url_pattern = r#"https?://[a-zA-Z0-9.-]+(?:\.[a-zA-Z]{2,})(?:/[^\s"']*)?"#;
     let re = Regex::new(url_pattern).unwrap();
 
     re.find_iter(text)
         .map(|m| m.as_str().to_string()) // Convert matches to String
         .collect()
-}
+} */
         
 async fn fetch_url(url: String) -> Result<String, Error> {
     let client = Client::new();
