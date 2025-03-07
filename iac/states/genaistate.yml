@@ -338,7 +338,7 @@ genaiState:
                       Type: Task
                       Resource: arn:aws:states:::dynamodb:getItem
                       Parameters:
-                        TableName: "ConversationHistoryTable"
+                        TableName: sessions-bedrock-${self:provider.stage}
                         Key: {
                           "sessionId": { "S.$": "$.connectionId" }
                         }
