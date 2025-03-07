@@ -345,36 +345,55 @@ genaiState:
                             S.$: "$.connectionId"
           
                       ResultPath: "$.conversationHistory"
-                      Next: promtMenuBedrock
-                      
-                    promtMenuBedrock:
-                      Type: Task
-                      Resource: arn:aws:states:::bedrock:invokeModel
-                      Parameters:
-                        ModelId: "anthropic.claude-3-sonnet-20240229-v1:0" #arn:aws:bedrock:eu-west-1::foundation-model/anthropic.claude-3-sonnet-20240229-v1:0    #"anthropic.claude-3-5-sonnet-20240620-v1:0"
-                        Body:
-                          anthropic_version: "bedrock-2023-05-31"
-                          messages:
-                            - role: "user"
-                              content:
-                                - type: "text"
-                                  #text.$: $.body.prompt
-                                  text: "You are a helpful assistant. Remember our conversation."
-                            - role: "assistant"
-                              content:
-                                - type: "text"
-                                  #text.$: $.body.prompt
-                                  text.$: "States.JsonToString($.conversationHistory)"
+                      Next: parallelPromptStorePromp
 
-                            - role: "user"
-                              content:
-                                - type: "text"
-                                  #text.$: $.body.prompt
-                                  text.$: "States.Format('{}', $.body.prompt)"
-                          max_tokens: 200
-                        
-                      ResultPath: $.genContent
+                    parallelPromptStorePromp:
+                      Type: Parallel
                       Next: Send Message to WebSocket Menu Prompt
+                      OutputPath: "$[1]"
+                      Branches:
+
+                      - StartAt: StoreConversationPromp
+                        States:
+                          StoreConversationPromp: 
+                            Type: Task
+                            Resource: arn:aws:states:::dynamodb:putItem
+                            Parameters:
+                              TableName: sessions-bedrock-${self:provider.stage}
+                              Item: {
+                                "sessionId": { "S.$": "$.connectionId" },
+                                "timestamp": { "S.$": "$$.State.EnteredTime" },
+                                "messages": { "S.$": "$.body.prompt" }
+                              }
+                            End: true
+
+                      - StartAt: promtMenuBedrock
+                        States:
+                          promtMenuBedrock:
+                            Type: Task
+                            Resource: arn:aws:states:::bedrock:invokeModel
+                            Parameters:
+                              ModelId: "anthropic.claude-3-sonnet-20240229-v1:0" #arn:aws:bedrock:eu-west-1::foundation-model/anthropic.claude-3-sonnet-20240229-v1:0    #"anthropic.claude-3-5-sonnet-20240620-v1:0"
+                              Body:
+                                anthropic_version: "bedrock-2023-05-31"
+                                messages:
+                                  - role: "user"
+                                    content:
+                                      - type: "text"
+                                        text: "You are a helpful assistant. Remember our conversation."
+                                  - role: "assistant"
+                                    content:
+                                      - type: "text"
+                                        text.$: "States.JsonToString($.conversationHistory.Items)"
+
+                                  - role: "user"
+                                    content:
+                                      - type: "text"
+                                        text.$: "States.Format('{}', $.body.prompt)"
+                                max_tokens: 300
+                              
+                            ResultPath: $.genContent
+                            End true
 
                     getMenuContent:
                       Type: Task
