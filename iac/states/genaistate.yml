@@ -180,24 +180,24 @@ genaiState:
                         body.$: "$.body.body"
                         executionTime.$: "$$.Execution.StartTime"
                         connectionId.$: $.messageAttributes.connectionId.stringValue
-                      Next: promtBedrockbyUrls
-
-                    promtBedrockbyUrls:
-                      Type: Task
-                      Resource: arn:aws:states:::bedrock:invokeModel
-                      Parameters:
-                        ModelId: "anthropic.claude-3-sonnet-20240229-v1:0" #arn:aws:bedrock:eu-west-1::foundation-model/anthropic.claude-3-sonnet-20240229-v1:0    #"anthropic.claude-3-5-sonnet-20240620-v1:0"
-                        Body:
-                          anthropic_version: "bedrock-2023-05-31"
-                          messages:
-                            - role: "user"
-                              content:
-                                - type: "text"
-                                  text.$: "States.Format('return an array, with 1 elements, with most popular url about: {}', $.body.userContent)"
-                          max_tokens: 200
-                        
-                      ResultPath: $.urlsContent
                       Next: invokeParser
+
+                    #promtBedrockbyUrls:
+                    #  Type: Task
+                    #  Resource: arn:aws:states:::bedrock:invokeModel
+                    #  Parameters:
+                    #    ModelId: "anthropic.claude-3-sonnet-20240229-v1:0" #arn:aws:bedrock:eu-west-1::foundation-model/anthropic.claude-3-sonnet-20240229-v1:0    #"anthropic.claude-3-5-sonnet-20240620-v1:0"
+                    #    Body:
+                    #      anthropic_version: "bedrock-2023-05-31"
+                    #      messages:
+                    #        - role: "user"
+                    #          content:
+                    #            - type: "text"
+                    #              text.$: "States.Format('return an array, with 1 elements, with most popular url about: {}', $.body.userContent)"
+                    #      max_tokens: 200
+                        
+                    #  ResultPath: $.urlsContent
+                    #  Next: invokeParser
 
                     #parseUrlsContent:
                     #  Type: Pass
@@ -210,7 +210,8 @@ genaiState:
                       Resource: arn:aws:states:::lambda:invoke
                       Parameters:
                         FunctionName: arn:aws:lambda:${self:provider.region}:178934116267:function:gen-ai-service-${self:provider.stage}-scrapperrs
-                        Payload: {content.$: "$.urlsContent.Body.content[0].text"}
+                        Payload.$: "$.body"
+                        #Payload: {content.$: "$.urlsContent.Body.content[0].text"}
                       #OutputPath: "$.Payload"
                       ResultPath: "$.outputUrlContent"
                       Next: getContent
