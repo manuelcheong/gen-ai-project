@@ -336,12 +336,14 @@ genaiState:
                         
                     GetConversationHistory:
                       Type: Task
-                      Resource: arn:aws:states:::dynamodb:getItem
+                      Resource: arn:aws:states:::aws-sdk:dynamodb:query
                       Parameters:
                         TableName: sessions-bedrock-${self:provider.stage}
-                        Key: {
-                          "sessionId": { "S.$": "$.connectionId" }
-                        }
+                        KeyConditionExpression: sessionId = :sessionId
+                        ExpressionAttributeValues:
+                          ":sessionId":
+                            S.$: "$.connectionId"
+          
                       ResultPath: "$.conversationHistory"
                       Next: promtMenuBedrock
                       
