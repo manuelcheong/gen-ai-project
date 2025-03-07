@@ -374,7 +374,7 @@ genaiState:
                               content:
                                 - type: "text"
                                   #text.$: $.body.prompt
-                                  text.$: "Este es el menu: {}', $.menuContent)"
+                                  text.$: "States.Format('Este es el menu: {}', $.menuContent)"
                           max_tokens: 4096
 
                         #Input:
