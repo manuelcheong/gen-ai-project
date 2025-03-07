@@ -374,7 +374,7 @@ genaiState:
                             Type: Task
                             Resource: arn:aws:states:::dynamodb:putItem
                             Parameters:
-                              TableName: "ConversationHistoryTable"
+                              TableName: sessions-bedrock-${self:provider.stage}
                               Item: {
                                 "sessionId": { "S.$": "$.connectionId" },
                                 "timestamp": { "S.$": "$$.State.EnteredTime" },
