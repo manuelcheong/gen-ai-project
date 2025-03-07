@@ -323,6 +323,37 @@ genaiState:
                         body.$: "$.body.body"
                         executionTime.$: "$$.Execution.StartTime"
                         connectionId.$: $.messageAttributes.connectionId.stringValue
+                      Next: promtMenuBedrock
+
+                    promtMenuBedrock:
+                      Type: Task
+                      Resource: arn:aws:states:::bedrock:invokeModel
+                      Parameters:
+                        ModelId: "anthropic.claude-3-5-sonnet-20240620-v1:0" #arn:aws:bedrock:eu-west-1::foundation-model/anthropic.claude-3-sonnet-20240229-v1:0    #"anthropic.claude-3-5-sonnet-20240620-v1:0"
+                        Body:
+                          anthropic_version: "bedrock-2023-05-31"
+                          messages:
+                            - role: "user"
+                              content:
+                                - type: "text"
+                                  #text.$: $.body.prompt
+                                  text.$: "States.Format('{}', $.body.prompt)"
+                          max_tokens: 500
+                        
+                      ResultPath: $.genContent
+                      Next: Send Message to WebSocket Menu Prompt
+
+                    Send Message to WebSocket Menu Prompt:
+                      Type: Task          
+                      Resource: arn:aws:states:::apigateway:invoke
+                      Parameters:
+                        ApiEndpoint: !Sub "${WebSocketApi}.execute-api.${AWS::Region}.amazonaws.com"
+                        Method: POST
+                        Stage: "${self:provider.stage}"
+                        Path.$: "States.Format('/@connections/{}', $.connectionId)"
+                        RequestBody:
+                          Message.$: $.genContent
+                        AuthType: IAM_ROLE
                       End: true
 
 
