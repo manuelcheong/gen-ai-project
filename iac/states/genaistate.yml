@@ -236,7 +236,7 @@ genaiState:
                               content:
                                 - type: "text"
                                   #text.$: $.body.prompt
-                                  text.$: "States.Format('Genera un resumen con este contenido, en una pagina html:  {}', $.allContent.Body)"
+                                  text.$: "States.Format('Genera un resumen con este contenido:  {}', $.allContent.Body)"
                           max_tokens: 500
                         
                       ResultPath: $.genContent
@@ -298,6 +298,31 @@ genaiState:
                           Body:
                             Html:
                               Data.$: "$.body.data"
+
+
+          - StartAt: filterMenuPrompter
+            States:
+              filterMenuPrompter: 
+                Type: "Pass"
+                InputPath: "$.[?(@.body.index == 'gen-prompt-menu')]"
+                Next: "handlePrompMenuItems"
+
+              handlePrompMenuItems:
+                Type: Map
+                End: true
+                ItemsPath: $
+                MaxConcurrency: 10
+                ItemProcessor:
+                  StartAt: parsePromptMenu
+                  States:
+                    parsePromptMenu:
+                      Type: Pass
+                      Parameters:
+                        messageId.$: $.messageId
+                        body.$: "$.body.body"
+                        executionTime.$: "$$.Execution.StartTime"
+                        connectionId.$: $.messageAttributes.connectionId.stringValue
+                      End: true
 
 
       #  processItems:
