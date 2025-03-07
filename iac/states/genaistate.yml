@@ -331,7 +331,7 @@ genaiState:
                         - And:
                           - Variable: "$.body.menu"
                             IsPresent: true
-                          Next: promtInputMenuBedrock
+                          Next: getMenuContent
                       Default: promtMenuBedrock
                         
 
@@ -353,13 +353,32 @@ genaiState:
                       ResultPath: $.genContent
                       Next: Send Message to WebSocket Menu Prompt
 
+                    getMenuContent:
+                      Type: Task
+                      Parameters:
+                        Bucket: gen-ai-content-${self:provider.stage}
+                        Key.$: "States.Format('s3://gen-ai-content-pre/{}', $.body.menu)"   #"output123.txt"
+                      ResultPath: "$.menuContent"
+                      Resource: arn:aws:states:::aws-sdk:s3:getObject
+                      Next: promtInputMenuBedrock
+
                     promtInputMenuBedrock:
                       Type: Task
                       Resource: arn:aws:states:::bedrock:invokeModel
                       Parameters:
                         ModelId: "anthropic.claude-3-sonnet-20240229-v1:0" #arn:aws:bedrock:eu-west-1::foundation-model/anthropic.claude-3-sonnet-20240229-v1:0    #"anthropic.claude-3-5-sonnet-20240620-v1:0"
-                        Input:
-                          S3Uri.$: "States.Format('s3://gen-ai-content-pre/{}', $.body.menu)"
+                        Body:
+                          anthropic_version: "bedrock-2023-05-31"
+                          messages:
+                            - role: "user"
+                              content:
+                                - type: "text"
+                                  #text.$: $.body.prompt
+                                  text.$: "Este es el menu: {}', $.menuContent)"
+                          max_tokens: 4096
+
+                        #Input:
+                        #  S3Uri.$: "States.Format('s3://gen-ai-content-pre/{}', $.body.menu)"
                         #Output:
                         #  S3Uri.$: "$.outputS3"
                         
