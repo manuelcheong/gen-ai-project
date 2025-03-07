@@ -357,7 +357,7 @@ genaiState:
                       Type: Task
                       Parameters:
                         Bucket: gen-ai-content-${self:provider.stage}
-                        Key.$: "States.Format('s3://gen-ai-content-pre/{}', $.body.menu)"   #"output123.txt"
+                        Key.$: "States.Format('{}', $.body.menu)"   #"output123.txt"
                       ResultPath: "$.menuContent"
                       Resource: arn:aws:states:::aws-sdk:s3:getObject
                       Next: promtInputMenuBedrock
