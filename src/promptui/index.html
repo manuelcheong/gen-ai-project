@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>WebSocket WebApp</title>
+    <title>MenuGen 0.1</title>
     <script src="config.js"></script>
     <script src="https://cdn.socket.io/4.0.0/socket.io.min.js"></script>
     <script>
@@ -59,24 +59,50 @@
 
 
                     socket.send(JSON.stringify({
-                                                    "index": "gen-prompt-content",
+                                                    "index": "gen-prompt-menu",
                                                     "body": {
-                                                        "userContent": input.value
+                                                        "prompt": input.value
                                                         
                                                     }
                                                 } ));
                     input.value = '';
                 }
             });
+
+            // ---- MENU -----
+            const form2 = document.getElementById('promptForm2');
+            const input2 = document.getElementById('promptInput2');
+
+            form2.addEventListener('submit', (e) => {
+                e.preventDefault();
+                if (input2.value) {
+                    socket.send(JSON.stringify({
+                                                    "index": "gen-prompt-menu",
+                                                    "body": {
+                                                        "menu": input2.value
+                                                        
+                                                    }
+                                                } ));
+                    input2.value = '';
+                }
+            });
         });
     </script>
 </head>
 <body>
+    <h1> Pedido </h1>
     <ul id="messages"></ul>
     <form id="promptForm" action="">
         <input id="promptInput" autocomplete="off" /><button type="submit">Send</button>
     </form>
 
     <iframe id="responseFrame" style="width: 100%; height: 600px;"></iframe>
+
+    <h1> Menu </h1>
+    <ul id="messages2"></ul>
+    <form id="promptForm2" action="">
+        <input id="promptInput2" autocomplete="off" /><button type="submit">Send</button>
+    </form>
+
 </body>
 </html>
