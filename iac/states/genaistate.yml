@@ -323,7 +323,17 @@ genaiState:
                         body.$: "$.body.body"
                         executionTime.$: "$$.Execution.StartTime"
                         connectionId.$: $.messageAttributes.connectionId.stringValue
-                      Next: promtMenuBedrock
+                      Next: choiceMenu
+
+                    choiceMenu:
+                      Type: Choice
+                      Choices:
+                        - And:
+                          - Variable: "$.body.menu"
+                            IsPresent: true
+                          Next: promtInputMenuBedrock
+                      Default: promtMenuBedrock
+                        
 
                     promtMenuBedrock:
                       Type: Task
@@ -339,6 +349,19 @@ genaiState:
                                   #text.$: $.body.prompt
                                   text.$: "States.Format('{}', $.body.prompt)"
                           max_tokens: 200
+                        
+                      ResultPath: $.genContent
+                      Next: Send Message to WebSocket Menu Prompt
+
+                    promtInputMenuBedrock:
+                      Type: Task
+                      Resource: arn:aws:states:::bedrock:invokeModel
+                      Parameters:
+                        ModelId: "anthropic.claude-3-sonnet-20240229-v1:0" #arn:aws:bedrock:eu-west-1::foundation-model/anthropic.claude-3-sonnet-20240229-v1:0    #"anthropic.claude-3-5-sonnet-20240620-v1:0"
+                        Input:
+                          S3Uri.$: "States.Format('s3://gen-ai-content-pre/{}', $.body.menu)"
+                        #Output:
+                        #  S3Uri.$: "$.outputS3"
                         
                       ResultPath: $.genContent
                       Next: Send Message to WebSocket Menu Prompt
