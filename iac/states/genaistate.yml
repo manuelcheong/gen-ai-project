@@ -332,9 +332,19 @@ genaiState:
                           - Variable: "$.body.menu"
                             IsPresent: true
                           Next: getMenuContent
-                      Default: promtMenuBedrock
+                      Default: GetConversationHistory
                         
-
+                    GetConversationHistory:
+                      Type: Task
+                      Resource: arn:aws:states:::dynamodb:getItem
+                      Parameters:
+                        TableName: "ConversationHistoryTable"
+                        Key: {
+                          "sessionId": { "S.$": "$.connectionId" }
+                        }
+                      ResultPath: "$.conversationHistory"
+                      Next: promtMenuBedrock
+                      
                     promtMenuBedrock:
                       Type: Task
                       Resource: arn:aws:states:::bedrock:invokeModel
@@ -343,6 +353,17 @@ genaiState:
                         Body:
                           anthropic_version: "bedrock-2023-05-31"
                           messages:
+                            - role: "user"
+                              content:
+                                - type: "text"
+                                  #text.$: $.body.prompt
+                                  text: "You are a helpful assistant. Remember our conversation."
+                            - role: "assistant"
+                              content:
+                                - type: "text"
+                                  #text.$: $.body.prompt
+                                  text.$: "States.JsonToString($.conversationHistory)"
+
                             - role: "user"
                               content:
                                 - type: "text"
