@@ -393,7 +393,7 @@ genaiState:
                                 max_tokens: 300
                               
                             ResultPath: $.genContent
-                            End true
+                            End: true
 
                     getMenuContent:
                       Type: Task
