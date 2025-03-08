@@ -360,10 +360,10 @@ genaiState:
                             Resource: arn:aws:states:::dynamodb:putItem
                             Parameters:
                               TableName: sessions-bedrock-${self:provider.stage}
-                              Item: {
-                                "sessionId": { "S.$": "$.connectionId" },
-                                "timestamp": { "S.$": "$$.State.EnteredTime" },
-                                "messages": { "S.$": "$.body.prompt" },
+                              Item:
+                                "sessionId": { "S.$": "$.connectionId" }
+                                "timestamp": { "S.$": "$$.State.EnteredTime" }
+                                "messages": { "S.$": "$.body.prompt" }
                                 "ttl": { N.$: "States.JsonToString(States.MathAdd(States.TimestampFromString($$.State.EnteredTime), 7200))" }
                             End: true
 
@@ -417,12 +417,11 @@ genaiState:
                             Resource: arn:aws:states:::dynamodb:putItem
                             Parameters:
                               TableName: sessions-bedrock-${self:provider.stage}
-                              Item: {
-                                "sessionId": { "S.$": "$.connectionId" },
-                                "timestamp": { "S.$": "$$.State.EnteredTime" },
-                                "messages": { "S.$": "$.menuContent.Body" },
+                              Item: 
+                                "sessionId": { "S.$": "$.connectionId" }
+                                "timestamp": { "S.$": "$$.State.EnteredTime" }
+                                "messages": { "S.$": "$.menuContent.Body" }
                                 "ttl": { N.$: "States.JsonToString(States.MathAdd(States.TimestampFromString($$.State.EnteredTime), 7200))" }
-                              }
                             End: true
 
                       - StartAt: promtInputMenuBedrock
