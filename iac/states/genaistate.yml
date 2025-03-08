@@ -368,7 +368,7 @@ genaiState:
                                 "messages":
                                   "S.$": "$.body.prompt" 
                                 "ttl":
-                                  "N.$": "States.JsonToString(States.MathAdd(States.TimestampFromString($$.State.EnteredTime), 7200))"
+                                  "N": !Sub "${States.MathAdd(States.TimestampFromString($$.State.EnteredTime), 7200)}"
                             End: true
 
                       - StartAt: promtMenuBedrock
@@ -429,7 +429,7 @@ genaiState:
                                 "messages":
                                   "S.$": "$.menuContent.Body"
                                 "ttl":
-                                  "N.$": "States.JsonToString(States.MathAdd(States.TimestampFromString($$.State.EnteredTime), 7200))"
+                                  "N": !Sub "${States.MathAdd(States.TimestampFromString($$.State.EnteredTime), 7200)}"
                             End: true
 
                       - StartAt: promtInputMenuBedrock
