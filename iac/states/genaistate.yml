@@ -421,7 +421,7 @@ genaiState:
                                 "sessionId": { "S.$": "$.connectionId" },
                                 "timestamp": { "S.$": "$$.State.EnteredTime" },
                                 "messages": { "S.$": "$.menuContent.Body" },
-                                "ttl": { "N.$": "States.Format('{}', States.MathAdd(States.TimestampFromString($$.State.EnteredTime), 7200))" }
+                                "ttl": { N.$: "States.JsonToString(States.MathAdd(States.TimestampFromString($$.State.EnteredTime), 7200))" }
                               }
                             End: true
 
