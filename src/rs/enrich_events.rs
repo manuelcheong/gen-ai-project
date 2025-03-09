@@ -24,14 +24,23 @@ async fn func(_event: LambdaEvent<Value>) -> Result<Value, Error> {
     
     // Add 2 hours (7200 seconds) for TTL
     let ttl = current_time + 7200;
-    
+
+    if let Value::Array(ref mut items) = payload {
+        for item in items {
+            if let Value::Object(ref mut map) = item {
+                map.insert("additional_data".to_string(), json!({
+                    "ttl": ttl
+                }));
+            }
+        }
+    }   
     // Add the TTL field to the event
-    if let Value::Object(ref mut map) = payload {
+    /* if let Value::Object(ref mut map) = payload {
         // map.insert("ttl".to_string(), json!(ttl));
         map.insert("additional_data".to_string(), json!({
             "ttl": ttl
         }));
-    }
+    } */
     
     print!("Updated Event: {:?}", payload);
 
