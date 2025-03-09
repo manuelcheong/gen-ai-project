@@ -33,7 +33,10 @@ genaiState:
                   messageId.$: $.messageId
                   body.$: States.StringToJson($.body)
                   messageAttributes.$: $.messageAttributes
-                  timestamp.$: States.StringToJson($.attributes.ApproximateFirstReceiveTimestamp)
+                  # ----- HANDLE TIMESTAMP -----
+                  timestamp.$: $.attributes.ApproximateFirstReceiveTimestamp
+                  sufixTimestamp.$: "States.Format('{}', $.attributes.ApproximateFirstReceiveTimestamp).substring(States.Format('{}', $.attributes.ApproximateFirstReceiveTimestamp).length - 4)"
+                  prefixTimestamp.$: "States.Format('{}', States.MathAdd(States.MathFloor(State.StringToJson($.attributes.ApproximateFirstReceiveTimestamp) / 10000), 4))"
                   
                 End: true
             ProcessorConfig:
@@ -324,7 +327,7 @@ genaiState:
                         body.$: "$.body.body"
                         executionTime.$: "$$.Execution.StartTime"
                         connectionId.$: $.messageAttributes.connectionId.stringValue
-                        ttl.$: "States.MathAdd($.timestamp, 3600)"
+                        ttl: "States.MathAdd(7200, 3600)"
                       Next: choiceMenu
 
                     choiceMenu:
