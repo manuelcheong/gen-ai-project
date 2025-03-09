@@ -369,8 +369,8 @@ genaiState:
                                   "S.$": "$$.State.EnteredTime" 
                                 "messages":
                                   "S.$": "$.body.prompt" 
-                                "ttl":
-                                  "N.$": "$.ttl"
+                                #"ttl":
+                                #  "N.$": "$.ttl"
                             End: true
 
                       - StartAt: promtMenuBedrock
@@ -430,8 +430,8 @@ genaiState:
                                   "S.$": "$$.State.EnteredTime"
                                 "messages":
                                   "S.$": "$.menuContent.Body"
-                                "ttl1":
-                                  "N.$": "$.ttl"
+                                #"ttl1":
+                                #  "N.$": "$.ttl"
                             End: true
 
                       - StartAt: promtInputMenuBedrock
@@ -472,8 +472,8 @@ genaiState:
                             "S.$": "$$.State.EnteredTime" 
                           "messages":
                             "S.$": "$.genContent.Body.content[0].text" 
-                          "ttl":
-                            "N.$": "$.ttl"
+                          #"ttl":
+                          #  "N.$": "$.ttl"
                       Next: Send Message to WebSocket Menu Prompt
 
                     Send Message to WebSocket Menu Prompt:
