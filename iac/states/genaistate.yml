@@ -33,6 +33,7 @@ genaiState:
                   messageId.$: $.messageId
                   body.$: States.StringToJson($.body)
                   messageAttributes.$: $.messageAttributes
+                  timestamp.$: States.StringToJson($.attributes.ApproximateFirstReceiveTimestamp)
                   
                 End: true
             ProcessorConfig:
@@ -368,7 +369,7 @@ genaiState:
                                 "messages":
                                   "S.$": "$.body.prompt" 
                                 "ttl2":
-                                  "N": "States.MathAdd(7200, 3600)"
+                                  "N.$": "States.MathAdd(7200, 3600)"
                             End: true
 
                       - StartAt: promtMenuBedrock
