@@ -35,8 +35,9 @@ genaiState:
                   messageAttributes.$: $.messageAttributes
                   # ----- HANDLE TIMESTAMP -----
                   timestamp.$: $.attributes.ApproximateFirstReceiveTimestamp
-                  sufixTimestamp.$: "States.Format('{}', $.attributes.ApproximateFirstReceiveTimestamp).substring(States.Format('{}', $.attributes.ApproximateFirstReceiveTimestamp).length - 4)"
-                  prefixTimestamp.$: "States.Format('{}', States.MathAdd(States.MathFloor(State.StringToJson($.attributes.ApproximateFirstReceiveTimestamp) / 10000), 4))"
+                  timestampLength.$: "States.ArrayLength(States.StringSplit($.attributes.ApproximateFirstReceiveTimestamp, ''))"
+                  "startPosition.$": "States.MathSubtract(States.ArrayLength(States.StringSplit($.attributes.ApproximateFirstReceiveTimestamp, '')), 4)"
+                  "lastFourChars.$": "States.ArrayGetItem(States.StringSplit($.attributes.ApproximateFirstReceiveTimestamp, ''), States.MathSubtract(States.ArrayLength(States.StringSplit($.attributes.ApproximateFirstReceiveTimestamp, '')), 4), States.ArrayLength(States.StringSplit($.attributes.ApproximateFirstReceiveTimestamp, '')))"
                   
                 End: true
             ProcessorConfig:
