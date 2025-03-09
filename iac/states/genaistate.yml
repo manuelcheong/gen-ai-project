@@ -367,8 +367,8 @@ genaiState:
                                   "S.$": "$$.State.EnteredTime" 
                                 "messages":
                                   "S.$": "$.body.prompt" 
-                                "ttl":
-                                  "N": !Sub "${States.MathAdd(States.TimestampFromString($$.State.EnteredTime), 7200)}"
+                                "ttl2":
+                                  "N": !Sub "${States.MathAdd(7200, 7200)}"
                             End: true
 
                       - StartAt: promtMenuBedrock
@@ -428,8 +428,8 @@ genaiState:
                                   "S.$": "$$.State.EnteredTime"
                                 "messages":
                                   "S.$": "$.menuContent.Body"
-                                "ttl":
-                                  "N": !Sub "${States.MathAdd(States.TimestampFromString($$.State.EnteredTime), 7200)}"
+                                "ttl1":
+                                  "N": !Sub "${States.TimestampFromString($$.State.EnteredTime)}"
                             End: true
 
                       - StartAt: promtInputMenuBedrock
