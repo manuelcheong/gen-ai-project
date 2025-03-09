@@ -368,7 +368,7 @@ genaiState:
                                 "messages":
                                   "S.$": "$.body.prompt" 
                                 "ttl2":
-                                  "N.$": "States.TimestampFromString($$.State.EnteredTime)"
+                                  "N.$": "States.MathAdd(7200, 3600)"
                             End: true
 
                       - StartAt: promtMenuBedrock
