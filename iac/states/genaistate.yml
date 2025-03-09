@@ -324,6 +324,7 @@ genaiState:
                         body.$: "$.body.body"
                         executionTime.$: "$$.Execution.StartTime"
                         connectionId.$: $.messageAttributes.connectionId.stringValue
+                        ttl.$: "States.MathAdd($.timestamp, 3600)"
                       Next: choiceMenu
 
                     choiceMenu:
@@ -368,8 +369,8 @@ genaiState:
                                   "S.$": "$$.State.EnteredTime" 
                                 "messages":
                                   "S.$": "$.body.prompt" 
-                                "ttl2":
-                                  "N.$": "States.MathAdd(7200, 3600)"
+                                "ttl":
+                                  "N.$": "$.ttl"
                             End: true
 
                       - StartAt: promtMenuBedrock
@@ -430,7 +431,7 @@ genaiState:
                                 "messages":
                                   "S.$": "$.menuContent.Body"
                                 "ttl1":
-                                  "N": "States.MathAdd(7200, 3600)"
+                                  "N.$": "$.ttl"
                             End: true
 
                       - StartAt: promtInputMenuBedrock
