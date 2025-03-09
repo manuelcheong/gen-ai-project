@@ -368,7 +368,7 @@ genaiState:
                                 "messages":
                                   "S.$": "$.body.prompt" 
                                 "ttl2":
-                                  "N": !Sub "${States.MathAdd(7200, 7200)}"
+                                  "N.$": "${States.MathAdd(7200, 7200)}"
                             End: true
 
                       - StartAt: promtMenuBedrock
