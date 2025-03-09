@@ -351,7 +351,7 @@ genaiState:
 
                     parallelPromptStorePromp:
                       Type: Parallel
-                      Next: Send Message to WebSocket Menu Prompt
+                      Next: StoreResponseFromPromp
                       OutputPath: "$[1]"
                       Branches:
 
@@ -459,6 +459,23 @@ genaiState:
                             ResultPath: $.genContent
                             End: true
 
+                    StoreResponseFromPromp: 
+                      Type: Task
+                      Resource: arn:aws:states:::dynamodb:putItem
+                      ResultPath: "$.responseStoreResponse"
+                      Parameters:
+                        TableName: sessions-bedrock-${self:provider.stage}
+                        Item:
+                          "sessionId": 
+                            "S.$": "$.connectionId" 
+                          "timestamp":
+                            "S.$": "$$.State.EnteredTime" 
+                          "messages":
+                            "S.$": "$.genContent.Body.content[0].text" 
+                          "ttl":
+                            "N.$": "$.ttl"
+                      Next: Send Message to WebSocket Menu Prompt
+
                     Send Message to WebSocket Menu Prompt:
                       Type: Task          
                       Resource: arn:aws:states:::apigateway:invoke
@@ -468,7 +485,7 @@ genaiState:
                         Stage: "${self:provider.stage}"
                         Path.$: "States.Format('/@connections/{}', $.connectionId)"
                         RequestBody:
-                          Message.$: $.genContent
+                          Message.$: $.genContent.Body.content[0].text
                         AuthType: IAM_ROLE
                       End: true
 
