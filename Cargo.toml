@@ -5,8 +5,8 @@ authors = ["manuel cheong <mcheong@soaint.com>"]
 edition = "2021"
 
 [[bin]]
-name = "createitem"
-path = "src/rs/createitem.rs"
+name = "enrich_event"
+path = "src/rs/enrich_events.rs"
 
 [[bin]]
 name = "scrapperrs"

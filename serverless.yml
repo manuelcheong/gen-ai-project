@@ -63,7 +63,7 @@ provider:
 
 functions:
   scrapperrs: '${file(./iac/lambda/scrapper.yml):scrapperrs}'
-  #createIteminTable: '${file(./iac/lambda/createIteminTable.yml):createIteminTable}'
+  enrich_event: '${file(./iac/lambda/enrich_event.yml):enrich_event}'
   
 
 resources:

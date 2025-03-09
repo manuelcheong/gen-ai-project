@@ -1,5 +1,5 @@
-createIteminTable:
-  handler: multi-binary.createitem
+enrich_event:
+  handler: multi-binary.enrich_event
   runtime: provided.al2023
   environment:
     RUST_BACKTRACE: full
