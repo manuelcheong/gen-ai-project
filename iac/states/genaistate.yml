@@ -324,7 +324,7 @@ genaiState:
                         body.$: "$.body.body"
                         executionTime.$: "$$.Execution.StartTime"
                         connectionId.$: $.messageAttributes.connectionId.stringValue
-                        ttl: "$.ttl"
+                        ttl.$: "$.ttl"
                       Next: choiceMenu
 
                     choiceMenu:
