@@ -11,8 +11,7 @@ genaiPipe:
         BatchSize: 10
         MaximumBatchingWindowInSeconds: 3
     #Enrichment: arn:aws:states:${self:provider.region}:178934116267:stateMachine:enrich_msg_sfn-${self:provider.stage}
-    Enrichment:
-      Fn::GetAtt: ["enrich_event", "Arn"]
+    Enrichment: arn:aws:lambda:${self:provider.region}:178934116267:function:gen-ai-service-${self:provider.stage}-enrich_event
     Target: arn:aws:states:${self:provider.region}:178934116267:stateMachine:gen-ai-states-${self:provider.stage}
     TargetParameters:
       StepFunctionStateMachineParameters:

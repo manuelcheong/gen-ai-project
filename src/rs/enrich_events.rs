@@ -3,9 +3,9 @@ use lambda_runtime::{service_fn, LambdaEvent, Error};
 
 // use serde::{Deserialize, Serialize};
 use serde_json::Value;
-use serde_json::json;
+// use serde_json::json;
 
-use core::result::Result;
+// use core::result::Result;
 
 #[tokio::main]
 async fn main() -> Result<(), Error> {
