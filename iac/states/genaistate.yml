@@ -370,7 +370,7 @@ genaiState:
                                 "messages":
                                   "S.$": "$.body.prompt" 
                                 "ttl":
-                                  "N.$": "$.ttl"
+                                  "N.$": "States.JsonToString($.ttl)"
                             End: true
 
                       - StartAt: promtMenuBedrock
@@ -431,7 +431,7 @@ genaiState:
                                 "messages":
                                   "S.$": "$.menuContent.Body"
                                 "ttl1":
-                                  "N.$": "$.ttl"
+                                  "N.$": "States.JsonToString($.ttl)"
                             End: true
 
                       - StartAt: promtInputMenuBedrock
@@ -473,7 +473,7 @@ genaiState:
                           "messages":
                             "S.$": "$.genContent.Body.content[0].text" 
                           "ttl":
-                            "N.$": "$.ttl"
+                            "N.$": "States.JsonToString($.ttl)"
                       Next: Send Message to WebSocket Menu Prompt
 
                     Send Message to WebSocket Menu Prompt:
