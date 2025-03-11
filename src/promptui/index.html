@@ -4,6 +4,24 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MenuGen 0.1</title>
+    <style>
+        table {
+            width: 80%;
+            border-collapse: collapse;
+            margin: 20px auto;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+            }
+            tr:nth-child(even) {
+                background-color: #f9f9f9;
+            }
+        </style>
     <script src="config.js"></script>
     <script src="https://cdn.socket.io/4.0.0/socket.io.min.js"></script>
     <script>
@@ -28,8 +46,8 @@
                 console.log('WebSocket message received:');
                 console.log(msg);  
                  
-                if (msg.Message?.Body?.content) {
-                    const content = msg.Message.Body.content[0].text;
+                if (msg.Message) {
+                    const content = msg.Message;
                     const iframe = document.getElementById('responseFrame');
                     iframe.contentWindow.document.open();
                     iframe.contentWindow.document.write(content);
@@ -51,7 +69,7 @@
             form.addEventListener('submit', (e) => {
                 e.preventDefault();
                 if (input.value) {
-                    const content = '<p>Generando contenido ...</p>';
+                    const content = '<p>Procesando ...</p>';
                     const iframe = document.getElementById('responseFrame');
                     iframe.contentWindow.document.open();
                     iframe.contentWindow.document.write(content);
@@ -90,15 +108,51 @@
     </script>
 </head>
 <body>
-    <h1> Pedido </h1>
+    <h1> Chat </h1>
     <ul id="messages"></ul>
     <form id="promptForm" action="">
         <input id="promptInput" autocomplete="off" /><button type="submit">Send</button>
     </form>
 
-    <iframe id="responseFrame" style="width: 100%; height: 600px;"></iframe>
+    <iframe id="responseFrame" style="width: 100%; height: 200px;"></iframe>
 
     <h1> Menu </h1>
+    <h2></h2>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Restaurante</th>
+                <th>Menu</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>Foster's Hollywood Garbera</td>
+                <td>menus/FH/20250226ES005978.json</td>
+            </tr>
+            <tr>
+                <td>Row 2, Cell 1</td>
+                <td>>menus/FL/20250226ES055699.json</td>
+            </tr>
+            <tr>
+                <td>Row 3, Cell 1</td>
+                <td>>menus/FR/20250221ES0043921.json</td>
+            </tr>
+            <tr>
+                <td>Row 4, Cell 1</td>
+                <td>>menus/GN/20250226ES0025560.json</td>
+            </tr>
+            <tr>
+                <td>Row 4, Cell 1</td>
+                <td>>menus/VP/20250306ES0016520.json</td>
+            </tr>
+            <tr>
+                <td>Row 4, Cell 1</td>
+                <td>>menus/VS/20250218ES0115634.json</td>
+            </tr>
+       </tbody>
+    </table>
     <ul id="messages2"></ul>
     <form id="promptForm2" action="">
         <input id="promptInput2" autocomplete="off" /><button type="submit">Send</button>
