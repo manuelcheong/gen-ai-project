@@ -12,13 +12,6 @@ path = "src/rs/enrich_events.rs"
 name = "scrapperrs"
 path = "src/rs/scrapperrs.rs"
 
-[[bin]]
-name = "faiss_handler"
-path = "src/rs/faiss_handler.rs"
-
-[[bin]]
-name = "faiss_updates"
-path = "src/rs/faiss_updates.rs"
 
 [dependencies]
 futures-util = "0.3.31"
