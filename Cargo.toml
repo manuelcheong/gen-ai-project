@@ -30,7 +30,6 @@ tokio = { version = "1", features = ["full"] }
 aws-config = {version = "1", features = ["behavior-version-latest"] }
 aws-sdk-s3 = "1"
 uuid = { version = "1.8", features = ["v4"] }
-
 anyhow = "1.0"
 faiss = { git = "https://github.com/Enet4/faiss-rs", branch = "main" }
 ndarray = "0.15.6"
