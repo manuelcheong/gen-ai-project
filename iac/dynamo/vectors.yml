@@ -1,0 +1,11 @@
+vectorDatabase:
+  Type: "AWS::DynamoDB::Table"
+  Properties:
+    TableName: vectors-table-${self:provider.stage}
+    AttributeDefinitions:
+      - AttributeName: vectorId
+        AttributeType: S
+    KeySchema:
+      - AttributeName: vectorId
+        KeyType: HASH
+    BillingMode: PAY_PER_REQUEST

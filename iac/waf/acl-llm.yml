@@ -1,0 +1,297 @@
+OWASPLLMWebACL:
+    Type: 'AWS::WAFv2::WebACL'
+    Properties:
+      Name: OWASP-Top10-LLM-Protection
+      Scope: CLOUDFRONT  # Cambia a CLOUDFRONT si lo usarás con CloudFront
+      Description: 'WebACL implementing OWASP Top 10 for LLM Applications protection'
+      DefaultAction:
+        Allow: {}
+      VisibilityConfig:
+        SampledRequestsEnabled: true
+        CloudWatchMetricsEnabled: true
+        MetricName: OWASP-Top10-LLM-Protection
+      Rules:
+        # LLM01: Prompt Injection
+        - Name: LLM01-PromptInjection
+          Priority: 1
+          Statement:
+            AndStatement:
+              Statements:
+                - RegexPatternSetReferenceStatement:
+                    ARN: !GetAtt PromptInjectionPatterns.ARN
+                    FieldToMatch:
+                      Body: {}
+                    TextTransformations:
+                      - Priority: 0
+                        Type: NONE
+                - NotStatement:
+                    Statement:
+                      ByteMatchStatement:
+                        SearchString: 'trusted-source'
+                        FieldToMatch:
+                          SingleHeader:
+                            Name: 'x-api-key'
+                        TextTransformations:
+                          - Priority: 0
+                            Type: NONE
+                        PositionalConstraint: CONTAINS
+          Action:
+            Block: {}
+          VisibilityConfig:
+            SampledRequestsEnabled: true
+            CloudWatchMetricsEnabled: true
+            MetricName: LLM01-PromptInjection
+
+        # LLM02: Insecure Output Handling
+        - Name: LLM02-InsecureOutputHandling
+          Priority: 2
+          Statement:
+            RateBasedStatement:
+              Limit: 100
+              AggregateKeyType: IP
+              ScopeDownStatement:
+                ByteMatchStatement:
+                  SearchString: '/api/llm/generate'
+                  FieldToMatch:
+                    UriPath: {}
+                  TextTransformations:
+                    - Priority: 0
+                      Type: NONE
+                  PositionalConstraint: CONTAINS
+          Action:
+            Block: {}
+          VisibilityConfig:
+            SampledRequestsEnabled: true
+            CloudWatchMetricsEnabled: true
+            MetricName: LLM02-InsecureOutputHandling
+
+        # LLM03: Training Data Poisoning
+        - Name: LLM03-TrainingDataPoisoning
+          Priority: 3
+          Statement:
+            AndStatement:
+              Statements:
+                - ByteMatchStatement:
+                    SearchString: '/api/llm/train'
+                    FieldToMatch:
+                      UriPath: {}
+                    TextTransformations:
+                      - Priority: 0
+                        Type: NONE
+                    PositionalConstraint: CONTAINS
+                - SizeConstraintStatement:
+                    ComparisonOperator: GT
+                    Size: 5242880  # 5MB limit for training data
+                    FieldToMatch:
+                      Body: {}
+                    TextTransformations:
+                      - Priority: 0
+                        Type: NONE
+          Action:
+            Block: {}
+          VisibilityConfig:
+            SampledRequestsEnabled: true
+            CloudWatchMetricsEnabled: true
+            MetricName: LLM03-TrainingDataPoisoning
+
+        # LLM04: Model Denial of Service
+        - Name: LLM04-ModelDoS
+          Priority: 4
+          Statement:
+            RateBasedStatement:
+              Limit: 50
+              AggregateKeyType: IP
+              ScopeDownStatement:
+                ByteMatchStatement:
+                  SearchString: '/api/llm'
+                  FieldToMatch:
+                    UriPath: {}
+                  TextTransformations:
+                    - Priority: 0
+                      Type: NONE
+                  PositionalConstraint: CONTAINS
+          Action:
+            Block: {}
+          VisibilityConfig:
+            SampledRequestsEnabled: true
+            CloudWatchMetricsEnabled: true
+            MetricName: LLM04-ModelDoS
+
+        # LLM05: Supply Chain Vulnerabilities
+        - Name: LLM05-SupplyChainVulnerabilities
+          Priority: 5
+          Statement:
+            ByteMatchStatement:
+              SearchString: '/api/llm/model/update'
+              FieldToMatch:
+                UriPath: {}
+              TextTransformations:
+                - Priority: 0
+                  Type: NONE
+              PositionalConstraint: CONTAINS
+          Action:
+            ManagedRuleGroupStatement:
+              VendorName: AWS
+              Name: AWSManagedRulesKnownBadInputsRuleSet
+          VisibilityConfig:
+            SampledRequestsEnabled: true
+            CloudWatchMetricsEnabled: true
+            MetricName: LLM05-SupplyChainVulnerabilities
+
+        # LLM06: Sensitive Information Disclosure
+        - Name: LLM06-SensitiveInfoDisclosure
+          Priority: 6
+          Statement:
+            RegexPatternSetReferenceStatement:
+              ARN: !GetAtt SensitiveDataPatterns.ARN
+              FieldToMatch:
+                Body: {}
+              TextTransformations:
+                - Priority: 0
+                  Type: NONE
+          Action:
+            Block: {}
+          VisibilityConfig:
+            SampledRequestsEnabled: true
+            CloudWatchMetricsEnabled: true
+            MetricName: LLM06-SensitiveInfoDisclosure
+
+        # LLM07: Insecure Plugin Design
+        - Name: LLM07-InsecurePluginDesign
+          Priority: 7
+          Statement:
+            AndStatement:
+              Statements:
+                - ByteMatchStatement:
+                    SearchString: '/api/llm/plugins'
+                    FieldToMatch:
+                      UriPath: {}
+                    TextTransformations:
+                      - Priority: 0
+                        Type: NONE
+                    PositionalConstraint: CONTAINS
+                - NotStatement:
+                    Statement:
+                      ByteMatchStatement:
+                        SearchString: 'plugin-verification'
+                        FieldToMatch:
+                          SingleHeader:
+                            Name: 'x-plugin-token'
+                        TextTransformations:
+                          - Priority: 0
+                            Type: NONE
+                        PositionalConstraint: CONTAINS
+          Action:
+            Block: {}
+          VisibilityConfig:
+            SampledRequestsEnabled: true
+            CloudWatchMetricsEnabled: true
+            MetricName: LLM07-InsecurePluginDesign
+
+        # LLM08: Excessive Agency
+        - Name: LLM08-ExcessiveAgency
+          Priority: 8
+          Statement:
+            ByteMatchStatement:
+              SearchString: '/api/llm/autonomous-actions'
+              FieldToMatch:
+                UriPath: {}
+              TextTransformations:
+                - Priority: 0
+                  Type: NONE
+              PositionalConstraint: CONTAINS
+          Action:
+            CaptchaAction: {}
+          VisibilityConfig:
+            SampledRequestsEnabled: true
+            CloudWatchMetricsEnabled: true
+            MetricName: LLM08-ExcessiveAgency
+
+        # LLM09: Overreliance
+        - Name: LLM09-Overreliance
+          Priority: 9
+          Statement:
+            RateBasedStatement:
+              Limit: 200
+              AggregateKeyType: IP
+              ScopeDownStatement:
+                ByteMatchStatement:
+                  SearchString: '/api/llm/critical-decisions'
+                  FieldToMatch:
+                    UriPath: {}
+                  TextTransformations:
+                    - Priority: 0
+                      Type: NONE
+                  PositionalConstraint: CONTAINS
+          Action:
+            Challenge: {}
+          VisibilityConfig:
+            SampledRequestsEnabled: true
+            CloudWatchMetricsEnabled: true
+            MetricName: LLM09-Overreliance
+
+        # LLM10: Model Theft
+        - Name: LLM10-ModelTheft
+          Priority: 10
+          Statement:
+            AndStatement:
+              Statements:
+                - ByteMatchStatement:
+                    SearchString: '/api/llm/model'
+                    FieldToMatch:
+                      UriPath: {}
+                    TextTransformations:
+                      - Priority: 0
+                        Type: NONE
+                    PositionalConstraint: CONTAINS
+                - RateBasedStatement:
+                    Limit: 30
+                    AggregateKeyType: IP
+          Action:
+            Block: {}
+          VisibilityConfig:
+            SampledRequestsEnabled: true
+            CloudWatchMetricsEnabled: true
+            MetricName: LLM10-ModelTheft
+
+  # Regex Pattern Sets
+PromptInjectionPatterns:
+    Type: 'AWS::WAFv2::RegexPatternSet'
+    Properties:
+      Name: PromptInjectionPatterns
+      Scope: CLOUDFRONT  # Cambia a CLOUDFRONT si lo usarás con CloudFront
+      Description: 'Patterns to detect prompt injection attacks'
+      RegularExpressionList:
+        - 'ignore previous instructions'
+        - 'disregard all prior commands'
+        - 'forget your instructions'
+        - 'you are now [a-zA-Z]+'
+        - 'system:\s*'
+        - 'now act as [a-zA-Z]+'
+        - 'ignore your previous directives'
+        - 'bypass content filters'
+        - 'ignore content policy'
+        - 'ignore ethical guidelines'
+
+SensitiveDataPatterns:
+    Type: 'AWS::WAFv2::RegexPatternSet'
+    Properties:
+      Name: SensitiveDataPatterns
+      Scope: CLOUDFRONT  # Cambia a CLOUDFRONT si lo usarás con CloudFront
+      Description: 'Patterns to detect sensitive data'
+      RegularExpressionList:
+        - '[0-9]{3}-[0-9]{2}-[0-9]{4}'  # SSN
+        - '[0-9]{4}-[0-9]{4}-[0-9]{4}-[0-9]{4}'  # Credit Card
+        - '[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}'  # Email
+        - 'password[s]?\s*[=:]\s*[^\s]+'  # Passwords
+        - 'api[_-]?key[s]?\s*[=:]\s*[^\s]+'  # API Keys
+        - 'secret[s]?\s*[=:]\s*[^\s]+'  # Secrets
+        - 'token[s]?\s*[=:]\s*[^\s]+'  # Tokens
+
+Outputs:
+  WebACLId:
+    Description: 'ID of the WebACL'
+    Value: !Ref OWASPLLMWebACL
+  WebACLArn:
+    Description: 'ARN of the WebACL'
+    Value: !GetAtt OWASPLLMWebACL.Arn

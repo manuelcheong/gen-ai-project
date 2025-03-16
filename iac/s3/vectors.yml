@@ -1,0 +1,4 @@
+VectorIndicesBucket:
+  Type: AWS::S3::Bucket
+  Properties:
+    BucketName: vector-indices-${self:provider.stage}

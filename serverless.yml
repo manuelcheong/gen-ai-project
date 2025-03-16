@@ -125,6 +125,8 @@ resources:
     privateModel: '${file(./iac/dynamo/privateModel.yml):privateModel}'
     sessionsBedrock: '${file(./iac/dynamo/sessionsBedrock.yml):sessionsBedrock}'
 
+    vectorDatabase: '${file(./iac/dynamo/vectors.yml):vectorDatabase}'
+
     # ---------- S3 TABLE 🫡 ---------------
     s3Table: '${file(./iac/s3/tables.yml):s3Table}'
     s3TableOutput: '${file(./iac/s3/tables.yml):s3TableOutput}'
@@ -134,6 +136,9 @@ resources:
     # ---------- S3 WEBSITE 🫡 --------------
     WebsiteBucket: '${file(./iac/s3/frontend.yml):WebsiteBucket}'
     WebsiteBucketPolicy: '${file(./iac/s3/frontend.yml):WebsiteBucketPolicy}'
+
+    # ---------- S3 VECTORS 🫡 ---------------
+    VectorIndicesBucket: '${file(./iac/s3/vectors.yml):VectorIndicesBucket}'
 
     
 

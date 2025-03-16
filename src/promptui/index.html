@@ -23,17 +23,19 @@
             }
         </style>
     <script src="config.js"></script>
-    <script src="https://cdn.socket.io/4.0.0/socket.io.min.js"></script>
+    <script src="https://cdn.socket.io/4.5.4/socket.io.min.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', (event) => {
             const socketUrl = window.config.websocketUrl;
-            const token = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJub2xpMjMiLCJpYXQiOjE3NDA4OTQwNjMsImV4cCI6MTc0MDk4MDQ2M30.tuxcTREygeIqcAOJfoQVAPX4TEFFC9YplAYXID5GlwM'; // Replace with your actual token
+            const token = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJub2xpMjMiLCJpYXQiOjE3NDE5NDc5ODksImV4cCI6MTc0MjAzNDM4OX0.pJ1TIbGuPH86IEOWOcyVRgWcOd3a2GDzqEHwP6y0MeI'; // Replace with your actual token
 
-            const socket = new WebSocket(socketUrl, [], {
-                headers: {
-                    Authorization: `${token}`
+            const socket = new WebSocket(socketUrl, {
+                extraHeaders: {
+                    Authorization: token
                 }
             });
+
+            // const socket = new WebSocket(`${socketUrl}?token=${encodeURIComponent(token)}`);
 
             socket.onopen = () => {
                 console.log('WebSocket connection established');
