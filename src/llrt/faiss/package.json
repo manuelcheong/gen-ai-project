@@ -1,0 +1,9 @@
+{
+  "name": "faiss",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "dependencies": {
+    "faiss-node": "^0.5.1"
+  }
+}

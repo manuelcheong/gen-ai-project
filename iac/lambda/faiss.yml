@@ -1,0 +1,6 @@
+faiss:
+  handler: faiss.handler
+  runtime: provided.al2
+  package:
+    artifact: src/llrt/faiss/faiss.zip
+  timeout: 15 

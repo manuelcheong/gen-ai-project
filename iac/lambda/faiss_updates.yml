@@ -1,5 +1,0 @@
-faiss_updates:
-  handler: multi-binary.faiss_updates
-  runtime: provided.al2023
-  environment:
-    RUST_BACKTRACE: full

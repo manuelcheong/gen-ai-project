@@ -23,11 +23,7 @@ tokio = { version = "1", features = ["full"] }
 aws-config = {version = "1", features = ["behavior-version-latest"] }
 aws-sdk-s3 = "1"
 uuid = { version = "1.8", features = ["v4"] }
-anyhow = "1.0"
-faiss = { git = "https://github.com/Enet4/faiss-rs", branch = "master" }
-ndarray = "0.15.6"
-bytes = "1.4.0"
-tempfile = "3.5.0"
+
 
 
 [profile.release]
