@@ -213,7 +213,7 @@ genaiState:
                         generatedContent: "{% $outputUrlContent %}"
                       Arguments:
                         FunctionName: arn:aws:lambda:${self:provider.region}:178934116267:function:gen-ai-service-${self:provider.stage}-scrapperrs 
-                        Payload: "{% $body %}"
+                        Payload: "{% $states.input.body %}"
                       Output: "{% $outputUrlContent %}"
 
 
