@@ -55,6 +55,7 @@ async fn main() -> Result<(), Error> {
 }
 
 async fn func(event: LambdaEvent<Value>) -> Result<Value, Error> {
+    println!("{:?}", event);
     // List of URLs to scrape
     /* let urls: Vec<String> = vec![
         "https://example.com/1".to_string(),
