@@ -116,6 +116,7 @@ async fn func(event: LambdaEvent<Value>) -> Result<Value, Error> {
             "bucket": std::env::var("BUCKET_NAME").expect("BUCKET_NAME must be set"),
             "key": uuid_string,
         }, */
+        "output": "salida",
         "content": output
         }))
 }
