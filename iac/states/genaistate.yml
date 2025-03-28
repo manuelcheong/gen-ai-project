@@ -209,12 +209,12 @@ genaiState:
                     invokeParser:
                       Type: Task
                       QueryLanguage: JSONata
-                      Assign:
-                        generatedContent: "{% $outputUrlContent %}"
                       Arguments:
                         FunctionName: arn:aws:lambda:${self:provider.region}:178934116267:function:gen-ai-service-${self:provider.stage}-scrapperrs 
                         Payload: "{% $states.input.body %}"
-                      Output: "{% $outputUrlContent %}"
+                      Assign:
+                        generatedContent: "{% $states.result.outputUrlContent %}"
+                      Output: "{% $states.result.outputUrlContent %}"
 
 
                       Resource: arn:aws:states:::lambda:invoke
