@@ -55,7 +55,7 @@ async fn main() -> Result<(), Error> {
 }
 
 async fn func(event: LambdaEvent<Value>) -> Result<Value, Error> {
-    println!("{:?}", event);
+    // println!("{:?}", event);
     // List of URLs to scrape
     /* let urls: Vec<String> = vec![
         "https://example.com/1".to_string(),
@@ -111,9 +111,12 @@ async fn func(event: LambdaEvent<Value>) -> Result<Value, Error> {
     let prefix = "s3://gen-ai-content-pre/".to_string();
     let result = prefix + &uuid_string;
     Ok(json!({
-        "url": result,  // "s3://gen-ai-content-pre/filename.txt",
-        "bucket": std::env::var("BUCKET_NAME").expect("BUCKET_NAME must be set"),
-        "key": uuid_string,
+        "s3": {
+            "url": result,  // "s3://gen-ai-content-pre/filename.txt",
+            "bucket": std::env::var("BUCKET_NAME").expect("BUCKET_NAME must be set"),
+            "key": uuid_string,
+        },
+        "content": output
         }))
 }
 

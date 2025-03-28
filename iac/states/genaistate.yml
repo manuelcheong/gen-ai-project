@@ -215,32 +215,24 @@ genaiState:
                       Assign:
                         generatedContent: "{% $states.result.Payload %}"
                         inputContent: "{% $states.input %}"
-                      Output: "{% $states.result %}"
-
-
+                      Output: "{% $states.result.Payload.s3 %}"
                       Resource: arn:aws:states:::lambda:invoke
-                      ##Parameters:
-                      ##  FunctionName: arn:aws:lambda:${self:provider.region}:178934116267:function:gen-ai-service-${self:provider.stage}-scrapperrs
-                      ##  Payload.$: "$.body"
-                        #Payload: {content.$: "$.urlsContent.Body.content[0].text"}
-                      #OutputPath: "$.Payload"
-                      ##ResultPath: "$.outputUrlContent"
-                      
-                      Next: getContent
-
-                    getContent:
-                      Type: Task
-                      Parameters:
-                        Bucket.$: $.Payload.bucket   # gen-ai-content-${self:provider.stage}
-                        Key.$: $.Payload.key   #"output123.txt"
-                      ResultPath: "$.allContent"
-                      Resource: arn:aws:states:::aws-sdk:s3:getObject
                       Next: promtBedrock
+
+                    #getContent:
+                    #  Type: Task
+                    #  Parameters:
+                    #    Bucket.$: $.Payload.bucket   # gen-ai-content-${self:provider.stage}
+                    #    Key.$: $.Payload.key   #"output123.txt"
+                    #  ResultPath: "$.allContent"
+                    #  Resource: arn:aws:states:::aws-sdk:s3:getObject
+                    #  Next: promtBedrock
 
                     promtBedrock:
                       Type: Task
+                      QueryLanguage: JSONata
                       Resource: arn:aws:states:::bedrock:invokeModel
-                      Parameters:
+                      Arguments:
                         ModelId: "anthropic.claude-3-sonnet-20240229-v1:0" #arn:aws:bedrock:eu-west-1::foundation-model/anthropic.claude-3-sonnet-20240229-v1:0    #"anthropic.claude-3-5-sonnet-20240620-v1:0"
                         Body:
                           anthropic_version: "bedrock-2023-05-31"
@@ -249,10 +241,12 @@ genaiState:
                               content:
                                 - type: "text"
                                   #text.$: $.body.prompt
-                                  text.$: "States.Format('Genera un resumen con este contenido:  {}', $.allContent.Body)"
+                                  text: "{% 'Genera un resumen con este contenido: ' & $generatedContent.content %}" #"States.Format('Genera un resumen con este contenido:  {}', $.allContent.Body)"
                           max_tokens: 500
                         
-                      ResultPath: $.genContent
+                      #ResultPath: $.genContent
+                      Assign:
+                        resumeContent: "{% $states.result %}"
                       Next: Send Message to WebSocket Client Prompt
 
                       #"Parameters": {
@@ -273,7 +267,7 @@ genaiState:
                       #  Path.$: "States.Format('/@connections/{}', $.connectionId)"
                         Path: "{% '/@connections/' & $inputContent.connectionId %}"
                         RequestBody:
-                          Message: "{% $states.input.genContent %}" 
+                          Message: "{% $resumeContent %}" 
                         AuthType: IAM_ROLE
                       End: true
     
