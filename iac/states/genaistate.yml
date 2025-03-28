@@ -263,15 +263,17 @@ genaiState:
                       #  }
 
                     Send Message to WebSocket Client Prompt:
-                      Type: Task          
+                      Type: Task      
+                      QueryLanguage: JSONata    
                       Resource: arn:aws:states:::apigateway:invoke
-                      Parameters:
+                      Arguments:
                         ApiEndpoint: !Sub "${WebSocketApi}.execute-api.${AWS::Region}.amazonaws.com"
                         Method: POST
                         Stage: "${self:provider.stage}"
-                        Path.$: "States.Format('/@connections/{}', $.connectionId)"
+                      #  Path.$: "States.Format('/@connections/{}', $.connectionId)"
+                        Path: "{% '/@connections/' & $inputContent.connectionId %}"
                         RequestBody:
-                          Message.$: $.genContent
+                          Message: "{% $states.input.genContent %}" 
                         AuthType: IAM_ROLE
                       End: true
     
