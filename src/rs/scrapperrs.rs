@@ -1,11 +1,11 @@
-// use aws_sdk_s3::primitives::ByteStream;
+use aws_sdk_s3::primitives::ByteStream;
 use lambda_runtime::{service_fn, LambdaEvent, Error};
 use tokio;
 use reqwest::{Client};
 use serde_json::Value;
 use tokio::task::JoinError;
 use serde_json::json;
-// use uuid::Uuid;
+use uuid::Uuid;
 // use regex::Regex;
 // use scraper::{Html, Selector};
 
@@ -100,7 +100,7 @@ async fn func(event: LambdaEvent<Value>) -> Result<Value, Error> {
         Err(err) => eprintln!("Failed to join all tasks: {:?}", err),
     }
 
-    /* let config = aws_config::load_from_env().await;
+    let config = aws_config::load_from_env().await;
     let s3_client = aws_sdk_s3::Client::new(&config);
 
     let my_uuid = Uuid::new_v4();
@@ -109,19 +109,17 @@ async fn func(event: LambdaEvent<Value>) -> Result<Value, Error> {
     upload_content(&s3_client, &output, &uuid_string).await?;
 
     let prefix = "s3://gen-ai-content-pre/".to_string();
-    let result = prefix + &uuid_string; */
+    let result = prefix + &uuid_string; 
     Ok(json!({
-        /* "s3": {
+        "s3": {
             "url": result,  // "s3://gen-ai-content-pre/filename.txt",
             "bucket": std::env::var("BUCKET_NAME").expect("BUCKET_NAME must be set"),
             "key": uuid_string,
-        }, */
-        "output": "salida",
-        "content": output
+        }
         }))
 }
 
-/* pub async fn upload_content(
+pub async fn upload_content(
     client: &aws_sdk_s3::Client,
     content: &str,
     uuid_string: &String,
@@ -141,4 +139,4 @@ async fn func(event: LambdaEvent<Value>) -> Result<Value, Error> {
     // println!("{:?}", result);
 
     Ok(())
-} */
+}

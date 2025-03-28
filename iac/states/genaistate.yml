@@ -215,20 +215,18 @@ genaiState:
                       Assign:
                         generatedContent: "{% $states.result.Payload %}"
                         inputContent: "{% $states.input %}"
-                      Output: {
-                        "output": "Prueba de salida"
-                      }
+                      Output: "{% $states.result %}"
                       Resource: arn:aws:states:::lambda:invoke
-                      Next: promtBedrock
+                      Next: getContent
 
-                    #getContent:
-                    #  Type: Task
-                    #  Parameters:
-                    #    Bucket.$: $.Payload.bucket   # gen-ai-content-${self:provider.stage}
-                    #    Key.$: $.Payload.key   #"output123.txt"
-                    #  ResultPath: "$.allContent"
-                    #  Resource: arn:aws:states:::aws-sdk:s3:getObject
-                    #  Next: promtBedrock
+                    getContent:
+                      Type: Task
+                      Parameters:
+                        Bucket.$: $.Payload.bucket   # gen-ai-content-${self:provider.stage}
+                        Key.$: $.Payload.key   #"output123.txt"
+                      ResultPath: "$.allContent"
+                      Resource: arn:aws:states:::aws-sdk:s3:getObject
+                      Next: promtBedrock
 
                     promtBedrock:
                       Type: Task
@@ -242,7 +240,7 @@ genaiState:
                             - role: "user"
                               content:
                                 - type: "text"
-                                  text: "{% 'Genera un resumen con este contenido: ' & $generatedContent.content %}" #"States.Format('Genera un resumen con este contenido:  {}', $.allContent.Body)"
+                                  text: "{% 'Genera un resumen con este contenido: ' & $state.input.allContent %}" #"States.Format('Genera un resumen con este contenido:  {}', $.allContent.Body)"
                           max_tokens: 500
                       Assign:
                         resumeContent: "{% $states.result %}"
