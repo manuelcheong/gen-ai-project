@@ -62,4 +62,4 @@ jobs:
         run: serverless deploy --stage ${{ env.STAGE }} --region ${{ env.AWS_REGION }}
 
       - name: Prune old versions 🧹
-        run: serverless prune -n 4 --stage ${{ env.STAGE }}
+        run: serverless prune -n 2 --stage ${{ env.STAGE }}
