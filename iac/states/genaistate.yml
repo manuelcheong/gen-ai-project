@@ -215,7 +215,7 @@ genaiState:
                       Assign:
                         generatedContent: "{% $states.result.Payload %}"
                         inputContent: "{% $states.input %}"
-                      #Output: "{% $states.result.Payload.s3 %}"
+                      Output: "{% $states.input.body %}"
                       Resource: arn:aws:states:::lambda:invoke
                       Next: promtBedrock
 
