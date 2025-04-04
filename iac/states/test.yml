@@ -15,4 +15,4 @@ testState:
     TracingConfiguration:
       Enabled: true
 
-    DefinitionString: !Sub ${file:./iac/states/definitions/test.asl.json}
+    DefinitionUri: ./iac/states/definitions/test.asl.json
