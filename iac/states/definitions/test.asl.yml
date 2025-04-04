@@ -1,0 +1,9 @@
+Comment: A description of my state machine
+StartAt: Pass
+States:
+  Pass:
+    Type: Pass
+    Parameters:
+      all.$: $
+    End: true
+QueryLanguage: JSONPath

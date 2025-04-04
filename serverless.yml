@@ -83,6 +83,8 @@ resources:
     genaiState: '${file(./iac/states/genaistate.yml):genaiState}'
     statesRole: '${file(./iac/states/statesRole.yml):statesRole}'
 
+    testState: '${file(./iac/states/test.yml):testState}'
+
     # ---------- WEBSOCKET API 🫡 ----------------
     WebSocketApi: '${file(./iac/api/websocket_api.yml):WebSocketApi}'
     WebSocketApiDeployment: '${file(./iac/api/websocket_api.yml):WebSocketApiDeployment}'

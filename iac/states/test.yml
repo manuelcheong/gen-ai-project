@@ -1,0 +1,18 @@
+testState:
+  Type: AWS::StepFunctions::StateMachine
+  Properties:
+    StateMachineName: test-states-${self:provider.stage}
+    StateMachineType: STANDARD
+    RoleArn: !GetAtt statesRole.Arn
+
+    LoggingConfiguration:
+      Destinations:
+        - CloudWatchLogsLogGroup:
+            LogGroupArn: !GetAtt statesLogGroup.Arn
+      IncludeExecutionData: true
+      Level: ALL
+
+    TracingConfiguration:
+      Enabled: true
+
+    DefinitionString: !Sub ${file:test.asl.json}
