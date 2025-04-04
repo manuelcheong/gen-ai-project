@@ -73,11 +73,6 @@ resources:
 
     # ---------- PArameters 🫡 ---------------
 
-    Parameters:
-      testStateMachine:
-        Type: String
-        Default: "testStateMachine"
-        Description: SFN 1
   
     # ---------- QUEUE 🫡 ----------------
     genaiQueue: '${file(./iac/queues/genaiQueue.yml):genaiQueue}'
