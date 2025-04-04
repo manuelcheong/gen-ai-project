@@ -60,7 +60,7 @@ jobs:
       
 
       - name: Add execution permission to REPLACE VARABLES 😎
-        run: chmod +x replace_variable.sh
+        run: chmod +x replace_variables.sh
 
       - name: Replace variables 😎
         run: ./replace_variable.sh -t iac/states/definitions/test.asl.yml -v TEST_STATE_MACHINE_DEFINITION -s iac/states/definitions/test.asl.json 
