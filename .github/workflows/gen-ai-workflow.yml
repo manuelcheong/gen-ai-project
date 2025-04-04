@@ -58,6 +58,16 @@ jobs:
       - name: Create package FAISS LLRT 😎
         run: cd src/llrt/faiss && zip -r faiss.zip . && cd ../../..
       
+
+      - name: Add execution permission to REPLACE VARABLES 😎
+        run: chmod +x replace_variable.sh
+
+      - name: Replace variables 😎
+        run: ./replace_variable.sh -t iac/states/definitions/test.asl.yml -v TEST_STATE_MACHINE_DEFINITION -s iac/states/definitions/test.asl.json 
+
+      - name: validate replaces 😎
+        run: cat iac/states/test.yml
+
       - name: Deploy GEN-AI reference 🚀 🔥
         run: serverless deploy --stage ${{ env.STAGE }} --region ${{ env.AWS_REGION }}
 

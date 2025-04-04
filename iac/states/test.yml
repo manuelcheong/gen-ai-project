@@ -15,4 +15,5 @@ testState:
     TracingConfiguration:
       Enabled: true
 
-    DefinitionUri: definitions/test.asl.json
+    DefinitionString: !Sub
+      - ${TEST_STATE_MACHINE_DEFINITION}
