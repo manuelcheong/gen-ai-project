@@ -63,7 +63,7 @@ jobs:
         run: chmod +x replace_variables.sh
 
       - name: Replace variables 😎
-        run: ./replace_variable.sh -t iac/states/definitions/test.asl.yml -v TEST_STATE_MACHINE_DEFINITION -s iac/states/definitions/test.asl.json 
+        run: ./replace_variables.sh -t iac/states/definitions/test.asl.yml -v TEST_STATE_MACHINE_DEFINITION -s iac/states/definitions/test.asl.json 
 
       - name: validate replaces 😎
         run: cat iac/states/test.yml
