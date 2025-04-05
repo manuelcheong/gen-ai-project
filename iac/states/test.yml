@@ -15,6 +15,5 @@ testState:
     TracingConfiguration:
       Enabled: true
 
-    DefinitionString: !Sub
-      - |
-        ${TEST_STATE_MACHINE_DEFINITION}
+    Definition:
+      ${TEST_STATE_MACHINE_DEFINITION}
