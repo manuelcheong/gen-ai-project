@@ -15,8 +15,14 @@ testState:
     TracingConfiguration:
       Enabled: true
 
-    DefinitionString: !Sub |
-      ${file(./iac/states/definitions/test.asl.json)}
+    DefinitionString:
+      Fn::Transform:
+        Name: AWS::Include
+        Parameters:
+          Location: ./iac/states/definitions/test.asl.json
+
+    #DefinitionString:
+    #  Fn::Sub: ${file(./iac/states/definitions/test.asl.json)}
     
     
     #${TEST_STATE_MACHINE_DEFINITION}
