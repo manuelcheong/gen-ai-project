@@ -35,8 +35,11 @@ provider:
     #KEY_SSM2: ${ssm:/parameter/genaiapikey}
   lambdaHashingVersion: 20201221
   architecture: arm64
-  stackExtraCapabilities: 
-    - CAPABILITY_AUTO_EXPAND
+  cfnDeployment:
+    capabilities:
+      - CAPABILITY_IAM
+      - CAPABILITY_NAMED_IAM
+      - CAPABILITY_AUTO_EXPAND
 
   iamRoleStatements:
   - Effect: Allow
