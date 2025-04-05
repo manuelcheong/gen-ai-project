@@ -36,8 +36,6 @@ provider:
   lambdaHashingVersion: 20201221
   architecture: arm64
   stackExtraCapabilities: 
-    - CAPABILITY_IAM
-    - CAPABILITY_NAMED_IAM
     - CAPABILITY_AUTO_EXPAND
 
   iamRoleStatements:
