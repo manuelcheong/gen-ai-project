@@ -142,13 +142,16 @@ resources:
     contentBucket: '${file(./iac/s3/content.yml):contentBucket}'
 
     # ---------- S3 WEBSITE 🫡 --------------
-    WebsiteBucket: '${file(./iac/s3/frontend.yml):WebsiteBucket}'
-    WebsiteBucketPolicy: '${file(./iac/s3/frontend.yml):WebsiteBucketPolicy}'
+    #WebsiteBucket: '${file(./iac/s3/frontend.yml):WebsiteBucket}'
+    #WebsiteBucketPolicy: '${file(./iac/s3/frontend.yml):WebsiteBucketPolicy}'
 
     # ---------- S3 VECTORS 🫡 ---------------
-    VectorIndicesBucket: '${file(./iac/s3/vectors.yml):VectorIndicesBucket}'
+    #VectorIndicesBucket: '${file(./iac/s3/vectors.yml):VectorIndicesBucket}'
 
-    
+  extensions:
+    deploymentSettings:
+      capabilities:
+        - CAPABILITY_AUTO_EXPAND
 
 custom:
   rust:
