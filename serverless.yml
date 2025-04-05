@@ -73,11 +73,11 @@ resources:
   Resources:
 
     # ---------- PArameters 🫡 ---------------
-    Parameters:
-      StateMachineNameDefinitionKey:
-        Type: String
-        Default: test.asl.json
-        Description: State Machine Definition Key
+    #Parameters:
+    #  StateMachineNameDefinitionKey:
+    #    Type: String
+    #    Default: test.asl.json
+    #    Description: State Machine Definition Key
 
   
     # ---------- QUEUE 🫡 ----------------
