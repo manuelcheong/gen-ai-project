@@ -35,11 +35,7 @@ provider:
     #KEY_SSM2: ${ssm:/parameter/genaiapikey}
   lambdaHashingVersion: 20201221
   architecture: arm64
-  cfnDeployment:
-    capabilities:
-      - CAPABILITY_IAM
-      - CAPABILITY_NAMED_IAM
-      - CAPABILITY_AUTO_EXPAND
+  
 
   iamRoleStatements:
   - Effect: Allow
@@ -92,7 +88,7 @@ resources:
     genaiState: '${file(./iac/states/genaistate.yml):genaiState}'
     statesRole: '${file(./iac/states/statesRole.yml):statesRole}'
 
-    testState: '${file(./iac/states/test.yml):testState}'
+    #testState: '${file(./iac/states/test.yml):testState}'
 
     # ---------- WEBSOCKET API 🫡 ----------------
     WebSocketApi: '${file(./iac/api/websocket_api.yml):WebSocketApi}'
@@ -152,6 +148,9 @@ resources:
 
     # ---------- S3 VECTORS 🫡 ---------------
     #VectorIndicesBucket: '${file(./iac/s3/vectors.yml):VectorIndicesBucket}'
+
+    # ---------- S3 ASL DEFINITIONS 🫡 --------------
+    aslDefinitionsBucket: '${file(./iac/s3/asldefinitions.yml):aslDefinitionsBucket}'
 
   #extensions:
   #  deploymentSettings:

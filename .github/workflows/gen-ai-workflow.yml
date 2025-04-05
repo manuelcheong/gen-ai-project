@@ -69,7 +69,7 @@ jobs:
       #  run: cat iac/states/test.yml
 
       - name: Deploy GEN-AI reference 🚀 🔥
-        run: serverless deploy --stage ${{ env.STAGE }} --region ${{ env.AWS_REGION }} --capabilities CAPABILITY_IAM,CAPABILITY_NAMED_IAM,CAPABILITY_AUTO_EXPAND
+        run: serverless deploy --stage ${{ env.STAGE }} --region ${{ env.AWS_REGION }}
 
       - name: Prune old versions 🧹
         run: serverless prune -n 2 --stage ${{ env.STAGE }}

@@ -1,0 +1,14 @@
+aslDefinitionsBucket:
+  Type: AWS::S3::Bucket
+  Properties:
+    BucketName: asl-definitions-${self:provider.stage}
+    AccessControl: Private
+    PublicAccessBlockConfiguration:
+      BlockPublicAcls: true
+      BlockPublicPolicy: true
+      IgnorePublicAcls: true
+      RestrictPublicBuckets: true
+    BucketEncryption:
+      ServerSideEncryptionConfiguration:
+        - ServerSideEncryptionByDefault:
+            SSEAlgorithm: AES256
