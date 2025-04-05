@@ -16,7 +16,7 @@ testState:
       Enabled: true
 
     DefinitionString: !Sub |
-      ${file(./definitions/test.asl.json)}
+      ${file(./iac/states/definitions/test.asl.json)}
     
     
     #${TEST_STATE_MACHINE_DEFINITION}
