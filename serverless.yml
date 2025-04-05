@@ -35,6 +35,10 @@ provider:
     #KEY_SSM2: ${ssm:/parameter/genaiapikey}
   lambdaHashingVersion: 20201221
   architecture: arm64
+  stackExtraCapabilities: 
+    - CAPABILITY_IAM
+    - CAPABILITY_NAMED_IAM
+    - CAPABILITY_AUTO_EXPAND
 
   iamRoleStatements:
   - Effect: Allow
@@ -148,10 +152,10 @@ resources:
     # ---------- S3 VECTORS 🫡 ---------------
     #VectorIndicesBucket: '${file(./iac/s3/vectors.yml):VectorIndicesBucket}'
 
-  extensions:
-    deploymentSettings:
-      capabilities:
-        - CAPABILITY_AUTO_EXPAND
+  #extensions:
+  #  deploymentSettings:
+  #    capabilities:
+  #      - CAPABILITY_AUTO_EXPAND
 
 custom:
   rust:
