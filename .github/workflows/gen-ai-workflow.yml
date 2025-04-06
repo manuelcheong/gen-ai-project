@@ -45,14 +45,12 @@ jobs:
           aws s3 cp iac/states/definitions/gen-ai-states.asl.json  s3://asl-definitions-${{ env.STAGE }}/gen-ai-states-${{ env.STAGE }}.asl.json
       
       - name: Install Rust 🦀  
-        run: curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
+        run: | 
+          curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
+          source $HOME/.cargo/env
+          rustup target add aarch64-unknown-linux-musl #x86_64-unknown-linux-musl 
 
-      - name: Setting home 🏠 ...
-        run: source $HOME/.cargo/env
 
-      - name: Setting Rust 🦀 ...
-        run: rustup target add aarch64-unknown-linux-musl #x86_64-unknown-linux-musl 
-      
       - name: Install Cargo Lambda Plugin 🦀 👾
         run: pip3 install cargo-lambda
 
