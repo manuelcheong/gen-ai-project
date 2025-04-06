@@ -31,3 +31,9 @@ testState:
     
     
     #${TEST_STATE_MACHINE_DEFINITION}
+
+statesTestLogGroup:
+  Type: AWS::Logs::LogGroup
+  Properties:
+    LogGroupName: !Join [ "/", [ "statesTestLogGroup_${self:provider.stage}", statesTestLogGroup]]
+    RetentionInDays: 30
