@@ -15,482 +15,486 @@ genaiState:
     TracingConfiguration:
       Enabled: true
 
-    Definition:
-      Comment: "GEN AI Orquestation to save analitycs in S3 tables"
-      StartAt: parserInput
-      States:
-        parserInput:
-          Type: Map
-          ItemsPath: $
-          #ResultPath: "$.items"
-          MaxConcurrency: 100
-          ItemProcessor:
-            StartAt: parser
-            States:
-              parser:
-                Type: Pass
-                Parameters:
-                  messageId.$: $.messageId
-                  body.$: States.StringToJson($.body)
-                  messageAttributes.$: $.messageAttributes
-                  # ----- HANDLE TIMESTAMP -----
-                  ttl.$: $.additional_data.ttl
-                End: true
-            ProcessorConfig:
-              Mode: DISTRIBUTED
-              ExecutionType: STANDARD
-          Next: parallelFilterbyTables
+    DefinitionS3Location:
+      Bucket: !Ref aslDefinitionsBucket
+      Key: gen-ai-states-${self:provider.stage}.asl.json
+
+    # Definition:
+    #   Comment: "GEN AI Orquestation to save analitycs in S3 tables"
+    #   StartAt: parserInput
+    #   States:
+    #     parserInput:
+    #       Type: Map
+    #       ItemsPath: $
+    #       #ResultPath: "$.items"
+    #       MaxConcurrency: 100
+    #       ItemProcessor:
+    #         StartAt: parser
+    #         States:
+    #           parser:
+    #             Type: Pass
+    #             Parameters:
+    #               messageId.$: $.messageId
+    #               body.$: States.StringToJson($.body)
+    #               messageAttributes.$: $.messageAttributes
+    #               # ----- HANDLE TIMESTAMP -----
+    #               ttl.$: $.additional_data.ttl
+    #             End: true
+    #         ProcessorConfig:
+    #           Mode: DISTRIBUTED
+    #           ExecutionType: STANDARD
+    #       Next: parallelFilterbyTables
         
               
 
-        parallelFilterbyTables:
-          Type: Parallel
-          End: true
-          Branches:
-          - StartAt: filterPedidosPulseEcommerce
-            States:
-              filterPedidosPulseEcommerce: 
-                Type: "Pass"
-                InputPath: "$.[?(@.body.index == 'pedidos-pulse-ecom-pro')]"
-                #InputPath: "$[?.body.index in ['pedidos-pulse-ecom-pro','pedidos-pulse-agg-pro']]"
-                Next: "handleCommerceItem"
+    #     parallelFilterbyTables:
+    #       Type: Parallel
+    #       End: true
+    #       Branches:
+    #       - StartAt: filterPedidosPulseEcommerce
+    #         States:
+    #           filterPedidosPulseEcommerce: 
+    #             Type: "Pass"
+    #             InputPath: "$.[?(@.body.index == 'pedidos-pulse-ecom-pro')]"
+    #             #InputPath: "$[?.body.index in ['pedidos-pulse-ecom-pro','pedidos-pulse-agg-pro']]"
+    #             Next: "handleCommerceItem"
 
 
-              handleCommerceItem:
-                Type: Map
-                End: true
-                ItemsPath: $
-                MaxConcurrency: 100
-                ItemProcessor:
-                  StartAt: Athena StartSyncExecution
-                  States:
-                    Athena StartSyncExecution:
-                      Type: Task
-                      Resource: arn:aws:states:::athena:startQueryExecution.sync
-                      Parameters:
-                        QueryString.$:  "States.Format('INSERT INTO dominos (messageid, eventsource, body, createdat, status, statustext, storeorderid, servicemethod, unidad, storeid)  VALUES (\\'{}\\', \\'{}\\', \\'{}\\', CURRENT_DATE, {}, \\'{}\\', \\'{}\\', \\'{}\\', \\'{}\\', {});', $.messageId, $.body.index, States.JsonToString($.body), $.body.body.Status, $.body.body.StatusText, $.body.body.StoreOrderID, $.body.body.ServiceMethod, $.body.body.Unidad, $.body.body.StoreID)"    # "INSERT INTO \"database1\".\"tabla2\" VALUES ('$.messageId', '$.eventSource', '$.body')"
-                        QueryExecutionContext:
-                          Database: "database1"
-                        WorkGroup: "primary"
-                        ResultConfiguration:
-                          OutputLocation: "s3://s3table-output-${self:provider.stage}/athena/"
-                      ResultPath: "$.queryResult"
-                      End: true
+    #           handleCommerceItem:
+    #             Type: Map
+    #             End: true
+    #             ItemsPath: $
+    #             MaxConcurrency: 100
+    #             ItemProcessor:
+    #               StartAt: Athena StartSyncExecution
+    #               States:
+    #                 Athena StartSyncExecution:
+    #                   Type: Task
+    #                   Resource: arn:aws:states:::athena:startQueryExecution.sync
+    #                   Parameters:
+    #                     QueryString.$:  "States.Format('INSERT INTO dominos (messageid, eventsource, body, createdat, status, statustext, storeorderid, servicemethod, unidad, storeid)  VALUES (\\'{}\\', \\'{}\\', \\'{}\\', CURRENT_DATE, {}, \\'{}\\', \\'{}\\', \\'{}\\', \\'{}\\', {});', $.messageId, $.body.index, States.JsonToString($.body), $.body.body.Status, $.body.body.StatusText, $.body.body.StoreOrderID, $.body.body.ServiceMethod, $.body.body.Unidad, $.body.body.StoreID)"    # "INSERT INTO \"database1\".\"tabla2\" VALUES ('$.messageId', '$.eventSource', '$.body')"
+    #                     QueryExecutionContext:
+    #                       Database: "database1"
+    #                     WorkGroup: "primary"
+    #                     ResultConfiguration:
+    #                       OutputLocation: "s3://s3table-output-${self:provider.stage}/athena/"
+    #                   ResultPath: "$.queryResult"
+    #                   End: true
 
-          - StartAt: filterPedidosPulseAggregator
-            States:
-              filterPedidosPulseAggregator: 
-                Type: "Pass"
-                InputPath: "$.[?(@.body.index == 'pedidos-pulse-agg-pro')]"
-                Next: "handleAggItem"
+    #       - StartAt: filterPedidosPulseAggregator
+    #         States:
+    #           filterPedidosPulseAggregator: 
+    #             Type: "Pass"
+    #             InputPath: "$.[?(@.body.index == 'pedidos-pulse-agg-pro')]"
+    #             Next: "handleAggItem"
   
   
-              handleAggItem:
-                Type: Map
-                End: true
-                ItemsPath: $
-                  #ResultPath: "$.items"
-                MaxConcurrency: 100
-                ItemProcessor:
-                  StartAt: Athena StartSyncExecutionAgg
-                  States:
-                    Athena StartSyncExecutionAgg:
-                      Type: Task
-                      Resource: arn:aws:states:::athena:startQueryExecution.sync
-                      Parameters:
-                        QueryString.$:  "States.Format('INSERT INTO dominos (messageid, eventsource, body, createdat, status, statustext, storeorderid, servicemethod, unidad, storeid)  VALUES (\\'{}\\', \\'{}\\', \\'{}\\', CURRENT_DATE, {}, \\'{}\\', \\'{}\\', \\'{}\\', \\'{}\\', {});', $.messageId, $.body.index, States.JsonToString($.body), $.body.body.Status, $.body.body.StatusText, $.body.body.StoreID, $.body.body.ServiceMethod, $.body.body.Unidad, $.body.body.StoreID)"    # "INSERT INTO \"database1\".\"tabla2\" VALUES ('$.messageId', '$.eventSource', '$.body')"
-                        QueryExecutionContext:
-                          Database: "database1"
-                        WorkGroup: "primary"
-                        ResultConfiguration:
-                          OutputLocation: "s3://s3table-output-${self:provider.stage}/athena/"
-                      ResultPath: "$.queryResult"
-                      End: true
+    #           handleAggItem:
+    #             Type: Map
+    #             End: true
+    #             ItemsPath: $
+    #               #ResultPath: "$.items"
+    #             MaxConcurrency: 100
+    #             ItemProcessor:
+    #               StartAt: Athena StartSyncExecutionAgg
+    #               States:
+    #                 Athena StartSyncExecutionAgg:
+    #                   Type: Task
+    #                   Resource: arn:aws:states:::athena:startQueryExecution.sync
+    #                   Parameters:
+    #                     QueryString.$:  "States.Format('INSERT INTO dominos (messageid, eventsource, body, createdat, status, statustext, storeorderid, servicemethod, unidad, storeid)  VALUES (\\'{}\\', \\'{}\\', \\'{}\\', CURRENT_DATE, {}, \\'{}\\', \\'{}\\', \\'{}\\', \\'{}\\', {});', $.messageId, $.body.index, States.JsonToString($.body), $.body.body.Status, $.body.body.StatusText, $.body.body.StoreID, $.body.body.ServiceMethod, $.body.body.Unidad, $.body.body.StoreID)"    # "INSERT INTO \"database1\".\"tabla2\" VALUES ('$.messageId', '$.eventSource', '$.body')"
+    #                     QueryExecutionContext:
+    #                       Database: "database1"
+    #                     WorkGroup: "primary"
+    #                     ResultConfiguration:
+    #                       OutputLocation: "s3://s3table-output-${self:provider.stage}/athena/"
+    #                   ResultPath: "$.queryResult"
+    #                   End: true
                     
   
-                #Athena StartSyncExecution:
-                #  Type: Task
-                #  Resource: arn:aws:states:::athena:startQueryExecution.sync
-                #  Parameters:
-                          #QueryString: "SELECT * FROM \"database1\".\"tabla1\" limit 1"
-                #    QueryString.$:  "States.Format('INSERT INTO tabla1 (messageid, eventsource, body, createdat)  VALUES (\\'{}\\', \\'{}\\', \\'{}\\', CURRENT_DATE);', $.messageId, $.eventSource, $.body)"    # "INSERT INTO \"database1\".\"tabla2\" VALUES ('$.messageId', '$.eventSource', '$.body')"
-                #    QueryExecutionContext:
-                #      Database: "database1"
-                #    WorkGroup: "primary"
-                #    ResultConfiguration:
-                #      OutputLocation: "s3://s3table-output-${self:provider.stage}/athena/"
-                #  ResultPath: "$.queryResult"
-                #  End: true
+    #             #Athena StartSyncExecution:
+    #             #  Type: Task
+    #             #  Resource: arn:aws:states:::athena:startQueryExecution.sync
+    #             #  Parameters:
+    #                       #QueryString: "SELECT * FROM \"database1\".\"tabla1\" limit 1"
+    #             #    QueryString.$:  "States.Format('INSERT INTO tabla1 (messageid, eventsource, body, createdat)  VALUES (\\'{}\\', \\'{}\\', \\'{}\\', CURRENT_DATE);', $.messageId, $.eventSource, $.body)"    # "INSERT INTO \"database1\".\"tabla2\" VALUES ('$.messageId', '$.eventSource', '$.body')"
+    #             #    QueryExecutionContext:
+    #             #      Database: "database1"
+    #             #    WorkGroup: "primary"
+    #             #    ResultConfiguration:
+    #             #      OutputLocation: "s3://s3table-output-${self:provider.stage}/athena/"
+    #             #  ResultPath: "$.queryResult"
+    #             #  End: true
 
-          - StartAt: filterCustomEvents
-            States:
-              filterCustomEvents: 
-                Type: "Pass"
-                InputPath: "$.[?(@.body.index == 'custom')]"
-                Next: "handleCustomItems"
+    #       - StartAt: filterCustomEvents
+    #         States:
+    #           filterCustomEvents: 
+    #             Type: "Pass"
+    #             InputPath: "$.[?(@.body.index == 'custom')]"
+    #             Next: "handleCustomItems"
 
-              handleCustomItems:
-                Type: Map
-                End: true
-                ItemsPath: $
-                MaxConcurrency: 100
-                ItemProcessor:
-                  StartAt: parseCustomItem
-                  States:
-                    parseCustomItem:
-                      Type: Pass
-                      Parameters:
-                        messageId.$: $.messageId
-                        body.$: "States.StringToJson($.body.body)"
-                        executionTime.$: "$$.Execution.StartTime"
-                        connectionId.$: $.messageAttributes.connectionId.stringValue
-                      Next: Send Message to WebSocket Client
+    #           handleCustomItems:
+    #             Type: Map
+    #             End: true
+    #             ItemsPath: $
+    #             MaxConcurrency: 100
+    #             ItemProcessor:
+    #               StartAt: parseCustomItem
+    #               States:
+    #                 parseCustomItem:
+    #                   Type: Pass
+    #                   Parameters:
+    #                     messageId.$: $.messageId
+    #                     body.$: "States.StringToJson($.body.body)"
+    #                     executionTime.$: "$$.Execution.StartTime"
+    #                     connectionId.$: $.messageAttributes.connectionId.stringValue
+    #                   Next: Send Message to WebSocket Client
 
-                    Send Message to WebSocket Client:
-                      Type: Task          
-                      Resource: arn:aws:states:::apigateway:invoke
-                      Parameters:
-                        ApiEndpoint: !Sub "${WebSocketApi}.execute-api.${AWS::Region}.amazonaws.com"
-                        Method: POST
-                        Stage: "${self:provider.stage}"
-                        Path.$: "States.Format('/@connections/{}', $.connectionId)"
-                        RequestBody:
-                          Message.$: $
-                        AuthType: IAM_ROLE
-                      End: true
+    #                 Send Message to WebSocket Client:
+    #                   Type: Task          
+    #                   Resource: arn:aws:states:::apigateway:invoke
+    #                   Parameters:
+    #                     ApiEndpoint: !Sub "${WebSocketApi}.execute-api.${AWS::Region}.amazonaws.com"
+    #                     Method: POST
+    #                     Stage: "${self:provider.stage}"
+    #                     Path.$: "States.Format('/@connections/{}', $.connectionId)"
+    #                     RequestBody:
+    #                       Message.$: $
+    #                     AuthType: IAM_ROLE
+    #                   End: true
   
-          - StartAt: filterEventToPromptBedrock
-            States:
-              filterEventToPromptBedrock: 
-                Type: "Pass"
-                InputPath: "$.[?(@.body.index == 'gen-prompt-content')]"
-                Next: "handlePrompCustomItems"
+    #       - StartAt: filterEventToPromptBedrock
+    #         States:
+    #           filterEventToPromptBedrock: 
+    #             Type: "Pass"
+    #             InputPath: "$.[?(@.body.index == 'gen-prompt-content')]"
+    #             Next: "handlePrompCustomItems"
 
-              handlePrompCustomItems:
-                Type: Map
-                End: true
-                ItemsPath: $
-                MaxConcurrency: 10
-                ItemProcessor:
-                  StartAt: parsePromptItem
-                  States:
-                    parsePromptItem:
-                      Type: Pass
-                      Parameters:
-                        messageId.$: $.messageId
-                        body.$: "$.body.body"
-                        executionTime.$: "$$.Execution.StartTime"
-                        connectionId.$: $.messageAttributes.connectionId.stringValue
-                      Next: invokeParser
+    #           handlePrompCustomItems:
+    #             Type: Map
+    #             End: true
+    #             ItemsPath: $
+    #             MaxConcurrency: 10
+    #             ItemProcessor:
+    #               StartAt: parsePromptItem
+    #               States:
+    #                 parsePromptItem:
+    #                   Type: Pass
+    #                   Parameters:
+    #                     messageId.$: $.messageId
+    #                     body.$: "$.body.body"
+    #                     executionTime.$: "$$.Execution.StartTime"
+    #                     connectionId.$: $.messageAttributes.connectionId.stringValue
+    #                   Next: invokeParser
 
-                    #promtBedrockbyUrls:
-                    #  Type: Task
-                    #  Resource: arn:aws:states:::bedrock:invokeModel
-                    #  Parameters:
-                    #    ModelId: "anthropic.claude-3-sonnet-20240229-v1:0" #arn:aws:bedrock:eu-west-1::foundation-model/anthropic.claude-3-sonnet-20240229-v1:0    #"anthropic.claude-3-5-sonnet-20240620-v1:0"
-                    #    Body:
-                    #      anthropic_version: "bedrock-2023-05-31"
-                    #      messages:
-                    #        - role: "user"
-                    #          content:
-                    #            - type: "text"
-                    #              text.$: "States.Format('return an array, with 1 elements, with most popular url about: {}', $.body.userContent)"
-                    #      max_tokens: 200
+    #                 #promtBedrockbyUrls:
+    #                 #  Type: Task
+    #                 #  Resource: arn:aws:states:::bedrock:invokeModel
+    #                 #  Parameters:
+    #                 #    ModelId: "anthropic.claude-3-sonnet-20240229-v1:0" #arn:aws:bedrock:eu-west-1::foundation-model/anthropic.claude-3-sonnet-20240229-v1:0    #"anthropic.claude-3-5-sonnet-20240620-v1:0"
+    #                 #    Body:
+    #                 #      anthropic_version: "bedrock-2023-05-31"
+    #                 #      messages:
+    #                 #        - role: "user"
+    #                 #          content:
+    #                 #            - type: "text"
+    #                 #              text.$: "States.Format('return an array, with 1 elements, with most popular url about: {}', $.body.userContent)"
+    #                 #      max_tokens: 200
                         
-                    #  ResultPath: $.urlsContent
-                    #  Next: invokeParser
+    #                 #  ResultPath: $.urlsContent
+    #                 #  Next: invokeParser
 
-                    #parseUrlsContent:
-                    #  Type: Pass
-                    #  Parameters:
-                    #    urlsContent.$: $.urlsContent.Body.content[0].text
-                    #  Next: true
+    #                 #parseUrlsContent:
+    #                 #  Type: Pass
+    #                 #  Parameters:
+    #                 #    urlsContent.$: $.urlsContent.Body.content[0].text
+    #                 #  Next: true
 
-                    invokeParser:
-                      Type: Task
-                      QueryLanguage: JSONata
-                      Arguments:
-                        FunctionName: arn:aws:lambda:${self:provider.region}:178934116267:function:gen-ai-service-${self:provider.stage}-scrapperrs 
-                        Payload: "{% $states.input.body %}"
-                      Assign:
-                        generatedContent: "{% $states.result.Payload %}"
-                        inputContent: "{% $states.input %}"
-                      Output: "{% $states.result %}"
-                      Resource: arn:aws:states:::lambda:invoke
-                      Next: getContent
+    #                 invokeParser:
+    #                   Type: Task
+    #                   QueryLanguage: JSONata
+    #                   Arguments:
+    #                     FunctionName: arn:aws:lambda:${self:provider.region}:178934116267:function:gen-ai-service-${self:provider.stage}-scrapperrs 
+    #                     Payload: "{% $states.input.body %}"
+    #                   Assign:
+    #                     generatedContent: "{% $states.result.Payload %}"
+    #                     inputContent: "{% $states.input %}"
+    #                   Output: "{% $states.result %}"
+    #                   Resource: arn:aws:states:::lambda:invoke
+    #                   Next: getContent
 
-                    getContent:
-                      Type: Task
-                      Parameters:
-                        Bucket.$: $.Payload.bucket   # gen-ai-content-${self:provider.stage}
-                        Key.$: $.Payload.key   #"output123.txt"
-                      ResultPath: "$.allContent"
-                      Resource: arn:aws:states:::aws-sdk:s3:getObject
-                      Next: promtBedrock
+    #                 getContent:
+    #                   Type: Task
+    #                   Parameters:
+    #                     Bucket.$: $.Payload.bucket   # gen-ai-content-${self:provider.stage}
+    #                     Key.$: $.Payload.key   #"output123.txt"
+    #                   ResultPath: "$.allContent"
+    #                   Resource: arn:aws:states:::aws-sdk:s3:getObject
+    #                   Next: promtBedrock
 
-                    promtBedrock:
-                      Type: Task
-                      QueryLanguage: JSONata
-                      Resource: arn:aws:states:::bedrock:invokeModel
-                      Arguments:
-                        ModelId: "anthropic.claude-3-sonnet-20240229-v1:0" #arn:aws:bedrock:eu-west-1::foundation-model/anthropic.claude-3-sonnet-20240229-v1:0    #"anthropic.claude-3-5-sonnet-20240620-v1:0"
-                        Body:
-                          anthropic_version: "bedrock-2023-05-31"
-                          messages:
-                            - role: "user"
-                              content:
-                                - type: "text"
-                                  text: "{% 'Genera un resumen con este contenido: ' & $state.input.allContent %}" #"States.Format('Genera un resumen con este contenido:  {}', $.allContent.Body)"
-                          max_tokens: 500
-                      Assign:
-                        resumeContent: "{% $states.result %}"
-                      Next: Send Message to WebSocket Client Prompt
+    #                 promtBedrock:
+    #                   Type: Task
+    #                   QueryLanguage: JSONata
+    #                   Resource: arn:aws:states:::bedrock:invokeModel
+    #                   Arguments:
+    #                     ModelId: "anthropic.claude-3-sonnet-20240229-v1:0" #arn:aws:bedrock:eu-west-1::foundation-model/anthropic.claude-3-sonnet-20240229-v1:0    #"anthropic.claude-3-5-sonnet-20240620-v1:0"
+    #                     Body:
+    #                       anthropic_version: "bedrock-2023-05-31"
+    #                       messages:
+    #                         - role: "user"
+    #                           content:
+    #                             - type: "text"
+    #                               text: "{% 'Genera un resumen con este contenido: ' & $state.input.allContent %}" #"States.Format('Genera un resumen con este contenido:  {}', $.allContent.Body)"
+    #                       max_tokens: 500
+    #                   Assign:
+    #                     resumeContent: "{% $states.result %}"
+    #                   Next: Send Message to WebSocket Client Prompt
 
-                      #"Parameters": {
-                      #    "ModelId": "arn:aws:bedrock:eu-west-1::foundation-model/anthropic.claude-3-sonnet-20240229-v1:0",
-                      #    "Input": {
-                      #      "S3Uri.$": "$.inputS3"
-                      #    }
-                      #  }
+    #                   #"Parameters": {
+    #                   #    "ModelId": "arn:aws:bedrock:eu-west-1::foundation-model/anthropic.claude-3-sonnet-20240229-v1:0",
+    #                   #    "Input": {
+    #                   #      "S3Uri.$": "$.inputS3"
+    #                   #    }
+    #                   #  }
 
-                    Send Message to WebSocket Client Prompt:
-                      Type: Task      
-                      QueryLanguage: JSONata    
-                      Resource: arn:aws:states:::apigateway:invoke
-                      Arguments:
-                        ApiEndpoint: !Sub "${WebSocketApi}.execute-api.${AWS::Region}.amazonaws.com"
-                        Method: POST
-                        Stage: "${self:provider.stage}"
-                        Path: "{% '/@connections/' & $inputContent.connectionId %}"
-                        RequestBody:
-                          Message: "{% $resumeContent %}" 
-                        AuthType: IAM_ROLE
-                      End: true
+    #                 Send Message to WebSocket Client Prompt:
+    #                   Type: Task      
+    #                   QueryLanguage: JSONata    
+    #                   Resource: arn:aws:states:::apigateway:invoke
+    #                   Arguments:
+    #                     ApiEndpoint: !Sub "${WebSocketApi}.execute-api.${AWS::Region}.amazonaws.com"
+    #                     Method: POST
+    #                     Stage: "${self:provider.stage}"
+    #                     Path: "{% '/@connections/' & $inputContent.connectionId %}"
+    #                     RequestBody:
+    #                       Message: "{% $resumeContent %}" 
+    #                     AuthType: IAM_ROLE
+    #                   End: true
     
-          - StartAt: filterNotificationEmail
-            States:
-              filterNotificationEmail: 
-                Type: "Pass"
-                InputPath: "$.[?(@.body.index == 'notification-email')]"
-                Next: "handleNotificationsEmail"
+    #       - StartAt: filterNotificationEmail
+    #         States:
+    #           filterNotificationEmail: 
+    #             Type: "Pass"
+    #             InputPath: "$.[?(@.body.index == 'notification-email')]"
+    #             Next: "handleNotificationsEmail"
 
 
-              handleNotificationsEmail:
-                Type: Map
-                End: true
-                ItemsPath: $
-                MaxConcurrency: 10
-                ItemProcessor:
-                  StartAt: parseNotificationItem
-                  States:
-                    parseNotificationItem:
-                      Type: Pass
-                      Parameters:
-                        body.$: "$.body.body"
-                      Next: sendEmail
+    #           handleNotificationsEmail:
+    #             Type: Map
+    #             End: true
+    #             ItemsPath: $
+    #             MaxConcurrency: 10
+    #             ItemProcessor:
+    #               StartAt: parseNotificationItem
+    #               States:
+    #                 parseNotificationItem:
+    #                   Type: Pass
+    #                   Parameters:
+    #                     body.$: "$.body.body"
+    #                   Next: sendEmail
 
-                    sendEmail:
-                      Type: Task
-                      Resource: arn:aws:states:::aws-sdk:ses:sendEmail
-                      End: true
-                      Parameters:
-                        Source.$: "$.body.from"
-                        Destination:
-                          ToAddresses.$: States.Array($.body.to)  #[ $.body.to ]
-                        Message:
-                          Subject:
-                            Data.$: "$.body.subject"
-                          Body:
-                            Html:
-                              Data.$: "$.body.data"
+    #                 sendEmail:
+    #                   Type: Task
+    #                   Resource: arn:aws:states:::aws-sdk:ses:sendEmail
+    #                   End: true
+    #                   Parameters:
+    #                     Source.$: "$.body.from"
+    #                     Destination:
+    #                       ToAddresses.$: States.Array($.body.to)  #[ $.body.to ]
+    #                     Message:
+    #                       Subject:
+    #                         Data.$: "$.body.subject"
+    #                       Body:
+    #                         Html:
+    #                           Data.$: "$.body.data"
 
 
-          - StartAt: filterMenuPrompter
-            States:
-              filterMenuPrompter: 
-                Type: "Pass"
-                InputPath: "$.[?(@.body.index == 'gen-prompt-menu')]"
-                Next: "handlePrompMenuItems"
+    #       - StartAt: filterMenuPrompter
+    #         States:
+    #           filterMenuPrompter: 
+    #             Type: "Pass"
+    #             InputPath: "$.[?(@.body.index == 'gen-prompt-menu')]"
+    #             Next: "handlePrompMenuItems"
 
-              handlePrompMenuItems:
-                Type: Map
-                End: true
-                ItemsPath: $
-                MaxConcurrency: 10
-                ItemProcessor:
-                  StartAt: parsePromptMenu
-                  States:
-                    parsePromptMenu:
-                      Type: Pass
-                      Parameters:
-                        messageId.$: $.messageId
-                        body.$: "$.body.body"
-                        executionTime.$: "$$.Execution.StartTime"
-                        connectionId.$: $.messageAttributes.connectionId.stringValue
-                        ttl.$: "$.ttl"
-                      Next: choiceMenu
+    #           handlePrompMenuItems:
+    #             Type: Map
+    #             End: true
+    #             ItemsPath: $
+    #             MaxConcurrency: 10
+    #             ItemProcessor:
+    #               StartAt: parsePromptMenu
+    #               States:
+    #                 parsePromptMenu:
+    #                   Type: Pass
+    #                   Parameters:
+    #                     messageId.$: $.messageId
+    #                     body.$: "$.body.body"
+    #                     executionTime.$: "$$.Execution.StartTime"
+    #                     connectionId.$: $.messageAttributes.connectionId.stringValue
+    #                     ttl.$: "$.ttl"
+    #                   Next: choiceMenu
 
-                    choiceMenu:
-                      Type: Choice
-                      Choices:
-                        - And:
-                          - Variable: "$.body.menu"
-                            IsPresent: true
-                          Next: getMenuContent
-                      Default: GetConversationHistory
+    #                 choiceMenu:
+    #                   Type: Choice
+    #                   Choices:
+    #                     - And:
+    #                       - Variable: "$.body.menu"
+    #                         IsPresent: true
+    #                       Next: getMenuContent
+    #                   Default: GetConversationHistory
                         
-                    GetConversationHistory:
-                      Type: Task
-                      Resource: arn:aws:states:::aws-sdk:dynamodb:query
-                      Parameters:
-                        TableName: sessions-bedrock-${self:provider.stage}
-                        KeyConditionExpression: sessionId = :sessionId
-                        ExpressionAttributeValues:
-                          ":sessionId":
-                            S.$: "$.connectionId"
+    #                 GetConversationHistory:
+    #                   Type: Task
+    #                   Resource: arn:aws:states:::aws-sdk:dynamodb:query
+    #                   Parameters:
+    #                     TableName: sessions-bedrock-${self:provider.stage}
+    #                     KeyConditionExpression: sessionId = :sessionId
+    #                     ExpressionAttributeValues:
+    #                       ":sessionId":
+    #                         S.$: "$.connectionId"
           
-                      ResultPath: "$.conversationHistory"
-                      Next: parallelPromptStorePromp
+    #                   ResultPath: "$.conversationHistory"
+    #                   Next: parallelPromptStorePromp
 
-                    parallelPromptStorePromp:
-                      Type: Parallel
-                      Next: StoreResponseFromPromp
-                      OutputPath: "$[1]"
-                      Branches:
+    #                 parallelPromptStorePromp:
+    #                   Type: Parallel
+    #                   Next: StoreResponseFromPromp
+    #                   OutputPath: "$[1]"
+    #                   Branches:
 
-                      - StartAt: StoreConversationPromp
-                        States:
-                          StoreConversationPromp: 
-                            Type: Task
-                            Resource: arn:aws:states:::dynamodb:putItem
-                            Parameters:
-                              TableName: sessions-bedrock-${self:provider.stage}
-                              Item:
-                                "sessionId": 
-                                  "S.$": "$.connectionId" 
-                                "timestamp":
-                                  "S.$": "$$.State.EnteredTime" 
-                                "messages":
-                                  "S.$": "$.body.prompt" 
-                                "ttl":
-                                  "N.$": "States.JsonToString($.ttl)"
-                            End: true
+    #                   - StartAt: StoreConversationPromp
+    #                     States:
+    #                       StoreConversationPromp: 
+    #                         Type: Task
+    #                         Resource: arn:aws:states:::dynamodb:putItem
+    #                         Parameters:
+    #                           TableName: sessions-bedrock-${self:provider.stage}
+    #                           Item:
+    #                             "sessionId": 
+    #                               "S.$": "$.connectionId" 
+    #                             "timestamp":
+    #                               "S.$": "$$.State.EnteredTime" 
+    #                             "messages":
+    #                               "S.$": "$.body.prompt" 
+    #                             "ttl":
+    #                               "N.$": "States.JsonToString($.ttl)"
+    #                         End: true
 
-                      - StartAt: promtMenuBedrock
-                        States:
-                          promtMenuBedrock:
-                            Type: Task
-                            Resource: arn:aws:states:::bedrock:invokeModel
-                            Parameters:
-                              ModelId: "anthropic.claude-3-sonnet-20240229-v1:0" #arn:aws:bedrock:eu-west-1::foundation-model/anthropic.claude-3-sonnet-20240229-v1:0    #"anthropic.claude-3-5-sonnet-20240620-v1:0"
-                              Body:
-                                anthropic_version: "bedrock-2023-05-31"
-                                messages:
-                                  - role: "user"
-                                    content:
-                                      - type: "text"
-                                        text: "You are a helpful assistant. Remember our conversation."
-                                  - role: "assistant"
-                                    content:
-                                      - type: "text"
-                                        text.$: "States.JsonToString($.conversationHistory.Items)"
+    #                   - StartAt: promtMenuBedrock
+    #                     States:
+    #                       promtMenuBedrock:
+    #                         Type: Task
+    #                         Resource: arn:aws:states:::bedrock:invokeModel
+    #                         Parameters:
+    #                           ModelId: "anthropic.claude-3-sonnet-20240229-v1:0" #arn:aws:bedrock:eu-west-1::foundation-model/anthropic.claude-3-sonnet-20240229-v1:0    #"anthropic.claude-3-5-sonnet-20240620-v1:0"
+    #                           Body:
+    #                             anthropic_version: "bedrock-2023-05-31"
+    #                             messages:
+    #                               - role: "user"
+    #                                 content:
+    #                                   - type: "text"
+    #                                     text: "You are a helpful assistant. Remember our conversation."
+    #                               - role: "assistant"
+    #                                 content:
+    #                                   - type: "text"
+    #                                     text.$: "States.JsonToString($.conversationHistory.Items)"
 
-                                  - role: "user"
-                                    content:
-                                      - type: "text"
-                                        text.$: "States.Format('{}', $.body.prompt)"
-                                max_tokens: 500
+    #                               - role: "user"
+    #                                 content:
+    #                                   - type: "text"
+    #                                     text.$: "States.Format('{}', $.body.prompt)"
+    #                             max_tokens: 500
                               
-                            ResultPath: $.genContent
-                            End: true
+    #                         ResultPath: $.genContent
+    #                         End: true
 
-                    getMenuContent:
-                      Type: Task
-                      Parameters:
-                        Bucket: gen-ai-content-${self:provider.stage}
-                        Key.$: "States.Format('{}', $.body.menu)"   #"output123.txt"
-                      ResultPath: "$.menuContent"
-                      Resource: arn:aws:states:::aws-sdk:s3:getObject
-                      Next: parallelPromptStoreMenu
+    #                 getMenuContent:
+    #                   Type: Task
+    #                   Parameters:
+    #                     Bucket: gen-ai-content-${self:provider.stage}
+    #                     Key.$: "States.Format('{}', $.body.menu)"   #"output123.txt"
+    #                   ResultPath: "$.menuContent"
+    #                   Resource: arn:aws:states:::aws-sdk:s3:getObject
+    #                   Next: parallelPromptStoreMenu
 
-                    parallelPromptStoreMenu:
-                      Type: Parallel
-                      Next: Send Message to WebSocket Menu Prompt
-                      OutputPath: "$[1]"
-                      Branches:
+    #                 parallelPromptStoreMenu:
+    #                   Type: Parallel
+    #                   Next: Send Message to WebSocket Menu Prompt
+    #                   OutputPath: "$[1]"
+    #                   Branches:
 
-                      - StartAt: StoreConversationHistory
-                        States:
-                          StoreConversationHistory: 
-                            Type: Task
-                            Resource: arn:aws:states:::dynamodb:putItem
-                            Parameters:
-                              TableName: sessions-bedrock-${self:provider.stage}
-                              Item: 
-                                "sessionId":
-                                  "S.$": "$.connectionId"
-                                "timestamp":
-                                  "S.$": "$$.State.EnteredTime"
-                                "messages":
-                                  "S.$": "$.menuContent.Body"
-                                "ttl1":
-                                  "N.$": "States.JsonToString($.ttl)"
-                            End: true
+    #                   - StartAt: StoreConversationHistory
+    #                     States:
+    #                       StoreConversationHistory: 
+    #                         Type: Task
+    #                         Resource: arn:aws:states:::dynamodb:putItem
+    #                         Parameters:
+    #                           TableName: sessions-bedrock-${self:provider.stage}
+    #                           Item: 
+    #                             "sessionId":
+    #                               "S.$": "$.connectionId"
+    #                             "timestamp":
+    #                               "S.$": "$$.State.EnteredTime"
+    #                             "messages":
+    #                               "S.$": "$.menuContent.Body"
+    #                             "ttl1":
+    #                               "N.$": "States.JsonToString($.ttl)"
+    #                         End: true
 
-                      - StartAt: promtInputMenuBedrock
-                        States:
-                          promtInputMenuBedrock:
-                            Type: Task
-                            Resource: arn:aws:states:::bedrock:invokeModel
-                            Parameters:
-                              ModelId: "anthropic.claude-3-sonnet-20240229-v1:0" #arn:aws:bedrock:eu-west-1::foundation-model/anthropic.claude-3-sonnet-20240229-v1:0    #"anthropic.claude-3-5-sonnet-20240620-v1:0"
-                              Body:
-                                anthropic_version: "bedrock-2023-05-31"
-                                messages:
-                                  - role: "user"
-                                    content:
-                                      - type: "text"
-                                        #text.$: $.body.prompt
-                                        text.$: "States.Format('Este es el menu: {}', $.menuContent)"
-                                max_tokens: 4096
+    #                   - StartAt: promtInputMenuBedrock
+    #                     States:
+    #                       promtInputMenuBedrock:
+    #                         Type: Task
+    #                         Resource: arn:aws:states:::bedrock:invokeModel
+    #                         Parameters:
+    #                           ModelId: "anthropic.claude-3-sonnet-20240229-v1:0" #arn:aws:bedrock:eu-west-1::foundation-model/anthropic.claude-3-sonnet-20240229-v1:0    #"anthropic.claude-3-5-sonnet-20240620-v1:0"
+    #                           Body:
+    #                             anthropic_version: "bedrock-2023-05-31"
+    #                             messages:
+    #                               - role: "user"
+    #                                 content:
+    #                                   - type: "text"
+    #                                     #text.$: $.body.prompt
+    #                                     text.$: "States.Format('Este es el menu: {}', $.menuContent)"
+    #                             max_tokens: 4096
 
-                              #Input:
-                              #  S3Uri.$: "States.Format('s3://gen-ai-content-pre/{}', $.body.menu)"
-                              #Output:
-                              #  S3Uri.$: "$.outputS3"
+    #                           #Input:
+    #                           #  S3Uri.$: "States.Format('s3://gen-ai-content-pre/{}', $.body.menu)"
+    #                           #Output:
+    #                           #  S3Uri.$: "$.outputS3"
                               
-                            ResultPath: $.genContent
-                            End: true
+    #                         ResultPath: $.genContent
+    #                         End: true
 
-                    StoreResponseFromPromp: 
-                      Type: Task
-                      Resource: arn:aws:states:::dynamodb:putItem
-                      ResultPath: "$.responseStoreResponse"
-                      Parameters:
-                        TableName: sessions-bedrock-${self:provider.stage}
-                        Item:
-                          "sessionId": 
-                            "S.$": "$.connectionId" 
-                          "timestamp":
-                            "S.$": "$$.State.EnteredTime" 
-                          "messages":
-                            "S.$": "$.genContent.Body.content[0].text" 
-                          "ttl":
-                            "N.$": "States.JsonToString($.ttl)"
-                      Next: Send Message to WebSocket Menu Prompt
+    #                 StoreResponseFromPromp: 
+    #                   Type: Task
+    #                   Resource: arn:aws:states:::dynamodb:putItem
+    #                   ResultPath: "$.responseStoreResponse"
+    #                   Parameters:
+    #                     TableName: sessions-bedrock-${self:provider.stage}
+    #                     Item:
+    #                       "sessionId": 
+    #                         "S.$": "$.connectionId" 
+    #                       "timestamp":
+    #                         "S.$": "$$.State.EnteredTime" 
+    #                       "messages":
+    #                         "S.$": "$.genContent.Body.content[0].text" 
+    #                       "ttl":
+    #                         "N.$": "States.JsonToString($.ttl)"
+    #                   Next: Send Message to WebSocket Menu Prompt
 
-                    Send Message to WebSocket Menu Prompt:
-                      Type: Task          
-                      Resource: arn:aws:states:::apigateway:invoke
-                      Parameters:
-                        ApiEndpoint: !Sub "${WebSocketApi}.execute-api.${AWS::Region}.amazonaws.com"
-                        Method: POST
-                        Stage: "${self:provider.stage}"
-                        Path.$: "States.Format('/@connections/{}', $.connectionId)"
-                        RequestBody:
-                          Message.$: $.genContent.Body.content[0].text
-                        AuthType: IAM_ROLE
-                      End: true
+    #                 Send Message to WebSocket Menu Prompt:
+    #                   Type: Task          
+    #                   Resource: arn:aws:states:::apigateway:invoke
+    #                   Parameters:
+    #                     ApiEndpoint: !Sub "${WebSocketApi}.execute-api.${AWS::Region}.amazonaws.com"
+    #                     Method: POST
+    #                     Stage: "${self:provider.stage}"
+    #                     Path.$: "States.Format('/@connections/{}', $.connectionId)"
+    #                     RequestBody:
+    #                       Message.$: $.genContent.Body.content[0].text
+    #                     AuthType: IAM_ROLE
+    #                   End: true
 
 
       #  processItems:
