@@ -8,7 +8,7 @@ testState:
     LoggingConfiguration:
       Destinations:
         - CloudWatchLogsLogGroup:
-            LogGroupArn: !GetAtt statesLogGroup.Arn
+            LogGroupArn: !GetAtt statesTestLogGroup.Arn
       IncludeExecutionData: true
       Level: ALL
 
@@ -17,7 +17,7 @@ testState:
 
     DefinitionS3Location:
       Bucket: !Ref aslDefinitionsBucket
-      Key: test.asl.json
+      Key: test-${self:provider.stage}.asl.json
   
 
     #DefinitionString:

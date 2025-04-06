@@ -1,0 +1,559 @@
+{
+  "Comment": "GEN AI Orquestation to save analitycs in S3 tables",
+  "StartAt": "parserInput",
+  "States": {
+    "parallelFilterbyTables": {
+      "Branches": [
+        {
+          "StartAt": "filterPedidosPulseEcommerce",
+          "States": {
+            "filterPedidosPulseEcommerce": {
+              "InputPath": "$.[?(@.body.index == 'pedidos-pulse-ecom-pro')]",
+              "Next": "handleCommerceItem",
+              "Type": "Pass"
+            },
+            "handleCommerceItem": {
+              "End": true,
+              "ItemProcessor": {
+                "StartAt": "Athena StartSyncExecution",
+                "States": {
+                  "Athena StartSyncExecution": {
+                    "End": true,
+                    "Parameters": {
+                      "QueryExecutionContext": {
+                        "Database": "database1"
+                      },
+                      "QueryString.$": "States.Format('INSERT INTO dominos (messageid, eventsource, body, createdat, status, statustext, storeorderid, servicemethod, unidad, storeid)  VALUES (\\'{}\\', \\'{}\\', \\'{}\\', CURRENT_DATE, {}, \\'{}\\', \\'{}\\', \\'{}\\', \\'{}\\', {});', $.messageId, $.body.index, States.JsonToString($.body), $.body.body.Status, $.body.body.StatusText, $.body.body.StoreOrderID, $.body.body.ServiceMethod, $.body.body.Unidad, $.body.body.StoreID)",
+                      "ResultConfiguration": {
+                        "OutputLocation": "s3://s3table-output-pre/athena/"
+                      },
+                      "WorkGroup": "primary"
+                    },
+                    "Resource": "arn:aws:states:::athena:startQueryExecution.sync",
+                    "ResultPath": "$.queryResult",
+                    "Type": "Task"
+                  }
+                }
+              },
+              "ItemsPath": "$",
+              "MaxConcurrency": 100,
+              "Type": "Map"
+            }
+          }
+        },
+        {
+          "StartAt": "filterPedidosPulseAggregator",
+          "States": {
+            "filterPedidosPulseAggregator": {
+              "InputPath": "$.[?(@.body.index == 'pedidos-pulse-agg-pro')]",
+              "Next": "handleAggItem",
+              "Type": "Pass"
+            },
+            "handleAggItem": {
+              "End": true,
+              "ItemProcessor": {
+                "StartAt": "Athena StartSyncExecutionAgg",
+                "States": {
+                  "Athena StartSyncExecutionAgg": {
+                    "End": true,
+                    "Parameters": {
+                      "QueryExecutionContext": {
+                        "Database": "database1"
+                      },
+                      "QueryString.$": "States.Format('INSERT INTO dominos (messageid, eventsource, body, createdat, status, statustext, storeorderid, servicemethod, unidad, storeid)  VALUES (\\'{}\\', \\'{}\\', \\'{}\\', CURRENT_DATE, {}, \\'{}\\', \\'{}\\', \\'{}\\', \\'{}\\', {});', $.messageId, $.body.index, States.JsonToString($.body), $.body.body.Status, $.body.body.StatusText, $.body.body.StoreID, $.body.body.ServiceMethod, $.body.body.Unidad, $.body.body.StoreID)",
+                      "ResultConfiguration": {
+                        "OutputLocation": "s3://s3table-output-pre/athena/"
+                      },
+                      "WorkGroup": "primary"
+                    },
+                    "Resource": "arn:aws:states:::athena:startQueryExecution.sync",
+                    "ResultPath": "$.queryResult",
+                    "Type": "Task"
+                  }
+                }
+              },
+              "ItemsPath": "$",
+              "MaxConcurrency": 100,
+              "Type": "Map"
+            }
+          }
+        },
+        {
+          "StartAt": "filterCustomEvents",
+          "States": {
+            "filterCustomEvents": {
+              "InputPath": "$.[?(@.body.index == 'custom')]",
+              "Next": "handleCustomItems",
+              "Type": "Pass"
+            },
+            "handleCustomItems": {
+              "End": true,
+              "ItemProcessor": {
+                "StartAt": "parseCustomItem",
+                "States": {
+                  "Send Message to WebSocket Client": {
+                    "End": true,
+                    "Parameters": {
+                      "ApiEndpoint": "gvy669mge1.execute-api.eu-west-1.amazonaws.com",
+                      "AuthType": "IAM_ROLE",
+                      "Method": "POST",
+                      "Path.$": "States.Format('/@connections/{}', $.connectionId)",
+                      "RequestBody": {
+                        "Message.$": "$"
+                      },
+                      "Stage": "pre"
+                    },
+                    "Resource": "arn:aws:states:::apigateway:invoke",
+                    "Type": "Task"
+                  },
+                  "parseCustomItem": {
+                    "Next": "Send Message to WebSocket Client",
+                    "Parameters": {
+                      "body.$": "States.StringToJson($.body.body)",
+                      "connectionId.$": "$.messageAttributes.connectionId.stringValue",
+                      "executionTime.$": "$$.Execution.StartTime",
+                      "messageId.$": "$.messageId"
+                    },
+                    "Type": "Pass"
+                  }
+                }
+              },
+              "ItemsPath": "$",
+              "MaxConcurrency": 100,
+              "Type": "Map"
+            }
+          }
+        },
+        {
+          "StartAt": "filterEventToPromptBedrock",
+          "States": {
+            "filterEventToPromptBedrock": {
+              "InputPath": "$.[?(@.body.index == 'gen-prompt-content')]",
+              "Next": "handlePrompCustomItems",
+              "Type": "Pass"
+            },
+            "handlePrompCustomItems": {
+              "End": true,
+              "ItemProcessor": {
+                "StartAt": "parsePromptItem",
+                "States": {
+                  "Send Message to WebSocket Client Prompt": {
+                    "Arguments": {
+                      "ApiEndpoint": "gvy669mge1.execute-api.eu-west-1.amazonaws.com",
+                      "AuthType": "IAM_ROLE",
+                      "Method": "POST",
+                      "Path": "{% '/@connections/' & $inputContent.connectionId %}",
+                      "RequestBody": {
+                        "Message": "{% $resumeContent %}"
+                      },
+                      "Stage": "pre"
+                    },
+                    "End": true,
+                    "QueryLanguage": "JSONata",
+                    "Resource": "arn:aws:states:::apigateway:invoke",
+                    "Type": "Task"
+                  },
+                  "getContent": {
+                    "Next": "promtBedrock",
+                    "Parameters": {
+                      "Bucket.$": "$.Payload.bucket",
+                      "Key.$": "$.Payload.key"
+                    },
+                    "Resource": "arn:aws:states:::aws-sdk:s3:getObject",
+                    "ResultPath": "$.allContent",
+                    "Type": "Task"
+                  },
+                  "invokeParser": {
+                    "Arguments": {
+                      "FunctionName": "arn:aws:lambda:eu-west-1:178934116267:function:gen-ai-service-pre-scrapperrs",
+                      "Payload": "{% $states.input.body %}"
+                    },
+                    "Assign": {
+                      "generatedContent": "{% $states.result.Payload %}",
+                      "inputContent": "{% $states.input %}"
+                    },
+                    "Next": "getContent",
+                    "Output": "{% $states.result %}",
+                    "QueryLanguage": "JSONata",
+                    "Resource": "arn:aws:states:::lambda:invoke",
+                    "Type": "Task"
+                  },
+                  "parsePromptItem": {
+                    "Next": "invokeParser",
+                    "Parameters": {
+                      "body.$": "$.body.body",
+                      "connectionId.$": "$.messageAttributes.connectionId.stringValue",
+                      "executionTime.$": "$$.Execution.StartTime",
+                      "messageId.$": "$.messageId"
+                    },
+                    "Type": "Pass"
+                  },
+                  "promtBedrock": {
+                    "Arguments": {
+                      "Body": {
+                        "anthropic_version": "bedrock-2023-05-31",
+                        "max_tokens": 500,
+                        "messages": [
+                          {
+                            "content": [
+                              {
+                                "text": "{% 'Genera un resumen con este contenido: ' & $state.input.allContent %}",
+                                "type": "text"
+                              }
+                            ],
+                            "role": "user"
+                          }
+                        ]
+                      },
+                      "ModelId": "anthropic.claude-3-sonnet-20240229-v1:0"
+                    },
+                    "Assign": {
+                      "resumeContent": "{% $states.result %}"
+                    },
+                    "Next": "Send Message to WebSocket Client Prompt",
+                    "QueryLanguage": "JSONata",
+                    "Resource": "arn:aws:states:::bedrock:invokeModel",
+                    "Type": "Task"
+                  }
+                }
+              },
+              "ItemsPath": "$",
+              "MaxConcurrency": 10,
+              "Type": "Map"
+            }
+          }
+        },
+        {
+          "StartAt": "filterNotificationEmail",
+          "States": {
+            "filterNotificationEmail": {
+              "InputPath": "$.[?(@.body.index == 'notification-email')]",
+              "Next": "handleNotificationsEmail",
+              "Type": "Pass"
+            },
+            "handleNotificationsEmail": {
+              "End": true,
+              "ItemProcessor": {
+                "StartAt": "parseNotificationItem",
+                "States": {
+                  "parseNotificationItem": {
+                    "Next": "sendEmail",
+                    "Parameters": {
+                      "body.$": "$.body.body"
+                    },
+                    "Type": "Pass"
+                  },
+                  "sendEmail": {
+                    "End": true,
+                    "Parameters": {
+                      "Destination": {
+                        "ToAddresses.$": "States.Array($.body.to)"
+                      },
+                      "Message": {
+                        "Body": {
+                          "Html": {
+                            "Data.$": "$.body.data"
+                          }
+                        },
+                        "Subject": {
+                          "Data.$": "$.body.subject"
+                        }
+                      },
+                      "Source.$": "$.body.from"
+                    },
+                    "Resource": "arn:aws:states:::aws-sdk:ses:sendEmail",
+                    "Type": "Task"
+                  }
+                }
+              },
+              "ItemsPath": "$",
+              "MaxConcurrency": 10,
+              "Type": "Map"
+            }
+          }
+        },
+        {
+          "StartAt": "filterMenuPrompter",
+          "States": {
+            "filterMenuPrompter": {
+              "InputPath": "$.[?(@.body.index == 'gen-prompt-menu')]",
+              "Next": "handlePrompMenuItems",
+              "Type": "Pass"
+            },
+            "handlePrompMenuItems": {
+              "End": true,
+              "ItemProcessor": {
+                "StartAt": "parsePromptMenu",
+                "States": {
+                  "GetConversationHistory": {
+                    "Next": "parallelPromptStorePromp",
+                    "Parameters": {
+                      "ExpressionAttributeValues": {
+                        ":sessionId": {
+                          "S.$": "$.connectionId"
+                        }
+                      },
+                      "KeyConditionExpression": "sessionId = :sessionId",
+                      "TableName": "sessions-bedrock-pre"
+                    },
+                    "Resource": "arn:aws:states:::aws-sdk:dynamodb:query",
+                    "ResultPath": "$.conversationHistory",
+                    "Type": "Task"
+                  },
+                  "Send Message to WebSocket Menu Prompt": {
+                    "End": true,
+                    "Parameters": {
+                      "ApiEndpoint": "gvy669mge1.execute-api.eu-west-1.amazonaws.com",
+                      "AuthType": "IAM_ROLE",
+                      "Method": "POST",
+                      "Path.$": "States.Format('/@connections/{}', $.connectionId)",
+                      "RequestBody": {
+                        "Message.$": "$.genContent.Body.content[0].text"
+                      },
+                      "Stage": "pre"
+                    },
+                    "Resource": "arn:aws:states:::apigateway:invoke",
+                    "Type": "Task"
+                  },
+                  "StoreResponseFromPromp": {
+                    "Next": "Send Message to WebSocket Menu Prompt",
+                    "Parameters": {
+                      "Item": {
+                        "messages": {
+                          "S.$": "$.genContent.Body.content[0].text"
+                        },
+                        "sessionId": {
+                          "S.$": "$.connectionId"
+                        },
+                        "timestamp": {
+                          "S.$": "$$.State.EnteredTime"
+                        },
+                        "ttl": {
+                          "N.$": "States.JsonToString($.ttl)"
+                        }
+                      },
+                      "TableName": "sessions-bedrock-pre"
+                    },
+                    "Resource": "arn:aws:states:::dynamodb:putItem",
+                    "ResultPath": "$.responseStoreResponse",
+                    "Type": "Task"
+                  },
+                  "choiceMenu": {
+                    "Choices": [
+                      {
+                        "And": [
+                          {
+                            "IsPresent": true,
+                            "Variable": "$.body.menu"
+                          }
+                        ],
+                        "Next": "getMenuContent"
+                      }
+                    ],
+                    "Default": "GetConversationHistory",
+                    "Type": "Choice"
+                  },
+                  "getMenuContent": {
+                    "Next": "parallelPromptStoreMenu",
+                    "Parameters": {
+                      "Bucket": "gen-ai-content-pre",
+                      "Key.$": "States.Format('{}', $.body.menu)"
+                    },
+                    "Resource": "arn:aws:states:::aws-sdk:s3:getObject",
+                    "ResultPath": "$.menuContent",
+                    "Type": "Task"
+                  },
+                  "parallelPromptStoreMenu": {
+                    "Branches": [
+                      {
+                        "StartAt": "StoreConversationHistory",
+                        "States": {
+                          "StoreConversationHistory": {
+                            "End": true,
+                            "Parameters": {
+                              "Item": {
+                                "messages": {
+                                  "S.$": "$.menuContent.Body"
+                                },
+                                "sessionId": {
+                                  "S.$": "$.connectionId"
+                                },
+                                "timestamp": {
+                                  "S.$": "$$.State.EnteredTime"
+                                },
+                                "ttl1": {
+                                  "N.$": "States.JsonToString($.ttl)"
+                                }
+                              },
+                              "TableName": "sessions-bedrock-pre"
+                            },
+                            "Resource": "arn:aws:states:::dynamodb:putItem",
+                            "Type": "Task"
+                          }
+                        }
+                      },
+                      {
+                        "StartAt": "promtInputMenuBedrock",
+                        "States": {
+                          "promtInputMenuBedrock": {
+                            "End": true,
+                            "Parameters": {
+                              "Body": {
+                                "anthropic_version": "bedrock-2023-05-31",
+                                "max_tokens": 4096,
+                                "messages": [
+                                  {
+                                    "content": [
+                                      {
+                                        "text.$": "States.Format('Este es el menu: {}', $.menuContent)",
+                                        "type": "text"
+                                      }
+                                    ],
+                                    "role": "user"
+                                  }
+                                ]
+                              },
+                              "ModelId": "anthropic.claude-3-sonnet-20240229-v1:0"
+                            },
+                            "Resource": "arn:aws:states:::bedrock:invokeModel",
+                            "ResultPath": "$.genContent",
+                            "Type": "Task"
+                          }
+                        }
+                      }
+                    ],
+                    "Next": "Send Message to WebSocket Menu Prompt",
+                    "OutputPath": "$[1]",
+                    "Type": "Parallel"
+                  },
+                  "parallelPromptStorePromp": {
+                    "Branches": [
+                      {
+                        "StartAt": "StoreConversationPromp",
+                        "States": {
+                          "StoreConversationPromp": {
+                            "End": true,
+                            "Parameters": {
+                              "Item": {
+                                "messages": {
+                                  "S.$": "$.body.prompt"
+                                },
+                                "sessionId": {
+                                  "S.$": "$.connectionId"
+                                },
+                                "timestamp": {
+                                  "S.$": "$$.State.EnteredTime"
+                                },
+                                "ttl": {
+                                  "N.$": "States.JsonToString($.ttl)"
+                                }
+                              },
+                              "TableName": "sessions-bedrock-pre"
+                            },
+                            "Resource": "arn:aws:states:::dynamodb:putItem",
+                            "Type": "Task"
+                          }
+                        }
+                      },
+                      {
+                        "StartAt": "promtMenuBedrock",
+                        "States": {
+                          "promtMenuBedrock": {
+                            "End": true,
+                            "Parameters": {
+                              "Body": {
+                                "anthropic_version": "bedrock-2023-05-31",
+                                "max_tokens": 500,
+                                "messages": [
+                                  {
+                                    "content": [
+                                      {
+                                        "text": "You are a helpful assistant. Remember our conversation.",
+                                        "type": "text"
+                                      }
+                                    ],
+                                    "role": "user"
+                                  },
+                                  {
+                                    "content": [
+                                      {
+                                        "text.$": "States.JsonToString($.conversationHistory.Items)",
+                                        "type": "text"
+                                      }
+                                    ],
+                                    "role": "assistant"
+                                  },
+                                  {
+                                    "content": [
+                                      {
+                                        "text.$": "States.Format('{}', $.body.prompt)",
+                                        "type": "text"
+                                      }
+                                    ],
+                                    "role": "user"
+                                  }
+                                ]
+                              },
+                              "ModelId": "anthropic.claude-3-sonnet-20240229-v1:0"
+                            },
+                            "Resource": "arn:aws:states:::bedrock:invokeModel",
+                            "ResultPath": "$.genContent",
+                            "Type": "Task"
+                          }
+                        }
+                      }
+                    ],
+                    "Next": "StoreResponseFromPromp",
+                    "OutputPath": "$[1]",
+                    "Type": "Parallel"
+                  },
+                  "parsePromptMenu": {
+                    "Next": "choiceMenu",
+                    "Parameters": {
+                      "body.$": "$.body.body",
+                      "connectionId.$": "$.messageAttributes.connectionId.stringValue",
+                      "executionTime.$": "$$.Execution.StartTime",
+                      "messageId.$": "$.messageId",
+                      "ttl.$": "$.ttl"
+                    },
+                    "Type": "Pass"
+                  }
+                }
+              },
+              "ItemsPath": "$",
+              "MaxConcurrency": 10,
+              "Type": "Map"
+            }
+          }
+        }
+      ],
+      "End": true,
+      "Type": "Parallel"
+    },
+    "parserInput": {
+      "ItemProcessor": {
+        "ProcessorConfig": {
+          "ExecutionType": "STANDARD",
+          "Mode": "DISTRIBUTED"
+        },
+        "StartAt": "parser",
+        "States": {
+          "parser": {
+            "End": true,
+            "Parameters": {
+              "body.$": "States.StringToJson($.body)",
+              "messageAttributes.$": "$.messageAttributes",
+              "messageId.$": "$.messageId",
+              "ttl.$": "$.additional_data.ttl"
+            },
+            "Type": "Pass"
+          }
+        }
+      },
+      "ItemsPath": "$",
+      "MaxConcurrency": 100,
+      "Next": "parallelFilterbyTables",
+      "Type": "Map"
+    }
+  }
+}
