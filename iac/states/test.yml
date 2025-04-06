@@ -15,11 +15,16 @@ testState:
     TracingConfiguration:
       Enabled: true
 
-    DefinitionString:
-      Fn::Transform:
-        Name: AWS::Include
-        Parameters:
-          Location: ./iac/states/definitions/test.asl.json
+    DefinitionS3Location:
+      Bucket: !Ref aslDefinitionsBucket
+      Key: test.asl.json
+  
+
+    #DefinitionString:
+    #  Fn::Transform:
+    #    Name: AWS::Include
+    #    Parameters:
+    #      Location: ./iac/states/definitions/test.asl.json
 
     #DefinitionString:
     #  Fn::Sub: ${file(./iac/states/definitions/test.asl.json)}
