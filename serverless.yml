@@ -148,7 +148,7 @@ resources:
     contentBucket: '${file(./iac/s3/content.yml):contentBucket}'
 
     # ---------- S3 WEBSITE 🫡 --------------
-    WebsiteBucket: '${file(./iac/s3/frontend.yml):WebsiteBucket}'
+    #WebsiteBucket: '${file(./iac/s3/frontend.yml):WebsiteBucket}'
     #WebsiteBucketPolicy: '${file(./iac/s3/frontend.yml):WebsiteBucketPolicy}'
 
     # ---------- S3 VECTORS 🫡 ---------------
