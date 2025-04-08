@@ -144,8 +144,8 @@ resources:
     vectorDatabase: '${file(./iac/dynamo/vectors.yml):vectorDatabase}'
 
     # ---------- S3 TABLE 🫡 ---------------
-    s3Table: '${file(./iac/s3/tables.yml):s3Table}'
-    s3TableOutput: '${file(./iac/s3/tables.yml):s3TableOutput}'
+    #s3Table: '${file(./iac/s3/tables.yml):s3Table}'
+    #s3TableOutput: '${file(./iac/s3/tables.yml):s3TableOutput}'
 
     contentBucket: '${file(./iac/s3/content.yml):contentBucket}'
 
