@@ -127,7 +127,7 @@ resources:
 
     # ------------ CDN 🤨 ------------------
     genaiDistribution: '${file(./iac/cdn/cdn.yml):genaiDistribution}'
-    cdn_vpc: '${file(./iac/cdn/cdn_vpc.yml):cdn_vpc}'
+    cdnVpc: '${file(./iac/cdn/cdnvpc.yml):cdnVpc}'
 
   
 
