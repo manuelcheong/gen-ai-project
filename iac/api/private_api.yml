@@ -1,0 +1,48 @@
+privaterestApi:
+  Type: AWS::ApiGateway::RestApi
+  Properties:
+    Name: gen-ai-api-rest-private-${self:provider.stage}
+    Description: 'REST API - GEN AI Exposition Layer PRIVATE ${self:provider.stage}'
+
+privaterestApiDeploy:
+  Type: 'AWS::ApiGateway::Deployment'
+  Properties:
+    RestApiId: !Ref privaterestApi
+    Description: !Sub "REST API - GEN AI Exposition Layer  PRIVATE${self:provider.stage}"
+    StageName: ${self:provider.stage}
+
+privateStage:  
+  Type: AWS::ApiGateway::Stage
+  Properties:
+    StageName: ${self:provider.stage}
+    RestApiId: !Ref privaterestApi
+    DeploymentId: !Ref privaterestApiDeploy
+
+privaterestApiRole:
+  Type: 'AWS::IAM::Role'
+  Properties:
+    AssumeRolePolicyDocument:
+      Version: '2012-10-17'
+      Statement:
+        - Action:
+            - 'sts:AssumeRole'
+          Effect: Allow
+          Principal:
+            Service:
+              - apigateway.amazonaws.com
+    Policies:
+      - PolicyName: gen-ai-restapi-private-role-Policy
+        PolicyDocument:
+          Version: '2012-10-17'
+          Statement:
+            - Effect: Allow
+              Action:
+                - logs:*
+              Resource: "*"
+
+            - Effect: Allow
+              Action:
+                - dynamodb:*
+              Resource: "*"
+
+

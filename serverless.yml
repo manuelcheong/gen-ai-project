@@ -165,6 +165,16 @@ resources:
     ApiSecurityGroup: '${file(./iac/network/sg.yml):ApiSecurityGroup}'
     ApiGatewayVpcEndpoint: '${file(./iac/network/vpc-link.yml):ApiGatewayVpcEndpoint}'
 
+    privaterestApi: '${file(./iac/api/private_api.yml):privaterestApi}'
+    privaterestApiDeploy: '${file(./iac/api/private_api.yml):privaterestApiDeploy}'
+    privateStage: '${file(./iac/api/private_api.yml):privateStage}'
+    privaterestApiRole: '${file(./iac/api/private_api.yml):privaterestApiRole}'
+
+    privatenotificationResource: '${file(./iac/api/definitions/private_crud.yml):privatenotificationResource}'
+    privatenotificationOwnerResource: '${file(./iac/api/definitions/private_crud.yml):privatenotificationOwnerResource}'
+    privatenotificationOwnerPathResource: '${file(./iac/api/definitions/private_crud.yml):privatenotificationOwnerPathResource}'
+    privatenotificationOwnerMethodGet: '${file(./iac/api/definitions/private_crud.yml):privatenotificationOwnerMethodGet}'
+
 
   #extensions:
   #  deploymentSettings:
