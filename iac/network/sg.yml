@@ -1,7 +1,7 @@
 ApiSecurityGroup:
   Type: AWS::EC2::SecurityGroup
   Properties:
-    GroupName: sg-gen-ai-${self:provider.stage}
+    GroupName: gen-ai-sg-${self:provider.stage}
     GroupDescription: Security group for API Gateway VPC endpoint
     VpcId: vpc-02fe63f61288eaae5
     SecurityGroupIngress:
