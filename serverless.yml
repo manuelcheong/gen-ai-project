@@ -161,6 +161,10 @@ resources:
 
     #   ------- Network Load Balancing  🫡 --------------
     NetworkLoadBalancer: '${file(./iac/network/nlb.yml):NetworkLoadBalancer}'
+    VpcLink: '${file(./iac/network/vpc-link.yml):VpcLink}'
+    ApiSecurityGroup: '${file(./iac/network/sg.yml):ApiSecurityGroup}'
+    ApiGatewayVpcEndpoint: '${file(./iac/network/vpc-link.yml):ApiGatewayVpcEndpoint}'
+
 
   #extensions:
   #  deploymentSettings:

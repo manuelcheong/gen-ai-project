@@ -1,0 +1,11 @@
+ApiSecurityGroup:
+  Type: AWS::EC2::SecurityGroup
+  Properties:
+    GroupName: sg-gen-ai-${self:provider.stage}
+    GroupDescription: Security group for API Gateway VPC endpoint
+    VpcId: vpc-02fe63f61288eaae5
+    SecurityGroupIngress:
+      - IpProtocol: tcp
+        FromPort: 443
+        ToPort: 443
+        #CidrIp: !Ref VpcCIDR
