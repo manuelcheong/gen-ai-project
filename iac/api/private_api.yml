@@ -4,19 +4,19 @@ privaterestApi:
     Name: gen-ai-api-rest-private-${self:provider.stage}
     Description: 'REST API - GEN AI Exposition Layer PRIVATE ${self:provider.stage}'
 
-#privaterestApiDeploy:
-#  Type: 'AWS::ApiGateway::Deployment'
-#  Properties:
-#    RestApiId: !Ref privaterestApi
-#    Description: !Sub "REST API - GEN AI Exposition Layer  PRIVATE${self:provider.stage}"
-#    StageName: ${self:provider.stage}
+privaterestApiDeploy:
+  Type: 'AWS::ApiGateway::Deployment'
+  Properties:
+    RestApiId: !Ref privaterestApi
+    Description: !Sub "REST API - GEN AI Exposition Layer  PRIVATE${self:provider.stage}"
+    StageName: ${self:provider.stage}
 
-#privateStage:  
-#  Type: AWS::ApiGateway::Stage
-#  Properties:
-#    StageName: ${self:provider.stage}
-#    RestApiId: !Ref privaterestApi
-#    DeploymentId: !Ref privaterestApiDeploy
+privateStage:  
+  Type: AWS::ApiGateway::Stage
+  Properties:
+    StageName: ${self:provider.stage}
+    RestApiId: !Ref privaterestApi
+    DeploymentId: !Ref privaterestApiDeploy
 
 privaterestApiRole:
   Type: 'AWS::IAM::Role'
