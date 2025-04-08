@@ -35,7 +35,7 @@ privatenotificationOwnerMethodGet:
       method.request.path.owner: true
     Integration:
       Type: AWS
-      Credentials: !GetAtt privateAPIGatewayRole.Arn
+      Credentials: !GetAtt privaterestApiRole.Arn
           # Should always be POST when integrating with AWS services
       IntegrationHttpMethod: POST
       # More info: https://docs.aws.amazon.com/apigateway/api-reference/resource/integration/
