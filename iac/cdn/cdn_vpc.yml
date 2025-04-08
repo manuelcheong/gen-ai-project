@@ -1,0 +1,40 @@
+cdn_vpc:
+  Type: AWS::CloudFront::Distribution
+  Properties:
+    DistributionConfig:
+      Enabled: true
+      DefaultCacheBehavior:
+        TargetOriginId: PrivateApiOrigin
+        ViewerProtocolPolicy: redirect-to-https
+        AllowedMethods:
+          - GET
+          - HEAD
+          - OPTIONS
+          - PUT
+          - POST
+          - PATCH
+          - DELETE
+        CachedMethods:
+          - GET
+          - HEAD
+          - OPTIONS
+        ForwardedValues:
+          QueryString: true
+          Headers:
+            - Authorization
+            - Host
+          Cookies:
+            Forward: all
+      Origins:
+        - Id: PrivateApiOrigin
+          DomainName: !Sub '${privaterestApi}.execute-api.${AWS::Region}.amazonaws.com'
+          OriginPath: !Sub '/${privateStage}'
+          CustomOriginConfig:
+            HTTPPort: 80
+            HTTPSPort: 443
+            OriginProtocolPolicy: https-only
+            OriginSSLProtocols:
+              - TLSv1.2
+      PriceClass: PriceClass_100
+      ViewerCertificate:
+        CloudFrontDefaultCertificate: true
