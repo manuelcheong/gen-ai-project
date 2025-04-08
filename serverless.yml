@@ -175,7 +175,6 @@ resources:
     privatenotificationOwnerPathResource: '${file(./iac/api/definitions/private_crud.yml):privatenotificationOwnerPathResource}'
     privatenotificationOwnerMethodGet: '${file(./iac/api/definitions/private_crud.yml):privatenotificationOwnerMethodGet}'
 
-
   #extensions:
   #  deploymentSettings:
   #    capabilities:
