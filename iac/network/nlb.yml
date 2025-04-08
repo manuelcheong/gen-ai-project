@@ -1,0 +1,10 @@
+NetworkLoadBalancer:
+  Type: AWS::ElasticLoadBalancingV2::LoadBalancer
+  Properties:
+    Name: nlb-gen-ai-${self:provider.stage}
+    Type: network
+    Scheme: internal
+    Subnets:
+      - subnet-03f57aefd60413460
+      - subnet-0e08bae7f1daec489
+      - subnet-079148971f23ce9f7

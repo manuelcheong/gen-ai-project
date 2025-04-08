@@ -159,6 +159,9 @@ resources:
     # ---------- S3 ASL DEFINITIONS 🫡 --------------
     aslDefinitionsBucket: '${file(./iac/s3/asldefinitions.yml):aslDefinitionsBucket}'
 
+    #   ------- Network Load Balancing  🫡 --------------
+    NetworkLoadBalancer: '${file(./iac/network/nlb.yml):NetworkLoadBalancer}'
+
   #extensions:
   #  deploymentSettings:
   #    capabilities:
