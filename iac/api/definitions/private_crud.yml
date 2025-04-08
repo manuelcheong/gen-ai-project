@@ -8,14 +8,14 @@ privatenotificationResource:
 privatenotificationOwnerResource:
   Type: 'AWS::ApiGateway::Resource'
   Properties:
-    RestApiId: !Ref privateApi
+    RestApiId: !Ref privaterestApi
     ParentId: !Ref privatenotificationResource
     PathPart: 'owner'
 
 privatenotificationOwnerPathResource:
   Type: 'AWS::ApiGateway::Resource'
   Properties:
-    RestApiId: !Ref privateApi
+    RestApiId: !Ref privaterestApi
     ParentId: !Ref privatenotificationOwnerResource
     PathPart: '{owner}'
 
@@ -25,7 +25,7 @@ privatenotificationOwnerPathResource:
 privatenotificationOwnerMethodGet:
   Type: 'AWS::ApiGateway::Method'
   Properties:
-    RestApiId: !Ref privateApi
+    RestApiId: !Ref privaterestApi
     ResourceId: !Ref privatenotificationOwnerPathResource
     HttpMethod: GET
     #ApiKeyRequired: true
