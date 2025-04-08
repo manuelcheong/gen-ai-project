@@ -52,10 +52,6 @@ privatenotificationOwnerMethodGet:
       IntegrationResponses:
         - StatusCode: '200'
           ResponseTemplates:
-                # Modify the response of the DynamoDB Query before sending back to the caller
-                # Using single-line Velocity Template Language (VTL) code as the mapping template
-                # \n represents a new line, \t represents a tab character, \" represents a single quote character
-                # Example response: {"notification":[{"id":"38bfb57e-a5a8-4fed-9a4f-391d66d5e987","artist":"The Beatles","album":"Abbey Road"}]}
             application/json: "#set($inputRoot = $input.path('$'))\n{\n\t\"notification\": [\n\t\t#foreach($field in $inputRoot.Items) {\n\t\t\t\"id\": \"$field.idnot.S\",\n\t\t\t\"owner\": \"$field.ownernot.S\",}#if($foreach.hasNext),#end\n\t\t#end\n\t]\n}"
     MethodResponses:
       - StatusCode: '200'
