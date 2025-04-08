@@ -166,8 +166,8 @@ resources:
     ApiGatewayVpcEndpoint: '${file(./iac/network/vpc-link.yml):ApiGatewayVpcEndpoint}'
 
     privaterestApi: '${file(./iac/api/private_api.yml):privaterestApi}'
-    privaterestApiDeploy: '${file(./iac/api/private_api.yml):privaterestApiDeploy}'
-    privateStage: '${file(./iac/api/private_api.yml):privateStage}'
+    #privaterestApiDeploy: '${file(./iac/api/private_api.yml):privaterestApiDeploy}'
+    #privateStage: '${file(./iac/api/private_api.yml):privateStage}'
     privaterestApiRole: '${file(./iac/api/private_api.yml):privaterestApiRole}'
 
     privatenotificationResource: '${file(./iac/api/definitions/private_crud.yml):privatenotificationResource}'
