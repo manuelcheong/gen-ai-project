@@ -162,9 +162,14 @@ resources:
 
     #   ------- Network Load Balancing  🫡 --------------
     NetworkLoadBalancer: '${file(./iac/network/nlb.yml):NetworkLoadBalancer}'
+    TargetGroup: '${file(./iac/network/nlb.yml):TargetGroup}'
+    NLBListener: '${file(./iac/network/nlb.yml):NLBListener}'
+
     VpcLink: '${file(./iac/network/vpc-link.yml):VpcLink}'
     ApiSecurityGroup: '${file(./iac/network/sg.yml):ApiSecurityGroup}'
     ApiGatewayVpcEndpoint: '${file(./iac/network/vpc-link.yml):ApiGatewayVpcEndpoint}'
+
+
 
     privaterestApi: '${file(./iac/api/private_api.yml):privaterestApi}'
     #privaterestApiDeploy: '${file(./iac/api/private_api.yml):privaterestApiDeploy}'

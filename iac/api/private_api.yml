@@ -3,6 +3,9 @@ privaterestApi:
   Properties:
     Name: gen-ai-api-rest-private-${self:provider.stage}
     Description: 'REST API - GEN AI Exposition Layer PRIVATE ${self:provider.stage}'
+    EndpointConfiguration:
+      Types:
+        - PRIVATE
 
 # privaterestApiDeploy:
 #   Type: 'AWS::ApiGateway::Deployment'

@@ -8,3 +8,21 @@ NetworkLoadBalancer:
       - subnet-03f57aefd60413460
       - subnet-0e08bae7f1daec489
       - subnet-079148971f23ce9f7
+
+TargetGroup:
+  Type: AWS::ElasticLoadBalancingV2::TargetGroup
+  Properties:
+    VpcId: vpc-02fe63f61288eaae5
+    Port: 443
+    Protocol: TCP
+    TargetType: ip  # Or 'instance' depending on your backend
+
+NLBListener:
+  Type: AWS::ElasticLoadBalancingV2::Listener
+  Properties:
+    LoadBalancerArn: !Ref NetworkLoadBalancer
+    Port: 443
+    Protocol: TCP
+    DefaultActions:
+      - Type: forward
+        TargetGroupArn: !Ref TargetGroup
