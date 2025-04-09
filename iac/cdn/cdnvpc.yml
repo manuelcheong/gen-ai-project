@@ -1,11 +1,11 @@
-CloudFrontOAC:
-  Type: AWS::CloudFront::OriginAccessControl
-  Properties:
-    OriginAccessControlConfig:
-      Name: !Sub '${AWS::StackName}-oac'
-      OriginAccessControlOriginType: 'apigateway'
-      SigningBehavior: 'always'
-      SigningProtocol: 'sigv4'
+# CloudFrontOAC:
+#   Type: AWS::CloudFront::OriginAccessControl
+#   Properties:
+#     OriginAccessControlConfig:
+#       Name: !Sub '${AWS::StackName}-oac'
+#       OriginAccessControlOriginType: 'apigateway'
+#       SigningBehavior: 'always'
+#       SigningProtocol: 'sigv4'
 
 cdnVpc:
   Type: AWS::CloudFront::Distribution
@@ -43,7 +43,7 @@ cdnVpc:
             OriginProtocolPolicy: https-only
             OriginSSLProtocols:
               - TLSv1.2
-          OriginAccessControlId: !Ref CloudFrontOAC
+          #OriginAccessControlId: !Ref CloudFrontOAC
       PriceClass: PriceClass_100
       ViewerCertificate:
         CloudFrontDefaultCertificate: true

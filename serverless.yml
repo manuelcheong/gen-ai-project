@@ -128,7 +128,7 @@ resources:
     # ------------ CDN 🤨 ------------------
     genaiDistribution: '${file(./iac/cdn/cdn.yml):genaiDistribution}'
     cdnVpc: '${file(./iac/cdn/cdnvpc.yml):cdnVpc}'
-    CloudFrontOAC: '${file(./iac/cdn/cdnvpc.yml):CloudFrontOAC}'
+    #CloudFrontOAC: '${file(./iac/cdn/cdnvpc.yml):CloudFrontOAC}'
 
   
 
