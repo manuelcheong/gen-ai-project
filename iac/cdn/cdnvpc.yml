@@ -28,7 +28,7 @@ cdnVpc:
       Origins:
         - Id: PrivateApiOrigin
           DomainName: !Sub '${privaterestApi}.execute-api.${AWS::Region}.amazonaws.com'
-          OriginPath: '/pre'
+          #OriginPath: '/pre'
           CustomOriginConfig:
             HTTPPort: 80
             HTTPSPort: 443
