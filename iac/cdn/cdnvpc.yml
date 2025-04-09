@@ -43,6 +43,7 @@ cdnVpc:
             OriginProtocolPolicy: https-only
             OriginSSLProtocols:
               - TLSv1.2
+          OriginAccessControlId: !Ref CloudFrontOAC
       PriceClass: PriceClass_100
       ViewerCertificate:
         CloudFrontDefaultCertificate: true
