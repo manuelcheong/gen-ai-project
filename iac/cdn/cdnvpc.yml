@@ -1,3 +1,12 @@
+CloudFrontOAC:
+  Type: AWS::CloudFront::OriginAccessControl
+  Properties:
+    OriginAccessControlConfig:
+      Name: !Sub '${AWS::StackName}-oac'
+      OriginAccessControlOriginType: 'apigateway'
+      SigningBehavior: 'always'
+      SigningProtocol: 'sigv4'
+
 cdnVpc:
   Type: AWS::CloudFront::Distribution
   Properties:
@@ -30,7 +39,6 @@ cdnVpc:
           DomainName: !Sub '${privaterestApi}.execute-api.${AWS::Region}.amazonaws.com'
           #OriginPath: '/pre'
           CustomOriginConfig:
-            HTTPPort: 80
             HTTPSPort: 443
             OriginProtocolPolicy: https-only
             OriginSSLProtocols:
