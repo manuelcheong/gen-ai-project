@@ -70,7 +70,7 @@ jobs:
       #- name: validate replaces 😎
       #  run: cat iac/states/test.yml
 
-      - name: Deploy GEN-AI reference 🚀 🔥
+      - name: Deploy GEN-AI reference  (🌐 → ☁️⚡ → 🚪🔒 → 🔗 → ⚖️ → 🏢🔐)
         run: serverless deploy --stage ${{ env.STAGE }} --region ${{ env.AWS_REGION }}
 
       - name: Prune old versions 🧹

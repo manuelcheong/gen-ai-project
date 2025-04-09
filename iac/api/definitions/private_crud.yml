@@ -38,8 +38,6 @@ privatenotificationOwnerMethodGet:
       Credentials: !GetAtt privaterestApiRole.Arn
           # Should always be POST when integrating with AWS services
       IntegrationHttpMethod: POST
-      ConnectionType: VPC_LINK
-      ConnectionId: !Ref VpcLink
       # More info: https://docs.aws.amazon.com/apigateway/api-reference/resource/integration/
       Uri: !Sub 'arn:aws:apigateway:${self:provider.region}:dynamodb:action/Query'
       PassthroughBehavior: WHEN_NO_TEMPLATES
