@@ -6,6 +6,18 @@ privaterestApi:
     EndpointConfiguration:
       Types:
         - PRIVATE
+      VpcEndpointIds:
+        - !Ref ApiGatewayVpcEndpoint
+    Policy:
+      Version: '2012-10-17'
+      Statement:
+        - Effect: Allow
+          Principal: '*'
+          Action: 'execute-api:Invoke'
+          Resource: '*'
+          #Condition:
+          #  StringEquals:
+          #    'aws:SourceArn': !Sub 'arn:aws:cloudfront::${AWS::AccountId}:distribution/${cdnVpc}'
 
 # privaterestApiDeploy:
 #   Type: 'AWS::ApiGateway::Deployment'
@@ -47,6 +59,10 @@ privaterestApiRole:
               Action:
                 - dynamodb:*
               Resource: "*"
+
+              #Condition:
+              #  StringNotEquals:
+              #    'aws:SourceArn': !Sub 'arn:aws:cloudfront::${AWS::AccountId}:distribution/${CloudFrontDistribution}'
 
               #Condition:
               #  StringEquals:
