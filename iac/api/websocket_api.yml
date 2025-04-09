@@ -11,9 +11,9 @@ WebSocketApi:
           Principal: "*"
           Action: "execute-api:Invoke"
           Resource: "*"
-          Condition:
-            StringEquals:
-            'aws:SourceArn': !Sub 'arn:aws:cloudfront::${AWS::AccountId}:distribution/${cdn}'
+          #Condition:
+          #  StringEquals:
+          #  'aws:SourceArn': !Sub 'arn:aws:cloudfront::${AWS::AccountId}:distribution/${cdn}'
 
 WebSocketApiDeployment:
   Type: AWS::ApiGatewayV2::Deployment
