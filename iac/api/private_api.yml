@@ -48,8 +48,8 @@ privaterestApiRole:
                 - dynamodb:*
               Resource: "*"
 
-              Condition:
-                StringEquals:
-                  'aws:SourceVpce': !Ref ApiGatewayVpcEndpoint
+              #Condition:
+              #  StringEquals:
+              #    'aws:SourceVpce': !Ref ApiGatewayVpcEndpoint
 
 
