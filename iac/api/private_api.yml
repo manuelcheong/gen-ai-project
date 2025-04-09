@@ -19,6 +19,35 @@ privaterestApi:
           #  StringEquals:
           #    'aws:SourceArn': !Sub 'arn:aws:cloudfront::${AWS::AccountId}:distribution/${cdnVpc}'
 
+RootMethod:
+  Type: AWS::ApiGateway::Method
+  Properties:
+    RestApiId: !Ref PrivateApi
+    ResourceId: !GetAtt PrivateApi.RootResourceId
+    HttpMethod: GET
+    AuthorizationType: NONE
+    Integration:
+      Type: MOCK
+      IntegrationHttpMethod: GET
+      PassthroughBehavior: WHEN_NO_MATCH
+      RequestTemplates:
+        application/json: '{"statusCode": 200}'
+      IntegrationResponses:
+        - StatusCode: 200
+          ResponseTemplates:
+            application/json: |
+              {
+                "mensaje": "Bienvenido a la API Privada",
+                "version": "1.0",
+                "timestamp": "$context.requestTime"
+              }
+    MethodResponses:
+      - StatusCode: 200
+        ResponseModels:
+          application/json: 'Empty'
+
+
+
 # privaterestApiDeploy:
 #   Type: 'AWS::ApiGateway::Deployment'
 #   Properties:
