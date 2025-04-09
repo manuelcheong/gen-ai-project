@@ -22,8 +22,8 @@ privaterestApi:
 RootMethod:
   Type: AWS::ApiGateway::Method
   Properties:
-    RestApiId: !Ref PrivateApi
-    ResourceId: !GetAtt PrivateApi.RootResourceId
+    RestApiId: !Ref privaterestApi
+    ResourceId: !GetAtt privaterestApi.RootResourceId
     HttpMethod: GET
     AuthorizationType: NONE
     Integration:
