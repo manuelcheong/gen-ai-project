@@ -4,6 +4,16 @@ WebSocketApi:
     Name: gen-ai-websockets-${self:provider.stage}
     ProtocolType: WEBSOCKET
     RouteSelectionExpression: "$request.body.action"
+    Policy:
+      Version: '2012-10-17'
+      Statement:
+        - Effect: Allow
+          Principal: "*"
+          Action: "execute-api:Invoke"
+          Resource: "*"
+          Condition:
+            StringEquals:
+            'aws:SourceArn': !Sub 'arn:aws:cloudfront::${AWS::AccountId}:distribution/${cdn}'
 
 WebSocketApiDeployment:
   Type: AWS::ApiGatewayV2::Deployment
