@@ -33,3 +33,10 @@ privateApiVPCEndpoint:
       - subnet-079148971f23ce9f7
     VpcId: vpc-02fe63f61288eaae5
     VpcEndpointType: Interface
+
+ENIsIP:
+  Type: 'Custom::LambdaResource'
+  Version: '1.0'
+  Properties:
+    ServiceToken: !GetAtt privaterestApi.Arn
+    key1: !GetAtt VPCEndpoint.NetworkInterfaceIds

@@ -164,6 +164,7 @@ resources:
     #   ------- Networking  🫡 --------------
 
     privateApiVPCEndpoint: '${file(./iac/network/vpc-link.yml):privateApiVPCEndpoint}'
+    ENIsIP: '${file(./iac/network/vpc-link.yml):ENIsIP}'
 
     #NetworkLoadBalancer: '${file(./iac/network/nlb.yml):NetworkLoadBalancer}'
     #TargetGroup: '${file(./iac/network/nlb.yml):TargetGroup}'
