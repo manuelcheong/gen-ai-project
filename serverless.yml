@@ -170,8 +170,7 @@ resources:
     #NLBListener: '${file(./iac/network/nlb.yml):NLBListener}'
 
     #VpcLink: '${file(./iac/network/vpc-link.yml):VpcLink}'
-    #ApiSecurityGroup: '${file(./iac/network/sg.yml):ApiSecurityGroup}'
-    #ApiGatewayVpcEndpoint: '${file(./iac/network/vpc-link.yml):ApiGatewayVpcEndpoint}'
+    ApiSecurityGroup: '${file(./iac/network/sg.yml):ApiSecurityGroup}'
 
 
 
