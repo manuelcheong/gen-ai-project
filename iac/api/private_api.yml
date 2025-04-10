@@ -11,13 +11,19 @@ privaterestApi:
     Policy:
       Version: '2012-10-17'
       Statement:
-        - Effect: Allow
-          Principal: '*'
-          Action: 'execute-api:Invoke'
-          Resource: '*'
-          #Condition:
-          #  StringEquals:
-          #    'aws:SourceArn': !Sub 'arn:aws:cloudfront::${AWS::AccountId}:distribution/${cdnVpc}'
+        - Effect: "Allow"
+          Principal: "*"
+          Action:
+            - "execute-api:Invoke"
+          Resource: "execute-api:/*"
+        - Effect: "Deny"
+          Principal: "*"
+          Action:
+            - "execute-api:Invoke"
+          Resource: "execute-api:/*"
+          Condition:
+            StringNotEquals:
+              aws:sourceVpce: !Ref privateApiVPCEndpoint
 
 RootMethod:
   Type: AWS::ApiGateway::Method
@@ -48,19 +54,21 @@ RootMethod:
 
 
 
-# privaterestApiDeploy:
-#   Type: 'AWS::ApiGateway::Deployment'
-#   Properties:
-#     RestApiId: !Ref privaterestApi
-#     Description: !Sub "REST API - GEN AI Exposition Layer  PRIVATE${self:provider.stage}"
-#     StageName: ${self:provider.stage}
+privaterestApiDeploy:
+  Type: 'AWS::ApiGateway::Deployment'
+  DependsOn: RootMethod
+  Properties:
+    RestApiId: !Ref privaterestApi
+    Description: !Sub "REST API - GEN AI Exposition Layer  PRIVATE${self:provider.stage}"
+    StageName: ${self:provider.stage}
 
-# privateStage:  
-#   Type: AWS::ApiGateway::Stage
-#   Properties:
-#     StageName: ${self:provider.stage}
-#     RestApiId: !Ref privaterestApi
-#     DeploymentId: !Ref privaterestApiDeploy
+privateStage:  
+  Type: AWS::ApiGateway::Stage
+  DependsOn: privaterestApiDeploy
+  Properties:
+    StageName: ${self:provider.stage}
+    RestApiId: !Ref privaterestApi
+    DeploymentId: !Ref privaterestApiDeploy
 
 privaterestApiRole:
   Type: 'AWS::IAM::Role'

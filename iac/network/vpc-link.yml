@@ -6,16 +6,30 @@ VpcLink:
       - !Ref NetworkLoadBalancer
 
 
-ApiGatewayVpcEndpoint:
+# ApiGatewayVpcEndpoint:
+#   Type: AWS::EC2::VPCEndpoint
+#   Properties:
+#     ServiceName: com.amazonaws.${self:provider.region}.execute-api
+#     VpcId: vpc-02fe63f61288eaae5
+#     VpcEndpointType: Interface
+#     PrivateDnsEnabled: true
+#     SubnetIds:
+#       - subnet-03f57aefd60413460
+#       - subnet-0e08bae7f1daec489
+#       - subnet-079148971f23ce9f7
+#     SecurityGroupIds:
+#       - !Ref ApiSecurityGroup
+
+privateApiVPCEndpoint:
   Type: AWS::EC2::VPCEndpoint
-  Properties:
-    ServiceName: com.amazonaws.${self:provider.region}.execute-api
-    VpcId: vpc-02fe63f61288eaae5
-    VpcEndpointType: Interface
+  Properties: 
     PrivateDnsEnabled: true
-    SubnetIds:
+    SecurityGroupIds: 
+      - !Ref ApiSecurityGroup
+    ServiceName: !Sub com.amazonaws.${AWS::Region}.execute-api
+    SubnetIds: 
       - subnet-03f57aefd60413460
       - subnet-0e08bae7f1daec489
       - subnet-079148971f23ce9f7
-    SecurityGroupIds:
-      - !Ref ApiSecurityGroup
+    VpcId: vpc-02fe63f61288eaae5
+    VpcEndpointType: Interface
