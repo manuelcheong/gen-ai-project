@@ -39,4 +39,4 @@ ENIsIP:
   Version: '1.0'
   Properties:
     ServiceToken: !GetAtt privaterestApi.Arn
-    key1: !GetAtt VPCEndpoint.NetworkInterfaceIds
+    key1: !GetAtt privateApiVPCEndpoint.NetworkInterfaceIds
