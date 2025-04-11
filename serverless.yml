@@ -117,12 +117,12 @@ resources:
     #restApiDeploy: '${file(./iac/api/rest_api.yml):restApiDeploy}'
     restApiRole: '${file(./iac/api/rest_api.yml):restApiRole}'
 
-    privaterestApi: '${file(./iac/api/private_api.yml):privaterestApi}'
+    #privaterestApi: '${file(./iac/api/private_api.yml):privaterestApi}'
     #privaterestApiDeploy: '${file(./iac/api/private_api.yml):privaterestApiDeploy}'
     #privateStage: '${file(./iac/api/private_api.yml):privateStage}'
-    privaterestApiRole: '${file(./iac/api/private_api.yml):privaterestApiRole}'
+    #privaterestApiRole: '${file(./iac/api/private_api.yml):privaterestApiRole}'
 
-    RootMethod: '${file(./iac/api/private_api.yml):RootMethod}'
+    #RootMethod: '${file(./iac/api/private_api.yml):RootMethod}'
 
     ## ---------- RESOURCES - REST API 🫡 ----------------
     queueEventResource: '${file(./iac/api/definitions/queue_event.yml):queueEventResource}'
@@ -147,10 +147,10 @@ resources:
     
 
     # ---------- DYNAMO 🫡 ---------------
-    privateModel: '${file(./iac/dynamo/privateModel.yml):privateModel}'
+    #privateModel: '${file(./iac/dynamo/privateModel.yml):privateModel}'
     sessionsBedrock: '${file(./iac/dynamo/sessionsBedrock.yml):sessionsBedrock}'
 
-    vectorDatabase: '${file(./iac/dynamo/vectors.yml):vectorDatabase}'
+    #vectorDatabase: '${file(./iac/dynamo/vectors.yml):vectorDatabase}'
 
     # ---------- S3 TABLE 🫡 ---------------
     #s3Table: '${file(./iac/s3/tables.yml):s3Table}'
@@ -170,7 +170,7 @@ resources:
 
     #   ------- Networking  🫡 --------------
 
-    privateApiVPCEndpoint: '${file(./iac/network/vpc-link.yml):privateApiVPCEndpoint}'
+    #privateApiVPCEndpoint: '${file(./iac/network/vpc-link.yml):privateApiVPCEndpoint}'
     #ENIsIP: '${file(./iac/network/vpc-link.yml):ENIsIP}'
 
     #NetworkLoadBalancer: '${file(./iac/network/nlb.yml):NetworkLoadBalancer}'
@@ -178,11 +178,7 @@ resources:
     #NLBListener: '${file(./iac/network/nlb.yml):NLBListener}'
 
     #VpcLink: '${file(./iac/network/vpc-link.yml):VpcLink}'
-    ApiSecurityGroup: '${file(./iac/network/sg.yml):ApiSecurityGroup}'
-
-
-
-    
+    #ApiSecurityGroup: '${file(./iac/network/sg.yml):ApiSecurityGroup}'
 
     #privatenotificationResource: '${file(./iac/api/definitions/private_crud.yml):privatenotificationResource}'
     #privatenotificationOwnerResource: '${file(./iac/api/definitions/private_crud.yml):privatenotificationOwnerResource}'
