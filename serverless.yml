@@ -118,8 +118,8 @@ resources:
     restApiRole: '${file(./iac/api/rest_api.yml):restApiRole}'
 
     privaterestApi: '${file(./iac/api/private_api.yml):privaterestApi}'
-    privaterestApiDeploy: '${file(./iac/api/private_api.yml):privaterestApiDeploy}'
-    privateStage: '${file(./iac/api/private_api.yml):privateStage}'
+    #privaterestApiDeploy: '${file(./iac/api/private_api.yml):privaterestApiDeploy}'
+    #privateStage: '${file(./iac/api/private_api.yml):privateStage}'
     privaterestApiRole: '${file(./iac/api/private_api.yml):privaterestApiRole}'
 
     RootMethod: '${file(./iac/api/private_api.yml):RootMethod}'
