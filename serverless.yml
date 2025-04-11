@@ -117,6 +117,13 @@ resources:
     #restApiDeploy: '${file(./iac/api/rest_api.yml):restApiDeploy}'
     restApiRole: '${file(./iac/api/rest_api.yml):restApiRole}'
 
+    privaterestApi: '${file(./iac/api/private_api.yml):privaterestApi}'
+    privaterestApiDeploy: '${file(./iac/api/private_api.yml):privaterestApiDeploy}'
+    privateStage: '${file(./iac/api/private_api.yml):privateStage}'
+    privaterestApiRole: '${file(./iac/api/private_api.yml):privaterestApiRole}'
+
+    RootMethod: '${file(./iac/api/private_api.yml):RootMethod}'
+
     ## ---------- RESOURCES - REST API 🫡 ----------------
     queueEventResource: '${file(./iac/api/definitions/queue_event.yml):queueEventResource}'
     queueEventMethodPost: '${file(./iac/api/definitions/queue_event.yml):queueEventMethodPost}'
@@ -164,7 +171,7 @@ resources:
     #   ------- Networking  🫡 --------------
 
     privateApiVPCEndpoint: '${file(./iac/network/vpc-link.yml):privateApiVPCEndpoint}'
-    ENIsIP: '${file(./iac/network/vpc-link.yml):ENIsIP}'
+    #ENIsIP: '${file(./iac/network/vpc-link.yml):ENIsIP}'
 
     #NetworkLoadBalancer: '${file(./iac/network/nlb.yml):NetworkLoadBalancer}'
     #TargetGroup: '${file(./iac/network/nlb.yml):TargetGroup}'
@@ -175,17 +182,14 @@ resources:
 
 
 
-    privaterestApi: '${file(./iac/api/private_api.yml):privaterestApi}'
-    privaterestApiDeploy: '${file(./iac/api/private_api.yml):privaterestApiDeploy}'
-    privateStage: '${file(./iac/api/private_api.yml):privateStage}'
-    privaterestApiRole: '${file(./iac/api/private_api.yml):privaterestApiRole}'
+    
 
     #privatenotificationResource: '${file(./iac/api/definitions/private_crud.yml):privatenotificationResource}'
     #privatenotificationOwnerResource: '${file(./iac/api/definitions/private_crud.yml):privatenotificationOwnerResource}'
     #privatenotificationOwnerPathResource: '${file(./iac/api/definitions/private_crud.yml):privatenotificationOwnerPathResource}'
     #privatenotificationOwnerMethodGet: '${file(./iac/api/definitions/private_crud.yml):privatenotificationOwnerMethodGet}'
 
-    RootMethod: '${file(./iac/api/private_api.yml):RootMethod}'
+    
 
   #extensions:
   #  deploymentSettings:
