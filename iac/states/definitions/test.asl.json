@@ -4,6 +4,17 @@
     "States": {
         "Pass": {
             "Type": "Pass",
+            "Output": {
+                "currentTime": "{% $now() %}"
+            },
+            "Next": "toMilis"
+        },
+        "toMilis": {
+            "Type": "Pass",
+            "Output": {
+                "inmilis": "{% $toMillis($states.input.currentTime)  %}",
+                "future": "{% $toMillis($states.input.currentTime) + 7889400 * 1000 %}"
+            },
             "End": true
         }
     },
