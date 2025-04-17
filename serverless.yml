@@ -178,7 +178,7 @@ resources:
     #NLBListener: '${file(./iac/network/nlb.yml):NLBListener}'
 
     #VpcLink: '${file(./iac/network/vpc-link.yml):VpcLink}'
-    #ApiSecurityGroup: '${file(./iac/network/sg.yml):ApiSecurityGroup}'
+    ApiSecurityGroup: '${file(./iac/network/sg.yml):ApiSecurityGroup}'
 
     #privatenotificationResource: '${file(./iac/api/definitions/private_crud.yml):privatenotificationResource}'
     #privatenotificationOwnerResource: '${file(./iac/api/definitions/private_crud.yml):privatenotificationOwnerResource}'

@@ -6,6 +6,6 @@ ApiSecurityGroup:
     VpcId: vpc-02fe63f61288eaae5
     SecurityGroupIngress:
       - IpProtocol: tcp
-        FromPort: 443
-        ToPort: 443
+        FromPort: '443'
+        ToPort: '443'
         CidrIp: 0.0.0.0/0
