@@ -95,6 +95,10 @@ resources:
 
     statesTestLogGroup: '${file(./iac/states/test.yml):statesTestLogGroup}'
     testState: '${file(./iac/states/test.yml):testState}'
+
+    enrichStateLogGroup: '${file(./iac/states/enrichState.yml):enrichStateLogGroup}'
+    enrichState: '${file(./iac/states/enrichState.yml):enrichState}'
+
     
 
     # ---------- WEBSOCKET API 🫡 ----------------

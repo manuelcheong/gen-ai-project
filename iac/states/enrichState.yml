@@ -1,0 +1,26 @@
+enrichState:
+  Type: AWS::StepFunctions::StateMachine
+  Properties:
+    StateMachineName: enrich-states-${self:provider.stage}
+    StateMachineType: STANDARD
+    RoleArn: !GetAtt statesRole.Arn
+
+    LoggingConfiguration:
+      Destinations:
+        - CloudWatchLogsLogGroup:
+            LogGroupArn: !GetAtt enrichStateLogGroup.Arn
+      IncludeExecutionData: true
+      Level: ALL
+
+    TracingConfiguration:
+      Enabled: true
+
+    DefinitionS3Location:
+      Bucket: !Ref aslDefinitionsBucket
+      Key: enrich-state-${self:provider.stage}.asl.json
+  
+enrichStateLogGroup:
+  Type: AWS::Logs::LogGroup
+  Properties:
+    LogGroupName: !Join [ "/", [ "enrichStateLogGroup_${self:provider.stage}", enrichStateLogGroup]]
+    RetentionInDays: 30
