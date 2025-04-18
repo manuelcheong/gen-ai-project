@@ -25,7 +25,7 @@ privateTargetGroup:
     HealthyThresholdCount: 3
     UnhealthyThresholdCount: 3
     Targets:
-      - Id: vpce-0d34d00c61be293b6-c2ut4wof.execute-api.eu-west-1.vpce.amazonaws.com
+      - Id: vpce-0d34d00c61be293b6
         Port: 443
 
 privateNLBListener:
