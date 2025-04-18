@@ -1,7 +1,7 @@
-NetworkLoadBalancer:
+privateLoadBalancer:
   Type: AWS::ElasticLoadBalancingV2::LoadBalancer
   Properties:
-    Name: nlb-gen-ai-${self:provider.stage}
+    Name: private-nlb-gen-ai-${self:provider.stage}
     Type: network
     Scheme: internal
     Subnets:
@@ -9,20 +9,33 @@ NetworkLoadBalancer:
       - subnet-0e08bae7f1daec489
       - subnet-079148971f23ce9f7
 
-TargetGroup:
+privateTargetGroup:
   Type: AWS::ElasticLoadBalancingV2::TargetGroup
   Properties:
     VpcId: vpc-02fe63f61288eaae5
     Port: 443
-    Protocol: TCP
-    TargetType: ip  # Or 'instance' depending on your backend
+    Protocol: TLS
+    TargetType: ip
+    HealthCheckEnabled: true
+    HealthCheckPort: 443
+    HealthCheckProtocol: HTTPS
+    HealthCheckPath: /health
+    HealthCheckIntervalSeconds: 30
+    HealthCheckTimeoutSeconds: 10
+    HealthyThresholdCount: 3
+    UnhealthyThresholdCount: 3
+    Targets:
+      - Id: !GetAtt privaterestApi.DNSName
+        Port: 443
 
-NLBListener:
+privateNLBListener:
   Type: AWS::ElasticLoadBalancingV2::Listener
   Properties:
-    LoadBalancerArn: !Ref NetworkLoadBalancer
+    LoadBalancerArn: !Ref privateLoadBalancer
     Port: 443
-    Protocol: TCP
+    Protocol: TLS
     DefaultActions:
       - Type: forward
-        TargetGroupArn: !Ref TargetGroup
+        TargetGroupArn: !Ref privateTargetGroup
+    Certificates:
+      - CertificateArn: arn:aws:acm:eu-west-1:178934116267:certificate/075a9e3b-09fe-47ee-93bb-87c38b2a3861

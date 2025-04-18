@@ -177,9 +177,9 @@ resources:
     privateApiVPCEndpoint: '${file(./iac/network/vpc-link.yml):privateApiVPCEndpoint}'
     #ENIsIP: '${file(./iac/network/vpc-link.yml):ENIsIP}'
 
-    #NetworkLoadBalancer: '${file(./iac/network/nlb.yml):NetworkLoadBalancer}'
-    #TargetGroup: '${file(./iac/network/nlb.yml):TargetGroup}'
-    #NLBListener: '${file(./iac/network/nlb.yml):NLBListener}'
+    privateLoadBalancer: '${file(./iac/network/nlb.yml):privateLoadBalancer}'
+    privateTargetGroup: '${file(./iac/network/nlb.yml):privateTargetGroup}'
+    privateNLBListener: '${file(./iac/network/nlb.yml):privateNLBListener}'
 
     #VpcLink: '${file(./iac/network/vpc-link.yml):VpcLink}'
     ApiSecurityGroup: '${file(./iac/network/sg.yml):ApiSecurityGroup}'
