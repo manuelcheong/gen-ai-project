@@ -19,7 +19,7 @@ privateTargetGroup:
     HealthCheckEnabled: true
     HealthCheckPort: 443
     HealthCheckProtocol: HTTPS
-    HealthCheckPath: /health
+    HealthCheckPath: /
     HealthCheckIntervalSeconds: 30
     HealthCheckTimeoutSeconds: 10
     HealthyThresholdCount: 3
