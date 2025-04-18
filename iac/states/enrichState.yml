@@ -24,3 +24,6 @@ enrichStateLogGroup:
   Properties:
     LogGroupName: !Join [ "/", [ "enrichStateLogGroup_${self:provider.stage}", enrichStateLogGroup]]
     RetentionInDays: 30
+
+
+# changes

@@ -92,10 +92,10 @@ privaterestApiRole:
                 - logs:*
               Resource: "*"
 
-            - Effect: Allow
-              Action:
-                - dynamodb:*
-              Resource: "*"
+            # - Effect: Allow
+            #   Action:
+            #     - dynamodb:*
+            #   Resource: "*"
 
               #Condition:
               #  StringNotEquals:
