@@ -2,6 +2,7 @@ genaiPipe:
   Type: AWS::Pipes::Pipe
   Properties:
     Name:  gen-ai-pipe-${self:provider.stage}
+    DesiredState: RUNNING
     RoleArn: 
       Fn::GetAtt: ["genaiPipeRole", "Arn"]
     Source:  
