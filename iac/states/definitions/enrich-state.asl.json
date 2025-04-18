@@ -7,15 +7,31 @@
             "Assign": {
                 "currentTime": "{% $now() %}"
             },
-            "Next": "create expiredAt timestamp"
+            "Next": "Map"
         },
-        "create expiredAt timestamp": {
-            "Type": "Pass",
-            "Output": {
-                "inputPayload": "{% $states.input %}",
-                "expiredAt": "{% $toMillis($currentTime) + 7889400 * 1000 %}"
+        "Map": {
+            "Type": "Map",
+            "ItemProcessor": {
+                "ProcessorConfig": {
+                    "Mode": "DISTRIBUTED",
+                    "ExecutionType": "EXPRESS"
+                },
+                "StartAt": "create expiredAt timestamp",
+                "States": {
+                    "create expiredAt timestamp": {
+                        "Type": "Pass",
+                        "Output": {
+                            "inputPayload": "{% $states.input %}",
+                            "expiredAt": "{% $toMillis($currentTime) + 7889400 * 1000 %}"
+                        },
+                        "End": true
+                    }
+                }
             },
-            "End": true
+            "End": true,
+            "Label": "Map",
+            "MaxConcurrency": 1000,
+            "Items": "{% $states.input %}"
         }
     },
     "QueryLanguage": "JSONata"
