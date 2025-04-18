@@ -25,7 +25,7 @@ privateTargetGroup:
     HealthyThresholdCount: 3
     UnhealthyThresholdCount: 3
     Targets:
-      - Id: !GetAtt privaterestApi.DNSName
+      - Id: !GetAtt privateApiVPCEndpoint.DNSName
         Port: 443
 
 privateNLBListener:
