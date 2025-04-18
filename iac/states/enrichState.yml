@@ -2,7 +2,7 @@ enrichState:
   Type: AWS::StepFunctions::StateMachine
   Properties:
     StateMachineName: enrich-states-${self:provider.stage}
-    StateMachineType: STANDARD
+    StateMachineType: EXPRESS
     RoleArn: !GetAtt statesRole.Arn
 
     LoggingConfiguration:

@@ -11,8 +11,8 @@ genaiPipe:
       SqsQueueParameters:
         BatchSize: 10
         MaximumBatchingWindowInSeconds: 3
-    #Enrichment: arn:aws:states:${self:provider.region}:178934116267:stateMachine:enrich-states-${self:provider.stage}
-    Enrichment: arn:aws:lambda:${self:provider.region}:178934116267:function:gen-ai-service-${self:provider.stage}-enrich_event
+    Enrichment: arn:aws:states:${self:provider.region}:178934116267:stateMachine:enrich-states-${self:provider.stage}
+    #Enrichment: arn:aws:lambda:${self:provider.region}:178934116267:function:gen-ai-service-${self:provider.stage}-enrich_event
     Target: arn:aws:states:${self:provider.region}:178934116267:stateMachine:gen-ai-states-${self:provider.stage}
     TargetParameters:
       StepFunctionStateMachineParameters:

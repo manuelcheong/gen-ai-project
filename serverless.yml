@@ -97,7 +97,7 @@ resources:
     testState: '${file(./iac/states/test.yml):testState}'
 
     enrichStateLogGroup: '${file(./iac/states/enrichState.yml):enrichStateLogGroup}'
-    #enrichState: '${file(./iac/states/enrichState.yml):enrichState}'
+    enrichState: '${file(./iac/states/enrichState.yml):enrichState}'
 
     
 
