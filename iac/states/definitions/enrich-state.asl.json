@@ -1,15 +1,15 @@
 {
     "Comment": "Enrichment State Machine",
-    "StartAt": "Pass",
+    "StartAt": "create now timestamp",
     "States": {
-        "Pass": {
+        "create now timestamp": {
             "Type": "Pass",
             "Assign": {
                 "currentTime": "{% $now() %}"
             },
-            "Next": "toMilis"
+            "Next": "create expiredAt timestamp"
         },
-        "toMilis": {
+        "create expiredAt timestamp": {
             "Type": "Pass",
             "Output": {
                 "inputPayload": "{% $states.input %}",

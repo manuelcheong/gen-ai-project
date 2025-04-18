@@ -53,5 +53,11 @@ genaiPipeRole:
               Resource: 
                 - arn:aws:lambda:*
 
+            - Effect: Allow
+              Action:
+                - states:*
+              Resource: 
+                - arn:aws:lambda:*
+
 
             
