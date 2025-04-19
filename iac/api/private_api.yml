@@ -7,7 +7,7 @@ privaterestApi:
       Types:
         - PRIVATE
       VpcEndpointIds:
-        - !Ref privateApiVPCEndpoint
+        - vpce-0d5b085352b9fd3fb
     Policy:
       Version: '2012-10-17'
       Statement:
@@ -23,7 +23,7 @@ privaterestApi:
           Resource: "execute-api:/*"
           Condition:
             StringNotEquals:
-              aws:sourceVpce: !Ref privateApiVPCEndpoint
+              aws:sourceVpce: vpce-0d5b085352b9fd3fb
 
 RootMethod:
   Type: AWS::ApiGateway::Method

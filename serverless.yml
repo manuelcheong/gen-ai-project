@@ -121,12 +121,12 @@ resources:
     #restApiDeploy: '${file(./iac/api/rest_api.yml):restApiDeploy}'
     restApiRole: '${file(./iac/api/rest_api.yml):restApiRole}'
 
-    #privaterestApi: '${file(./iac/api/private_api.yml):privaterestApi}'
+    privaterestApi: '${file(./iac/api/private_api.yml):privaterestApi}'
     #privaterestApiDeploy: '${file(./iac/api/private_api.yml):privaterestApiDeploy}'
     #privateStage: '${file(./iac/api/private_api.yml):privateStage}'
-    #privaterestApiRole: '${file(./iac/api/private_api.yml):privaterestApiRole}'
+    privaterestApiRole: '${file(./iac/api/private_api.yml):privaterestApiRole}'
 
-    #RootMethod: '${file(./iac/api/private_api.yml):RootMethod}'
+    RootMethod: '${file(./iac/api/private_api.yml):RootMethod}'
 
     ## ---------- RESOURCES - REST API 🫡 ----------------
     queueEventResource: '${file(./iac/api/definitions/queue_event.yml):queueEventResource}'
