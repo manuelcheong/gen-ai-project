@@ -7,9 +7,9 @@
             "Assign": {
                 "currentTime": "{% $now() %}"
             },
-            "Next": "Map"
+            "Next": "Mapping"
         },
-        "Map": {
+        "Mapping": {
             "Type": "Map",
             "ItemProcessor": {
                 "ProcessorConfig": {
