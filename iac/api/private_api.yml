@@ -16,14 +16,14 @@ privaterestApi:
           Action:
             - "execute-api:Invoke"
           Resource: "execute-api:/*"
-        - Effect: "Deny"
-          Principal: "*"
-          Action:
-            - "execute-api:Invoke"
-          Resource: "execute-api:/*"
-          Condition:
-            StringNotEquals:
-              aws:sourceVpce: vpce-0d5b085352b9fd3fb
+        #- Effect: "Deny"
+        #  Principal: "*"
+        #  Action:
+        #    - "execute-api:Invoke"
+        #  Resource: "execute-api:/*"
+          #Condition:
+          #  StringNotEquals:
+          #    aws:sourceVpce: vpce-0d5b085352b9fd3fb
 
 RootMethod:
   Type: AWS::ApiGateway::Method
