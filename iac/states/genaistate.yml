@@ -18,6 +18,7 @@ genaiState:
     DefinitionS3Location:
       Bucket: !Ref aslDefinitionsBucket
       Key: gen-ai-states-${self:provider.stage}.asl.json
+      Version: !Ref aslDefinitionsVersion
 
 statesLogGroup:
   Type: AWS::Logs::LogGroup

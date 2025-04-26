@@ -73,7 +73,11 @@ resources:
   Resources:
 
     # ---------- PArameters 🫡 ---------------
-    #Parameters:
+    Parameters:
+      aslDefinitionsVersion:
+        Type: String
+        Default: 1
+        Description: ASL Definitions Version
     #  StateMachineNameDefinitionKey:
     #    Type: String
     #    Default: test.asl.json

@@ -18,6 +18,7 @@ enrichState:
     DefinitionS3Location:
       Bucket: !Ref aslDefinitionsBucket
       Key: enrich-states-${self:provider.stage}.asl.json
+      Version: !Ref aslDefinitionsVersion
   
 enrichStateLogGroup:
   Type: AWS::Logs::LogGroup
@@ -28,3 +29,9 @@ enrichStateLogGroup:
     ##include change
 
 
+ForceUpdateHelper:
+  Type: AWS::CloudFormation::CustomResource
+  Properties:
+    ServiceToken: !GetAtt ForceUpdateFunction.Arn
+    UniqueId: !Ref "AWS::StackId"
+    TimeStamp: !Ref TimeStamp
