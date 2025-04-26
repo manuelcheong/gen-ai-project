@@ -74,10 +74,10 @@ resources:
   Parameters:
     aslDefinitionsVersion:
       Type: String
-      Default: 1
+      Default: "1"
       Description: ASL Definitions Version
 
-      
+
   Resources:
 
     
