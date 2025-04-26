@@ -63,8 +63,8 @@ provider:
       - "s3:*"
     Resource: "*"
 
-functions:
-  scrapperrs: '${file(./iac/lambda/scrapper.yml):scrapperrs}'
+#functions:
+#  scrapperrs: '${file(./iac/lambda/scrapper.yml):scrapperrs}'
   #enrich_event: '${file(./iac/lambda/enrich_event.yml):enrich_event}'
   #faiss: '${file(./iac/lambda/faiss.yml):faiss}'
   
@@ -197,9 +197,9 @@ resources:
   #      - CAPABILITY_AUTO_EXPAND
 
 custom:
-  rust:
-    cargoLambda:
-      docker: false
+  #rust:
+  #  cargoLambda:
+  #    docker: false
 
   api_region:
     eu-west-1:
@@ -226,7 +226,7 @@ custom:
 
 plugins:
   - serverless-prune-plugin
-  - serverless-rust-plugin
+  #- serverless-rust-plugin
   - serverless-ssm-fetch
 
 
