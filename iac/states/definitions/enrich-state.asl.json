@@ -11,13 +11,16 @@
         },
         "Mapping": {
             "Type": "Map",
+            "ItemSelector": "{% $$ %}",
             "ItemProcessor": {
                 "StartAt": "create expiredAt timestamp",
                 "States": {
                     "create expiredAt timestamp": {
                         "Type": "Pass",
                         "Output": {
-                            "inputPayload": "{% $states.input %}",
+                            "messageId": "{% $$.item.messageId %}",
+                            "body": "{% $$.item.body %}",
+                            "messageAttributes": "{% $$.item.messageAttributes %}",
                             "expiredAt": "{% $toMillis($currentTime) + 7889400 * 1000 %}"
                         },
                         "End": true
