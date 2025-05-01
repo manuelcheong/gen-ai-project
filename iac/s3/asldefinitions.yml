@@ -14,6 +14,13 @@ aslDefinitionsBucket:
             SSEAlgorithm: AES256
     VersioningConfiguration:
       Status: Enabled
+    LifecycleConfiguration:
+      Rules:
+        - Id: KeepOnly3Versions
+          Status: Enabled
+          NoncurrentVersionExpiration:
+            NoncurrentDays: 1
+          MaxNoncurrentVersions: 3
 
 
 

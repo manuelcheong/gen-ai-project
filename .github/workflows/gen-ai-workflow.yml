@@ -60,23 +60,23 @@ jobs:
           echo "enrich_version_id=$VERSION_ID" >> $GITHUB_OUTPUT
             
           # Also print for debugging
-          echo "Retrieved version ID: $VERSION_ID"
+          echo "Retrieved version ID FOR ENRICH: $VERSION_ID"
 
       - name: Get GEN S3 object version ID
         id: get-version-gen-ai-sfn
         run: |
           # Get the latest version ID of the object
-          VERSION_ID=$(aws s3api list-object-versions \
+          VERSION_ID2=$(aws s3api list-object-versions \
             --bucket asl-definitions-${{ env.STAGE }} \
             --prefix gen-ai-states-${{ env.STAGE }}.asl.json \
             --query 'Versions[0].VersionId' \
             --output text)
               
           # Set as output variable
-          echo "genai_version_id=$VERSION_ID" >> $GITHUB_OUTPUT
+          echo "genai_version_id=$VERSION_ID2" >> $GITHUB_OUTPUT
               
           # Also print for debugging
-          echo "Retrieved version ID: $VERSION_ID"
+          echo "Retrieved version ID for GEN AI: $VERSION_ID2"
       
       #- name: Install Rust 🦀  
       #  run: | 
