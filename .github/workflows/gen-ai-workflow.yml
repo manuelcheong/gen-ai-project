@@ -47,7 +47,7 @@ jobs:
           VERSION_ID=$(aws s3api list-object-versions --bucket asl-definitions-${{ env.STAGE }} --prefix /enrich-states-${{ env.STAGE }}.asl.json --query 'Versions[0].VersionId' --output text)
           export ENRICH_VERSION=$VERSION_ID
           echo "ENRICH_VERSION=$VERSION_ID" >> $GITHUB_ENV
-          echo $GITHUB_ENV
+          echo $ENRICH_VERSION
       
       #- name: Install Rust 🦀  
       #  run: | 
