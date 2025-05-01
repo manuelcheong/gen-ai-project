@@ -20,7 +20,7 @@ enrichState:
     DefinitionS3Location:
       Bucket: !Ref aslDefinitionsBucket
       Key: enrich-states-${self:provider.stage}.asl.json
-      Version: 1
+      Version: "new-version"
   
 enrichStateLogGroup:
   Type: AWS::Logs::LogGroup
