@@ -5,9 +5,9 @@ aslDefinitionsBucket:
     AccessControl: Private
     PublicAccessBlockConfiguration:
       BlockPublicAcls: true
-      BlockPublicPolicy: true
+      BlockPublicPolicy: false
       IgnorePublicAcls: true
-      RestrictPublicBuckets: true
+      RestrictPublicBuckets: false
     BucketEncryption:
       ServerSideEncryptionConfiguration:
         - ServerSideEncryptionByDefault:
