@@ -13,7 +13,7 @@
             "Type": "Map",
             "ItemProcessor": {
                 "ProcessorConfig": {
-                    "Mode": "DISTRIBUTED",
+                    "Mode": "INLINE",
                     "ExecutionType": "EXPRESS"
                 },
                 "StartAt": "create expiredAt timestamp",
