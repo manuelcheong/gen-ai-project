@@ -1,7 +1,5 @@
 enrichState:
   Type: AWS::StepFunctions::StateMachine
-  Metadata:
-    UpdateTimestamp: "2025-05-01T04:56:37Z"
   Properties:
     StateMachineName: enrich-states-${self:provider.stage}
     StateMachineType: EXPRESS

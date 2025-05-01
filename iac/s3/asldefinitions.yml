@@ -19,8 +19,8 @@ aslDefinitionsBucket:
         - Id: KeepOnly3Versions
           Status: Enabled
           NoncurrentVersionExpiration:
+            NewerNoncurrentVersions: 3
             NoncurrentDays: 1
-          MaxNoncurrentVersions: 3
 
 
 
