@@ -107,8 +107,8 @@ jobs:
       - name: Deploy GEN-AI reference  (🌐 → ☁️⚡ → 🚪🔒 → 🔗 → ⚖️ → 🏢🔐)
         run: serverless deploy --stage ${{ env.STAGE }} --region ${{ env.AWS_REGION }}
         env:
-          S3_ENRICH_VERSION_ID: ${{ steps.get-version.outputs.enrich_version_id }}
-          S3_GENAI_VERSION_ID: ${{ steps.get-version.outputs.genai_version_id }}
+          S3_ENRICH_VERSION_ID: ${{ steps.get-version-enrichment-sfn.outputs.enrich_version_id }}
+          S3_GENAI_VERSION_ID: ${{ steps.get-version-gen-ai-sfn.outputs.genai_version_id }}
 
       - name: Prune old versions 🧹
         run: serverless prune -n 1 --stage ${{ env.STAGE }}
