@@ -44,6 +44,10 @@ jobs:
           aws s3 cp iac/states/definitions/test.asl.json  s3://asl-definitions-${{ env.STAGE }}/test-${{ env.STAGE }}.asl.json
           aws s3 cp iac/states/definitions/gen-ai-states.asl.json  s3://asl-definitions-${{ env.STAGE }}/gen-ai-states-${{ env.STAGE }}.asl.json
           aws s3 cp iac/states/definitions/enrich-state.asl.json  s3://asl-definitions-${{ env.STAGE }}/enrich-states-${{ env.STAGE }}.asl.json
+          VERSION_ID=$(aws s3api list-object-versions --bucket your-bucket-name --prefix path/to/your/file --query 'Versions[0].VersionId' --output text)
+          export ENRICH_VERSION=$VERSION_ID
+          echo "ENRICH_VERSION=$VERSION_ID" >> $GITHUB_ENV
+          echo $GITHUB_ENV
       
       #- name: Install Rust 🦀  
       #  run: | 
