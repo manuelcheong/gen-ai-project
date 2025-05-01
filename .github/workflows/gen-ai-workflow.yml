@@ -47,7 +47,7 @@ jobs:
           
 
       - name: Get ENRICH S3 object version ID
-        id: get-version
+        id: get-version-enrichment-sfn
         run: |
           # Get the latest version ID of the object
           VERSION_ID=$(aws s3api list-object-versions \
@@ -59,6 +59,22 @@ jobs:
           # Set as output variable
           echo "enrich_version_id=$VERSION_ID" >> $GITHUB_OUTPUT
             
+          # Also print for debugging
+          echo "Retrieved version ID: $VERSION_ID"
+
+      - name: Get GEN S3 object version ID
+        id: get-version-gen-ai-sfn
+        run: |
+          # Get the latest version ID of the object
+          VERSION_ID=$(aws s3api list-object-versions \
+            --bucket asl-definitions-${{ env.STAGE }} \
+            --prefix gen-ai-states-${{ env.STAGE }}.asl.json \
+            --query 'Versions[0].VersionId' \
+            --output text)
+              
+          # Set as output variable
+          echo "genai_version_id=$VERSION_ID" >> $GITHUB_OUTPUT
+              
           # Also print for debugging
           echo "Retrieved version ID: $VERSION_ID"
       
@@ -92,6 +108,7 @@ jobs:
         run: serverless deploy --stage ${{ env.STAGE }} --region ${{ env.AWS_REGION }}
         env:
           S3_ENRICH_VERSION_ID: ${{ steps.get-version.outputs.enrich_version_id }}
+          S3_GENAI_VERSION_ID: ${{ steps.get-version.outputs.genai_version_id }}
 
       - name: Prune old versions 🧹
         run: serverless prune -n 1 --stage ${{ env.STAGE }}

@@ -12,10 +12,6 @@
         "Mapping": {
             "Type": "Map",
             "ItemProcessor": {
-                "ProcessorConfig": {
-                    "Mode": "INLINE",
-                    "ExecutionType": "EXPRESS"
-                },
                 "StartAt": "create expiredAt timestamp",
                 "States": {
                     "create expiredAt timestamp": {
