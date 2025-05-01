@@ -44,10 +44,23 @@ jobs:
           aws s3 cp iac/states/definitions/test.asl.json  s3://asl-definitions-${{ env.STAGE }}/test-${{ env.STAGE }}.asl.json
           aws s3 cp iac/states/definitions/gen-ai-states.asl.json  s3://asl-definitions-${{ env.STAGE }}/gen-ai-states-${{ env.STAGE }}.asl.json
           aws s3 cp iac/states/definitions/enrich-state.asl.json  s3://asl-definitions-${{ env.STAGE }}/enrich-states-${{ env.STAGE }}.asl.json
-          VERSION_ID=$(aws s3api list-object-versions --bucket asl-definitions-${{ env.STAGE }} --prefix /enrich-states-${{ env.STAGE }}.asl.json --query 'Versions[0].VersionId' --output text)
-          export ENRICH_VERSION=$VERSION_ID
-          echo "ENRICH_VERSION=$VERSION_ID" >> $GITHUB_ENV
-          echo $ENRICH_VERSION
+          
+
+      - name: Get ENRICH S3 object version ID
+        id: get-version
+        run: |
+          # Get the latest version ID of the object
+          VERSION_ID=$(aws s3api list-object-versions \
+            --bucket asl-definitions-${{ env.STAGE }} \
+            --prefix enrich-states-${{ env.STAGE }}.asl.json \
+            --query 'Versions[0].VersionId' \
+            --output text)
+            
+          # Set as output variable
+          echo "enrich_version_id=$VERSION_ID" >> $GITHUB_OUTPUT
+            
+          # Also print for debugging
+          echo "Retrieved version ID: $VERSION_ID"
       
       #- name: Install Rust 🦀  
       #  run: | 
@@ -77,6 +90,8 @@ jobs:
 
       - name: Deploy GEN-AI reference  (🌐 → ☁️⚡ → 🚪🔒 → 🔗 → ⚖️ → 🏢🔐)
         run: serverless deploy --stage ${{ env.STAGE }} --region ${{ env.AWS_REGION }}
+        env:
+          S3_ENRICH_VERSION_ID: ${{ steps.get-version.outputs.enrich_version_id }}
 
       - name: Prune old versions 🧹
         run: serverless prune -n 1 --stage ${{ env.STAGE }}
