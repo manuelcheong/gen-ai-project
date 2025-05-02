@@ -5,7 +5,8 @@
         "create now timestamp": {
             "Type": "Pass",
             "Assign": {
-                "currentTime": "{% $now() %}"
+                "currentTime": "{% $now() %}",
+                "futureTime": "{% $toMillis($now()) + 10800 * 1000 %}"
             },
             "Next": "Mapping"
         },
@@ -19,7 +20,7 @@
                 "States": {
                     "create expiredAt timestamp": {
                         "Type": "Pass",
-                        "Output": "{% { \"messageId\": $states.input.messageId, \"body\": $states.input.body,\"messageAttributes\": $states.input.messageAttributes,\"expiredAt\": $toMillis($currentTime) + 10800 * 1000} %}",
+                        "Output": "{% { \"messageId\": $states.input.messageId, \"body\": $states.input.body,\"messageAttributes\": $states.input.messageAttributes,\"expiredAt\": $toMillis($currentTime) + 7889400 * 1000} %}",
                         "End": true
                     }
                 }
