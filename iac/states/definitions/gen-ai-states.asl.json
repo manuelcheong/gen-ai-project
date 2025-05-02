@@ -371,7 +371,7 @@
                             "body.$": "States.StringToJson($.body)",
                             "messageAttributes.$": "$.messageAttributes",
                             "messageId.$": "$.messageId",
-                            "ttl.$": "$.additional_data.ttl"
+                            "ttl.$": "$.expiredAt"
                         },
                         "Type": "Pass"
                     }
