@@ -18,7 +18,7 @@
                     "create expiredAt timestamp": {
                         "Type": "Pass",
                         "Output": {
-                            "message": "{% $$.item %}",
+                            "message": "$$.item",
                             "expiredAt": "{% $toMillis($currentTime) + 7889400 * 1000 %}"
                         },
                         "End": true
