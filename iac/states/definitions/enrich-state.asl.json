@@ -1,5 +1,5 @@
 {
-    "Comment": "Enrichment State Machine -1",
+    "Comment": "Enrichment State Machine 1",
     "StartAt": "create now timestamp",
     "States": {
         "create now timestamp": {
