@@ -307,7 +307,7 @@
                                 "timestamp": {
                                   "S.$": "$$.State.EnteredTime"
                                 },
-                                "ttl1": {
+                                "ttl": {
                                   "N.$": "States.JsonToString($.ttl)"
                                 }
                               },
