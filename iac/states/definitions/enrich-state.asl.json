@@ -11,16 +11,16 @@
         },
         "Mapping": {
             "Type": "Map",
-            "ItemSelector": "{% $$ %}",
+            "ItemSelector":"{% { \"item\": $$, \"index\": $$.index,\"timestamp\": $now()} %}",
             "ItemProcessor": {
+                "ProcessorConfig": {
+                    "Mode": "INLINE"
+                },
                 "StartAt": "create expiredAt timestamp",
                 "States": {
                     "create expiredAt timestamp": {
                         "Type": "Pass",
-                        "Output": {
-                            "message": "$.item",
-                            "expiredAt": "{% $toMillis($currentTime) + 7889400 * 1000 %}"
-                        },
+                        "Output": "{% { \"messageId\": $$.item.messageId, \"body\": $$.item.body,\"messageAttributes\": $$.item.messageAttributes,\"expiredAt\": $toMillis($currentTime) + 7889400 * 1000} %}",
                         "End": true
                     }
                 }
