@@ -82,5 +82,21 @@ statesRole:
                 - ses:sendEmail
               Resource: "*"
 
+            - Effect: Allow
+              Action:
+                - textract:DetectDocumentText
+              Resource: "*"
+
+            - Effect: Allow
+              Action:
+                - bedrock:invokeModel
+              Resource: "*"
+
+
+
+
+
+
+
 
 
