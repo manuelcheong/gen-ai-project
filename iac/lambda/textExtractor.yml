@@ -99,12 +99,6 @@ textExtractorFunction:
               
               json_output_key = f"extracted-text/{job_id}.json"
 
-              # embedding json output
-              structured_output_embedding = {
-                  "inputText": structured_output["extractedText"],
-                  "dimensions": 1024,
-                  "normalize": true
-              }
               s3_client.put_object(
                   Bucket=output_bucket,
                   Key=json_output_key,
@@ -112,9 +106,18 @@ textExtractorFunction:
                   ContentType='application/json'
               )
 
+              embedding_output_key = f"extracted-json/{job_id}.json"
+
+              # embedding json output
+              structured_output_embedding = {
+                  "inputText": structured_output["extractedText"],
+                  "dimensions": 1024,
+                  "normalize": true
+              }
+
               s3_client.put_object(
                   Bucket=output_bucket,
-                  Key=f"embedding_{json_output_key}"
+                  Key=embedding_output_key,
                   Body=json.dumps(structured_output_embedding),
                   ContentType='application/json'
               )
@@ -128,6 +131,10 @@ textExtractorFunction:
                   "jsonLocation": {
                       "bucket": output_bucket,
                       "key": json_output_key
+                  },
+                  "embeddingjsonLocation": {
+                      "bucket": output_bucket,
+                      "key": embedding_output_key
                   },
                   "textLength": len(extracted_text),
                   "pageCount": structured_output["pageCount"]
