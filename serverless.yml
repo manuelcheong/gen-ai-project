@@ -182,7 +182,6 @@ resources:
     # ----------- TEXTRACTOR FUNCTIONS 🫡 --------------
 
     textExtractorFunction: '${file(./iac/lambda/textExtractor.yml):textExtractorFunction}'
-    combineTextFunction: '${file(./iac/lambda/combineTextFunction.yml):combineTextFunction}'
 
     #   ------- Networking  🫡 --------------
 
