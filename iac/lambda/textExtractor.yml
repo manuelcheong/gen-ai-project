@@ -78,6 +78,8 @@ textExtractorFunction:
               for block in all_blocks:
                   if block.get('BlockType') == 'LINE':
                       extracted_text += block.get('Text', '') + "\n"
+
+            
               
               # Save the extracted text to S3
               output_key = f"extracted-text/{job_id}.txt"
@@ -90,10 +92,9 @@ textExtractorFunction:
               
               # Optionally, you can also create a structured JSON with more information
               structured_output = {
-                  "jobId": job_id,
-                  "pageCount": len(set(block.get('Page', 0) for block in all_blocks if 'Page' in block)),
-                  "textLength": len(extracted_text),
-                  "extractedText": extracted_text
+                  "inputText": extracted_text,
+                  "dimensions": 1024,
+                  "normalize": true
               }
               
               json_output_key = f"extracted-text/{job_id}.json"
