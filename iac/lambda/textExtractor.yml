@@ -98,10 +98,17 @@ textExtractorFunction:
               }
               
               json_output_key = f"extracted-text/{job_id}.json"
+
+              # embedding json output
+              structured_output_embedding = {
+                  "inputText": structured_output["extractedText"],
+                  "dimensions": 1024,
+                  "normalize": true
+              }
               s3_client.put_object(
                   Bucket=output_bucket,
                   Key=json_output_key,
-                  Body=json.dumps(structured_output),
+                  Body=json.dumps(structured_output_embedding),
                   ContentType='application/json'
               )
               
