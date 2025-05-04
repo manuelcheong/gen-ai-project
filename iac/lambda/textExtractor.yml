@@ -42,6 +42,8 @@ textExtractorFunction:
                   Bucket=output_bucket,
                   Prefix=result_prefix
               )
+
+              print(f"Found {response}")
               
               if 'Contents' not in response:
                   raise Exception(f"No Textract results found for job {job_id}")

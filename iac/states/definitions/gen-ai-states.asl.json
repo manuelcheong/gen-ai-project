@@ -425,7 +425,7 @@
                                             "FunctionName": "TextExtractorFunction",
                                             "Payload": {
                                                 "outputBucket": "gen-ai-content-pre",
-                                                "outputPrefix": "textract-output/",
+                                                "outputPrefix": "textract-output",
                                                 "jobId.$": "$.textractJob.JobId"
                                             }
                                         },
