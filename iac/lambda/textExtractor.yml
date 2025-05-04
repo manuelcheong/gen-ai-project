@@ -108,6 +108,13 @@ textExtractorFunction:
               s3_client.put_object(
                   Bucket=output_bucket,
                   Key=json_output_key,
+                  Body=json.dumps(structured_output),
+                  ContentType='application/json'
+              )
+
+              s3_client.put_object(
+                  Bucket=output_bucket,
+                  Key=f"embedding_{json_output_key}"
                   Body=json.dumps(structured_output_embedding),
                   ContentType='application/json'
               )
