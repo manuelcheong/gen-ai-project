@@ -447,7 +447,8 @@
                                         "Resource": "arn:aws:states:::aws-sdk:textract:getDocumentTextDetection",
                                         "Parameters": {
                                             "JobId.$": "$.textractJob.JobId",
-                                            "NextToken.$": "$.textractResults.NextToken"
+                                            "NextToken.$": "$.textractResults.NextToken",
+                                            "MaxResults": 1
                                         },
                                         "ResultPath": "$.textractResults",
                                         "Next": "ProcessAllPages"
