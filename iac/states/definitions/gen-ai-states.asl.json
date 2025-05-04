@@ -396,8 +396,7 @@
                                         "Type": "Task",
                                         "Resource": "arn:aws:states:::aws-sdk:textract:getDocumentTextDetection",
                                         "Parameters": {
-                                            "JobId.$": "$.textractJob.JobId",
-                                            "MaxResults": 1
+                                            "JobId.$": "$.textractJob.JobId"
                                         },
                                         "ResultPath": "$.textractResults",
                                         "Next": "CheckJobStatus"
@@ -424,54 +423,10 @@
                                         "Parameters": {
                                             "FunctionName": "TextExtractorFunction",
                                             "Payload": {
-                                                "blocks.$": "$.textractResults.Blocks",
-                                                "nextToken.$": "$.textractResults.NextToken"
+                                                "outputBucket": "gen-ai-content-pre",
+                                                "outputPrefix": "textract-output/",
+                                                "jobId.$": "$.textractJob.JobId"
                                             }
-                                        },
-                                        "ResultPath": "$.currentExtraction",
-                                        "Next": "CheckForMorePages"
-                                    },
-                                    "CheckForMorePages": {
-                                        "Type": "Choice",
-                                        "Choices": [
-                                            {
-                                                "Variable": "$.textractResults.NextToken",
-                                                "IsPresent": true,
-                                                "Next": "GetNextPage"
-                                            }
-                                        ],
-                                        "Default": "CombineResults"
-                                    },
-                                    "GetNextPage": {
-                                        "Type": "Task",
-                                        "Resource": "arn:aws:states:::aws-sdk:textract:getDocumentTextDetection",
-                                        "Parameters": {
-                                            "JobId.$": "$.textractJob.JobId",
-                                            "NextToken.$": "$.textractResults.NextToken",
-                                            "MaxResults": 1
-                                        },
-                                        "ResultPath": "$.textractResults",
-                                        "Next": "ProcessAllPages"
-                                    },
-                                    "CombineResults": {
-                                        "Type": "Task",
-                                        "Resource": "arn:aws:states:::lambda:invoke",
-                                        "Parameters": {
-                                            "FunctionName": "CombineTextFunction",
-                                            "Payload": {
-                                                "extractedPages.$": "$.extractedPages"
-                                            }
-                                        },
-                                        "ResultPath": "$.finalText",
-                                        "Next": "StoreResults"
-                                    },
-                                    "StoreResults": {
-                                        "Type": "Task",
-                                        "Resource": "arn:aws:states:::aws-sdk:s3:putObject",
-                                        "Parameters": {
-                                            "Bucket.$": "$.outputBucket",
-                                            "Key.$": "$.outputKey",
-                                            "Body.$": "States.JsonToString($.finalText)"
                                         },
                                         "Next": "Bedrock InvokeModel"
                                     },
