@@ -3,23 +3,117 @@ textExtractorFunction:
   Properties:
     Code:
       ZipFile: |
+        import boto3
+        import json
+        import os
+
         def lambda_handler(event, context):
-          blocks = event.get('blocks', [])
-    
-          # Extract text from LINE blocks
-          extracted_text = ""
-          for block in blocks:
-              if block.get('BlockType') == 'LINE':
-                  extracted_text += block.get('Text', '') + "\n"
+          """
+          Process Textract results stored in S3 and extract all text.
           
-          # If this is the first page, initialize the pages array
-          if 'extractedPages' not in event:
-              event['extractedPages'] = []
+          This function:
+          1. Locates the Textract output files in S3 based on the job ID
+          2. Reads and combines all pages of results
+          3. Extracts text from all LINE blocks
+          4. Saves the consolidated text to an output file in S3
           
-          # Add this page's text to the array
-          event['extractedPages'].append(extracted_text)
+          Parameters:
+          - event: Contains outputBucket, outputPrefix, and jobId
+          - context: Lambda context
           
-          return event
+          Returns:
+          - Dictionary with processing status and output location
+          """
+          # Get parameters from the event
+          output_bucket = event['outputBucket']
+          output_prefix = event['outputPrefix']
+          job_id = event['jobId']
+          
+          # Initialize AWS clients
+          s3_client = boto3.client('s3')
+          textract_client = boto3.client('textract')
+          
+          # The output location will contain files with the job ID
+          result_prefix = f"{output_prefix}{job_id}"
+          
+          try:
+              # List all result files for this job
+              response = s3_client.list_objects_v2(
+                  Bucket=output_bucket,
+                  Prefix=result_prefix
+              )
+              
+              if 'Contents' not in response:
+                  raise Exception(f"No Textract results found for job {job_id}")
+              
+              # Process each result file
+              all_blocks = []
+              for item in response['Contents']:
+                  file_key = item['Key']
+                  
+                  # Get the file content
+                  file_obj = s3_client.get_object(
+                      Bucket=output_bucket,
+                      Key=file_key
+                  )
+                  file_content = file_obj['Body'].read().decode('utf-8')
+                  
+                  # Parse the JSON content
+                  result_data = json.loads(file_content)
+                  
+                  # Add blocks to our collection
+                  if 'Blocks' in result_data:
+                      all_blocks.extend(result_data['Blocks'])
+              
+              # Extract text from LINE blocks
+              extracted_text = ""
+              for block in all_blocks:
+                  if block.get('BlockType') == 'LINE':
+                      extracted_text += block.get('Text', '') + "\n"
+              
+              # Save the extracted text to S3
+              output_key = f"extracted-text/{job_id}.txt"
+              s3_client.put_object(
+                  Bucket=output_bucket,
+                  Key=output_key,
+                  Body=extracted_text,
+                  ContentType='text/plain'
+              )
+              
+              # Optionally, you can also create a structured JSON with more information
+              structured_output = {
+                  "jobId": job_id,
+                  "pageCount": len(set(block.get('Page', 0) for block in all_blocks if 'Page' in block)),
+                  "textLength": len(extracted_text),
+                  "extractedText": extracted_text
+              }
+              
+              json_output_key = f"extracted-text/{job_id}.json"
+              s3_client.put_object(
+                  Bucket=output_bucket,
+                  Key=json_output_key,
+                  Body=json.dumps(structured_output),
+                  ContentType='application/json'
+              )
+              
+              return {
+                  "status": "success",
+                  "textLocation": {
+                      "bucket": output_bucket,
+                      "key": output_key
+                  },
+                  "jsonLocation": {
+                      "bucket": output_bucket,
+                      "key": json_output_key
+                  },
+                  "textLength": len(extracted_text),
+                  "pageCount": structured_output["pageCount"]
+              }
+              
+          except Exception as e:
+              print(f"Error processing Textract results: {str(e)}")
+              raise e
+
 
     Description: AWS Lambda function to Extract content from a document
     FunctionName: TextExtractorFunction
