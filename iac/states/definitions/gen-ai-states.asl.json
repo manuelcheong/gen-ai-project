@@ -444,9 +444,6 @@
                                             "Input": {
                                                 "S3Uri.$": "States.Format('s3://{}/{}', $.Payload.jsonLocation.bucket , $.Payload.jsonLocation.key)"
                                             },
-                                            "Output": {
-                                                "S3Uri.$": "States.Format('s3://{}/embeding/{}', $.Payload.jsonLocation.bucket , $.Payload.jsonLocation.key)"
-                                            },
                                             "ContentType": "application/json",
                                             "Accept": "application/json"
                                         },
