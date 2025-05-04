@@ -442,15 +442,24 @@
                                         "Parameters": {
                                             "ModelId": "amazon.titan-embed-text-v2:0",
                                             "Input": {
-                                                "S3Uri.$": "States.Format('s3://{}/{}', $.Payload.textLocation.bucket , $.Payload.textLocation.key)"
+                                                "S3Uri.$": "States.Format('s3://{}/{}', $.Payload.jsonLocation.bucket , $.Payload.jsonLocation.key)"
                                             },
                                             "Output": {
-                                                "S3Uri.$": "States.Format('s3://{}/embeding/{}', $.Payload.textLocation.bucket , $.Payload.textLocation.key)"
+                                                "S3Uri.$": "States.Format('s3://{}/embeding/{}', $.Payload.jsonLocation.bucket , $.Payload.jsonLocation.key)"
                                             },
                                             "ContentType": "application/json",
                                             "Accept": "application/json"
                                         },
-                                        "End": true
+                                        "End": true,
+                                        "Catch": [
+                                            {
+                                                "ErrorEquals": [
+                                                    "States.ALL"
+                                                ],
+                                                "ResultPath": "$.error",
+                                                "Next": "JobFailed"
+                                            }
+                                        ]
                                     }
                                 }
                             },
