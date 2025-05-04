@@ -442,7 +442,7 @@
                                         "Parameters": {
                                             "ModelId": "amazon.titan-embed-text-v2:0",
                                             "Input": {
-                                                "S3Uri.$": "States.Format('s3://{}/{}', $.Payload.jsonLocation.bucket , $.Payload.jsonLocation.key)"
+                                                "S3Uri.$": "States.Format('s3://{}/{}', $.Payload.embeddingjsonLocation.bucket , $.Payload.embeddingjsonLocation.embedding_output_key)"
                                             },
                                             "ContentType": "application/json",
                                             "Accept": "application/json"

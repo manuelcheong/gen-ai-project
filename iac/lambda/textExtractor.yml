@@ -112,7 +112,7 @@ textExtractorFunction:
               structured_output_embedding = {
                   "inputText": structured_output["extractedText"],
                   "dimensions": 1024,
-                  "normalize": true
+                  "normalize": True
               }
 
               s3_client.put_object(
