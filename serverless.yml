@@ -179,6 +179,11 @@ resources:
     # ---------- S3 ASL DEFINITIONS 🫡 --------------
     aslDefinitionsBucket: '${file(./iac/s3/asldefinitions.yml):aslDefinitionsBucket}'
 
+    # ----------- TEXTRACTOR FUNCTIONS 🫡 --------------
+
+    textExtractorFunction: '${file(./iac/lambda/textExtractor.yml):textExtractorFunction}'
+    combineTextFunction: '${file(./iac/lambda/combineTextFunction.yml):combineTextFunction}'
+
     #   ------- Networking  🫡 --------------
 
     #privateApiVPCEndpoint: '${file(./iac/network/vpc-link.yml):privateApiVPCEndpoint}'

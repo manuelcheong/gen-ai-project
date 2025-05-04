@@ -367,12 +367,12 @@
                                 "ProcessorConfig": {
                                     "Mode": "INLINE"
                                 },
-                                "StartAt": "DetectDocumentText",
+                                "StartAt": "StartDocumentTextDetection",
                                 "States": {
-                                    "DetectDocumentText": {
+                                    "StartDocumentTextDetection": {
                                         "Type": "Task",
                                         "Parameters": {
-                                            "Document": {
+                                            "DocumentLocation": {
                                                 "S3Object": {
                                                     "Bucket": "areas-locations",
                                                     "Name": "resumen1.pdf"
@@ -380,7 +380,99 @@
                                             }
                                         },
                                         "Resource": "arn:aws:states:::aws-sdk:textract:detectDocumentText",
+                                        "ResultPath": "$.textractJob",
+                                        "Next": "WaitForJobCompletion"
+                                    },
+                                    "WaitForJobCompletion": {
+                                        "Type": "Wait",
+                                        "Seconds": 30,
+                                        "Next": "GetDocumentTextDetectionResults"
+                                    },
+                                    "GetDocumentTextDetectionResults": {
+                                        "Type": "Task",
+                                        "Resource": "arn:aws:states:::aws-sdk:textract:getDocumentTextDetection",
+                                        "Parameters": {
+                                            "JobId.$": "$.textractJob.JobId"
+                                        },
+                                        "ResultPath": "$.textractResults",
+                                        "Next": "CheckJobStatus"
+                                    },
+                                    "CheckJobStatus": {
+                                        "Type": "Choice",
+                                        "Choices": [
+                                            {
+                                                "Variable": "$.textractResults.JobStatus",
+                                                "StringEquals": "IN_PROGRESS",
+                                                "Next": "WaitForJobCompletion"
+                                            },
+                                            {
+                                                "Variable": "$.textractResults.JobStatus",
+                                                "StringEquals": "SUCCEEDED",
+                                                "Next": "ProcessAllPages"
+                                            }
+                                        ],
+                                        "Default": "JobFailed"
+                                    },
+                                    "ProcessAllPages": {
+                                        "Type": "Task",
+                                        "Resource": "arn:aws:states:::lambda:invoke",
+                                        "Parameters": {
+                                            "FunctionName": "TextExtractorFunction",
+                                            "Payload": {
+                                                "blocks.$": "$.textractResults.Blocks",
+                                                "nextToken.$": "$.textractResults.NextToken"
+                                            }
+                                        },
+                                        "ResultPath": "$.currentExtraction",
+                                        "Next": "CheckForMorePages"
+                                    },
+                                    "CheckForMorePages": {
+                                        "Type": "Choice",
+                                        "Choices": [
+                                            {
+                                                "Variable": "$.textractResults.NextToken",
+                                                "IsPresent": true,
+                                                "Next": "GetNextPage"
+                                            }
+                                        ],
+                                        "Default": "CombineResults"
+                                    },
+                                    "GetNextPage": {
+                                        "Type": "Task",
+                                        "Resource": "arn:aws:states:::aws-sdk:textract:getDocumentTextDetection",
+                                        "Parameters": {
+                                            "JobId.$": "$.textractJob.JobId",
+                                            "NextToken.$": "$.textractResults.NextToken"
+                                        },
+                                        "ResultPath": "$.textractResults",
+                                        "Next": "ProcessAllPages"
+                                    },
+                                    "CombineResults": {
+                                        "Type": "Task",
+                                        "Resource": "arn:aws:states:::lambda:invoke",
+                                        "Parameters": {
+                                            "FunctionName": "CombineTextFunction",
+                                            "Payload": {
+                                                "extractedPages.$": "$.extractedPages"
+                                            }
+                                        },
+                                        "ResultPath": "$.finalText",
+                                        "Next": "StoreResults"
+                                    },
+                                    "StoreResults": {
+                                        "Type": "Task",
+                                        "Resource": "arn:aws:states:::aws-sdk:s3:putObject",
+                                        "Parameters": {
+                                            "Bucket.$": "$.outputBucket",
+                                            "Key.$": "$.outputKey",
+                                            "Body.$": "States.JsonToString($.finalText)"
+                                        },
                                         "Next": "Bedrock InvokeModel"
+                                    },
+                                    "JobFailed": {
+                                        "Type": "Fail",
+                                        "Cause": "Textract job failed or was canceled",
+                                        "Error": "TextractJobFailed"
                                     },
                                     "Bedrock InvokeModel": {
                                         "Type": "Task",

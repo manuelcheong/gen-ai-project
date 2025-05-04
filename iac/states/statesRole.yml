@@ -85,6 +85,8 @@ statesRole:
             - Effect: Allow
               Action:
                 - textract:DetectDocumentText
+                - textract:startDocumentTextDetection
+                - textract:getDocumentTextDetection
               Resource: "*"
 
             - Effect: Allow
