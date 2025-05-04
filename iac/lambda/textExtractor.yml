@@ -47,10 +47,16 @@ textExtractorFunction:
               
               if 'Contents' not in response:
                   raise Exception(f"No Textract results found for job {job_id}")
+
+              # Filter response Content
+              filtered_items = []
+              for item in response['Contents']:
+                if not item['Key'].endswith('.s3_access_check'):
+                    filtered_items.append(item)
               
               # Process each result file
               all_blocks = []
-              for item in response['Contents']:
+              for item in filtered_items:
                   file_key = item['Key']
                   
                   # Get the file content
