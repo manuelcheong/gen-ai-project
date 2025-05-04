@@ -377,6 +377,10 @@
                                                     "Bucket": "areas-locations",
                                                     "Name": "resumen1.pdf"
                                                 }
+                                            },
+                                            "OutputConfig": {
+                                                "S3Bucket": "gen-ai-content-pre",
+                                                "S3Prefix": "textract-output/"
                                             }
                                         },
                                         "Resource": "arn:aws:states:::aws-sdk:textract:startDocumentTextDetection",
@@ -392,7 +396,8 @@
                                         "Type": "Task",
                                         "Resource": "arn:aws:states:::aws-sdk:textract:getDocumentTextDetection",
                                         "Parameters": {
-                                            "JobId.$": "$.textractJob.JobId"
+                                            "JobId.$": "$.textractJob.JobId",
+                                            "MaxResults": 1
                                         },
                                         "ResultPath": "$.textractResults",
                                         "Next": "CheckJobStatus"
