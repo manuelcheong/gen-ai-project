@@ -429,22 +429,20 @@
                                                 "jobId.$": "$.textractJob.JobId"
                                             }
                                         },
-                                        "Next": "Bedrock InvokeModel"
+                                        "Next": "Embeding extracted text with Titan"
                                     },
                                     "JobFailed": {
                                         "Type": "Fail",
                                         "Cause": "Textract job failed or was canceled",
                                         "Error": "TextractJobFailed"
                                     },
-                                    "Bedrock InvokeModel": {
+                                    "Embeding extracted text with Titan": {
                                         "Type": "Task",
                                         "Resource": "arn:aws:states:::bedrock:invokeModel",
                                         "Parameters": {
                                             "ModelId": "amazon.titan-embed-text-v2:0",
-                                            "Body": {
-                                                "inputText": "Your text to be embedded",
-                                                "dimensions": 1024,
-                                                "normalize": true
+                                            "Input": {
+                                                "S3Uri.$": "States.Format('s3://{}/{}', $.Payload.textLocation.textLocation.bucket , $.Payload.textLocation.textLocation.key)"
                                             },
                                             "ContentType": "application/json",
                                             "Accept": "application/json"
