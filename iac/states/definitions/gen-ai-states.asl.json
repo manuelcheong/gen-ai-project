@@ -396,7 +396,8 @@
                                         "Type": "Task",
                                         "Resource": "arn:aws:states:::aws-sdk:textract:getDocumentTextDetection",
                                         "Parameters": {
-                                            "JobId.$": "$.textractJob.JobId"
+                                            "JobId.$": "$.textractJob.JobId",
+                                            "MaxResults": 1
                                         },
                                         "ResultPath": "$.textractResults",
                                         "Next": "CheckJobStatus"
