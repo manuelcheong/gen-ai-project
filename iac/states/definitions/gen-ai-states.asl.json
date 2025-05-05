@@ -472,12 +472,10 @@
                                                 "Content-Type": "application/json"
                                             },
                                             "RequestBody": {
-                                                "vector_field.$": "$.embeddingContent.Body.embedding",
-                                                "text": "prueba",
-                                                "metadata": {
-                                                    "source": "source",
-                                                    "timestamp.$": "$$.Execution.StartTime"
-                                                }
+                                                "embedding.$": "$.embeddingContent.Body.embedding",
+                                                "chunk": "prueba",
+                                                "source": "source",
+                                                "timestamp.$": "$$.Execution.StartTime"
                                             }
                                         },
                                         "ResultPath": "$.indexResult",
