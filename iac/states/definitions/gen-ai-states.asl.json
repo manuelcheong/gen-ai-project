@@ -463,7 +463,7 @@
                                         "Type": "Task",
                                         "Resource": "arn:aws:states:::http:invoke",
                                         "Parameters": {
-                                            "ApiEndpoint.$": "States.Format('https://search-poc-domain-vqi3irgcogxna3pqkj5tq3uwyi.eu-west-1.es.amazonaws.com/vector-index/_doc/{}', $.Payload.embeddingjsonLocation.key)",
+                                            "ApiEndpoint.$": "States.Format('https://search-poc-domain-vqi3irgcogxna3pqkj5tq3uwyi.eu-west-1.es.amazonaws.com/vector-index/_doc/{}', $.SdkResponseMetadata.RequestId)",
                                             "Method": "PUT",
                                             "Authentication": {
                                                 "ConnectionArn": "arn:aws:events:eu-west-1:178934116267:connection/opensearch_connection/592e4ca1-4cef-47f3-b194-2d63f50e45f7"
