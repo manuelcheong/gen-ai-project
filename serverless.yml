@@ -67,6 +67,9 @@ provider:
 #  scrapperrs: '${file(./iac/lambda/scrapper.yml):scrapperrs}'
   #enrich_event: '${file(./iac/lambda/enrich_event.yml):enrich_event}'
   #faiss: '${file(./iac/lambda/faiss.yml):faiss}'
+functions:
+  strands: '${file(./iac/lambda/agent.yml):strands}'
+    
   
 
 resources:
