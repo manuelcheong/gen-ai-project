@@ -1,0 +1,27 @@
+Opensearch index create
+
+PUT /vector-index
+{
+          "settings": {
+            "index": {
+              "knn": true
+            }
+          },
+          "mappings": {
+            "properties": {
+              "chunk": { "type": "text" },
+              "embedding": {
+                "type": "knn_vector",
+                "dimension": 1024,
+                "method": {
+                  "name": "hnsw",
+                  "space_type": "cosinesimil",
+                  "engine": "nmslib"
+                }
+              },
+              "source": { "type": "keyword" },
+              "chunk_index": { "type": "integer" },
+              "timestamp": { "type": "date" }
+            }
+          }
+}
