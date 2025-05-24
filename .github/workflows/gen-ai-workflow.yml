@@ -91,8 +91,8 @@ jobs:
       - name: Creating BootStrap Agent 👾
         run: |
             cd src/python/agents 
-            python3 -m venv .venv
-            source .venv/bin/activate
+            python3 -m venv venv
+            source venv/bin/activate
             pip3 install strands-agents strands-agents-tools
             zip -r bootstrap.zip . -x "*.pyc" -x "*.pyo" -x "*__pycache__*" -x "tests/*" -x "docs/*"
             deactivate
