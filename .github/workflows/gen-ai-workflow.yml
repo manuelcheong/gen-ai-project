@@ -91,10 +91,16 @@ jobs:
       - name: Creating BootStrap Agent 👾
         run: |
             cd src/python/agents 
-            python -m venv .venv
+            python3 -m venv .venv
             source .venv/bin/activate
-            pip install strands-agents       
-            zip -r bootstrap.zip . -x "*.pyc" -x "*.pyo" -x "*__pycache__*" -x "tests/*" -x "docs/*"
+            pip install strands-agents
+            mkdir package
+            cp strands.py package/
+            pip install --target package -r strands-agents  
+            cd package      
+            zip -r ../bootstrap.zip . -x "*.pyc" -x "*.pyo" -x "*__pycache__*" -x "tests/*" -x "docs/*"
+            cd ..
+            deactivate
             cd ../../..
 
       #- name: Create package FAISS LLRT 😎
