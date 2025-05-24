@@ -94,12 +94,7 @@ jobs:
             python3 -m venv .venv
             source .venv/bin/activate
             pip3 install strands-agents strands-agents-tools
-            mkdir package
-            cp strands.py package/
-            pip3 install --target package -r strands-agents strands-agents-tools 
-            cd package      
-            zip -r ../bootstrap.zip . -x "*.pyc" -x "*.pyo" -x "*__pycache__*" -x "tests/*" -x "docs/*"
-            cd ..
+            zip -r bootstrap.zip . -x "*.pyc" -x "*.pyo" -x "*__pycache__*" -x "tests/*" -x "docs/*"
             deactivate
             cd ../../..
 
