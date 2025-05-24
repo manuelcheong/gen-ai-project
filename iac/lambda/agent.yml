@@ -3,4 +3,4 @@ strands:
   runtime: python3.13
   package:
     artifact: src/python/agents/bootstrap.zip
-  timeout: 15 
+  timeout: 300 

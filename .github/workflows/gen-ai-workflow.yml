@@ -89,7 +89,13 @@ jobs:
       #  run: pip3 install cargo-lambda
 
       - name: Creating BootStrap Agent 👾
-        run: cd src/python/agents && zip -r bootstrap.zip . && cd ../../..
+        run: |
+            cd src/python/agents 
+            python -m venv .venv
+            source .venv/bin/activate
+            pip install strands-agents strands-agents-tools
+            zip -r bootstrap.zip . 
+            cd ../../..
 
       #- name: Create package FAISS LLRT 😎
       #  run: cd src/llrt/faiss && zip -r faiss.zip . && cd ../../..
