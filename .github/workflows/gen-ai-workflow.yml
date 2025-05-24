@@ -93,10 +93,10 @@ jobs:
             cd src/python/agents 
             python3 -m venv .venv
             source .venv/bin/activate
-            pip install strands-agents
+            pip3 install strands-agents strands-agents-tools
             mkdir package
             cp strands.py package/
-            pip install --target package -r strands-agents  
+            pip3 install --target package -r strands-agents strands-agents-tools 
             cd package      
             zip -r ../bootstrap.zip . -x "*.pyc" -x "*.pyo" -x "*__pycache__*" -x "tests/*" -x "docs/*"
             cd ..
