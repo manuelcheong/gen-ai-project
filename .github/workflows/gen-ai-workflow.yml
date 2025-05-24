@@ -93,8 +93,8 @@ jobs:
             cd src/python/agents 
             python -m venv .venv
             source .venv/bin/activate
-            pip install strands-agents strands-agents-tools
-            zip -r bootstrap.zip . 
+            pip install strands-agents       
+            zip -r bootstrap.zip . -x "*.pyc" -x "*.pyo" -x "*__pycache__*" -x "tests/*" -x "docs/*"
             cd ../../..
 
       #- name: Create package FAISS LLRT 😎
