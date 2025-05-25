@@ -91,7 +91,7 @@ jobs:
       - name: Creating BootStrap Agent 👾
         run: |
             cd src/python/agents
-            pip install --target ./package strands strands-agents-tools
+            pip3 install --target ./package strands strands-agents-tools
             cp strands.py package/ 
             cd package
             zip -r ../bootstrap.zip . -x "*.pyc" -x "*.pyo" -x "*__pycache__*" -x "tests/*" -x "docs/*" 
