@@ -95,9 +95,7 @@ jobs:
             cp strands.py package/ 
             cd package
             zip -r ../bootstrap.zip . -x "*.pyc" -x "*.pyo" -x "*__pycache__*" -x "tests/*" -x "docs/*" 
-            cd ..
-            deactivate
-            cd ../../..
+            cd ../../../..
 
 
       #- name: Create package FAISS LLRT 😎
