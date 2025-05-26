@@ -1,5 +1,5 @@
 strands:
-  handler: src/python/agents/strands.handler
+  handler: strands.handler
   runtime: python3.13
   #package:
   #  artifact: src/python/agents/bootstrap.zip
