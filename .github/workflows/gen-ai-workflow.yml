@@ -88,21 +88,21 @@ jobs:
       #- name: Install Cargo Lambda Plugin 🦀 👾
       #  run: pip3 install cargo-lambda
 
-      - name: Creating BootStrap Layer 👾
-        run: |
-            cd src/python/agents
-            mkdir -p python/lib/python3.13/site-packages
-            pip install -r requirements.txt -t python/lib/python3.13/site-packages
-            zip -r layer.zip python
-            aws s3 cp layer.zip s3://strands-dependencies-${{ env.STAGE }}/layers/
+  #    - name: Creating BootStrap Layer 👾
+  #      run: |
+  #          cd src/python/agents
+  #          mkdir -p python/lib/python3.13/site-packages
+  #          pip install -r requirements.txt -t python/lib/python3.13/site-packages
+  #          zip -r layer.zip python
+  #          aws s3 cp layer.zip s3://strands-dependencies-${{ env.STAGE }}/layers/
 
 
-            python3 -m venv .venv
-            source .venv/bin/activate
-            pip3 install -r requirements.txt --platform manylinux2014_aarch64 --target ./package --only-binary=:all:
-            cd package
-            zip -r ../bootstrap.zip . -x "*.pyc" -x "*.pyo" -x "*__pycache__*" -x "tests/*" -x "docs/*" 
-            cd ../../../..
+  #          python3 -m venv .venv
+  #          source .venv/bin/activate
+  #          pip3 install -r requirements.txt --platform manylinux2014_aarch64 --target ./package --only-binary=:all:
+  #          cd package
+  #          zip -r ../bootstrap.zip . -x "*.pyc" -x "*.pyo" -x "*__pycache__*" -x "tests/*" -x "docs/*" 
+  #          cd ../../../..
 
 
       #- name: Create package FAISS LLRT 😎
