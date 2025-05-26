@@ -176,7 +176,8 @@ resources:
     #WebsiteBucket: '${file(./iac/s3/frontend.yml):WebsiteBucket}'
     #WebsiteBucketPolicy: '${file(./iac/s3/frontend.yml):WebsiteBucketPolicy}'
 
-    # ---------- S3 VECTORS 🫡 ---------------
+    # ---------- S3 LAYERS 🫡 ---------------
+    strandsDepsBucket: '${file(./iac/s3/strands_dependencies.yml):strandsDepsBucket}'
     #VectorIndicesBucket: '${file(./iac/s3/vectors.yml):VectorIndicesBucket}'
 
     # ---------- S3 ASL DEFINITIONS 🫡 --------------
@@ -242,5 +243,6 @@ plugins:
   - serverless-prune-plugin
   #- serverless-rust-plugin
   - serverless-ssm-fetch
+  - serverless-python-requirements
 
 

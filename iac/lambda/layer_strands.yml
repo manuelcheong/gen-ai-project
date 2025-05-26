@@ -1,0 +1,20 @@
+LambdaLayer:
+  Type: AWS::Lambda::LayerVersion
+  Properties:
+    LayerName: !Ref LayerName
+    Description: !Ref Description
+    Content:
+      S3Bucket: !Ref S3BucketName
+      S3Key: !Ref S3Key
+    CompatibleRuntimes: !Ref CompatibleRuntimes
+    CompatibleArchitectures:
+      - x86_64
+      - arm64
+    LicenseInfo: MIT
+
+LayerPermission:
+  Type: AWS::Lambda::LayerVersionPermission
+  Properties:
+    Action: lambda:GetLayerVersion
+    LayerVersionArn: !Ref LambdaLayer
+    Principal: '*'

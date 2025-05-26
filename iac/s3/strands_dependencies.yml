@@ -1,0 +1,4 @@
+strandsDepsBucket:
+  Type: AWS::S3::Bucket
+  Properties:
+    BucketName: strands-dependencies-${self:provider.stage}

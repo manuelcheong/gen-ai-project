@@ -1,6 +1,6 @@
 strands:
-  handler: strands.handler
+  handler: src/python/agents/strands.handler
   runtime: python3.13
-  package:
-    artifact: src/python/agents/bootstrap.zip
+  #package:
+  #  artifact: src/python/agents/bootstrap.zip
   timeout: 300 
