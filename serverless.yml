@@ -70,6 +70,7 @@ provider:
 functions:
   strandsAgent:
     handler: strands.lambda_handler
+    runtime: python3.13
     events:
       - http:
           path: agent
