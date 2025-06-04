@@ -225,6 +225,7 @@ custom:
   #    docker: false
   pythonRequirements:
     dockerizePip: true
+    dockerImage: public.ecr.aws/sam/build-python3.11:latest-x86_64
 
   api_region:
     eu-west-1:
