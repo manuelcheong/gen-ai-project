@@ -229,6 +229,8 @@ custom:
     pipCmdExtraArgs:
       - --platform
       - manylinux2014_x86_64
+      - --only-binary
+      - :all:
 
   api_region:
     eu-west-1:
