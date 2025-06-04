@@ -88,13 +88,18 @@ jobs:
       #- name: Install Cargo Lambda Plugin 🦀 👾
       #  run: pip3 install cargo-lambda
 
-  #    - name: Creating BootStrap Layer 👾
-  #      run: |
-  #          cd src/python/agents
-  #          mkdir -p python/lib/python3.13/site-packages
-  #          pip install -r requirements.txt -t python/lib/python3.13/site-packages
-  #          zip -r layer.zip python
-  #          aws s3 cp layer.zip s3://strands-dependencies-${{ env.STAGE }}/layers/
+    #  - name: Creating BootStrap Layer 👾
+    #    run: |
+    #        mkdir -p lambda-layer/python
+    #        pip install strands-agents strands-agents-tools -t lambda-layer/python
+    #        cd lambda-layer
+    #        zip -r ../strands-layer.zip .
+    #        cd ..
+
+
+          #  aws s3 cp layer.zip s3://strands-dependencies-${{ env.STAGE }}/layers/
+
+        #  pip install -r requirements.txt -t python/lib/python3.13/site-packages
 
 
   #          python3 -m venv .venv

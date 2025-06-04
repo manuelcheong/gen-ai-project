@@ -223,14 +223,13 @@ custom:
   #rust:
   #  cargoLambda:
   #    docker: false
-  pythonRequirements:
-    dockerizePip: true
-    dockerImage: public.ecr.aws/sam/build-python3.11:latest-x86_64
-    pipCmdExtraArgs:
-      - --platform
-      - manylinux2014_x86_64
-      - --only-binary
-      - :all:
+  #pythonRequirements:
+  #  dockerizePip: true
+  #  dockerImage: public.ecr.aws/sam/build-python3.11:latest-x86_64
+    #pipCmdExtraArgs:
+    #  - --platform
+    #  - manylinux2014_x86_64
+    
 
   api_region:
     eu-west-1:
@@ -259,6 +258,6 @@ plugins:
   - serverless-prune-plugin
   #- serverless-rust-plugin
   - serverless-ssm-fetch
-  - serverless-python-requirements
+  #- serverless-python-requirements
 
 
