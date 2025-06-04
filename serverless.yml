@@ -72,8 +72,8 @@ functions:
     handler: strands.lambda_handler
     runtime: python3.11
     package:
-    include:
-      - strands.py
+      include:
+        - strands.py
     events:
       - http:
           path: agent
