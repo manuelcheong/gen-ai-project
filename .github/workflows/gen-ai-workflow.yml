@@ -92,7 +92,7 @@ jobs:
         run: |
             cd src/python/
             mkdir -p lambda-layer/python
-            pip install strands-agents strands-agents-tools pydantic pydantic-core --platform manylinux2014_x86_64 --only-binary=:all: -t lambda-layer/python
+            pip install strands-agents strands-agents-tools pydantic pydantic-core typing-extensions --platform manylinux2014_x86_64 --only-binary=:all: -t lambda-layer/python
             cd lambda-layer
             zip -r ../strands-layer.zip python/
             cd ..
