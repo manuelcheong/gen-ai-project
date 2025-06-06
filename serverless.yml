@@ -83,6 +83,7 @@ functions:
           path: agent
           method: post
           cors: true
+    
   #strands: '${file(./iac/lambda/agent.yml):strands}'
     
   
