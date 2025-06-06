@@ -1,5 +1,5 @@
 import json
-import datetime
+import requests
 
 def handler(event, context):
     """
@@ -12,13 +12,14 @@ def handler(event, context):
         Returns:
             dict: Response containing timestamp and echo of input data
         """
-    current_time = datetime.datetime.now().isoformat()
-    
+    response = requests.get('https://httpbin.org/get')
+            
     return {
         'statusCode': 200,
         'body': json.dumps({
-            'message': 'Hello from Lambda!',
-            'timestamp': current_time,
-            'input': event
+            'message': 'Successfully made HTTP request',
+            'status_code': response.status_code,
+            'response_data': response.json()
         })
     }
+    
