@@ -67,18 +67,11 @@ functions:
   strandsAgent:
     handler: src/python/agents/agent_handler.handler
     runtime: python3.11
-    architecture: x86_64
+    #architecture: x86_64
+    layers:
+      - arn:aws:lambda:${self:provider.region}:123456789012:layer:my-layer-name:1
     package:
       exclude:
-        - "./*"
-        - "src/js"
-        - "src/llrt"
-        - "src/promptui"
-        - "src/rs"
-        - "src/python"
-        - "node_modules/*"
-        - "target/**"
-        - "iac/**"
         - "**"
       include:
         - src/python/agents/agent_handler.py
@@ -87,6 +80,8 @@ functions:
           path: agent
           method: post
           cors: true
+    layers:
+      - arn:aws:lambda:eu-west-1:178934116267:layer:python-layer:1
     
   #strands: '${file(./iac/lambda/agent.yml):strands}'
     
