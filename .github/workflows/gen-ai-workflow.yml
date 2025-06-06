@@ -96,7 +96,7 @@ jobs:
             cd lambda-layer
             zip -r ../strands-layer.zip python/
             cd ..
-            aws s3 cp strands-layer.zip s3://strands-dependencies-pre
+            aws s3 cp strands-layer.zip s3://strands-dependencies--${{ env.STAGE }}
             cd ../..
 
 

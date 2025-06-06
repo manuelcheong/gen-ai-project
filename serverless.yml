@@ -4,11 +4,7 @@ frameworkVersion: '4'
 package:
   individually: true
   exclude:
-    - "./*"
-    - "src/*"
-    - "node_modules/*"
-    - "target/**"
-    - "iac/**"
+    - "**"
 
 provider:
   name: aws
@@ -75,10 +71,15 @@ functions:
     package:
       exclude:
         - "./*"
-        - "src/*"
+        - "src/js"
+        - "src/llrt"
+        - "src/promptui"
+        - "src/rs"
+        - "src/python"
         - "node_modules/*"
         - "target/**"
         - "iac/**"
+        - "**"
       include:
         - src/python/agents/agent_handler.py
     events:
