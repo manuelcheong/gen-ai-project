@@ -97,6 +97,7 @@ jobs:
             zip -r ../strands-layer.zip python/
             cd ..
             aws s3 cp strands-layer.zip s3://strands-dependencies-pre
+            cd ../..
 
 
           #  aws s3 cp layer.zip s3://strands-dependencies-${{ env.STAGE }}/layers/
