@@ -9,7 +9,6 @@ frameworkVersion: '4'
 #    - "node_modules/*"
 #    - "target/**"
 
-s
 provider:
   name: aws
   runtime: nodejs22.x
