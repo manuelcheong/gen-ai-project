@@ -68,8 +68,6 @@ functions:
     handler: src/python/agents/agent_handler.handler
     runtime: python3.11
     #architecture: x86_64
-    layers:
-      - arn:aws:lambda:${self:provider.region}:123456789012:layer:my-layer-name:1
     package:
       exclude:
         - "**"
