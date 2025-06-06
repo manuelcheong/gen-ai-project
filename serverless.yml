@@ -69,7 +69,7 @@ provider:
   #faiss: '${file(./iac/lambda/faiss.yml):faiss}'
 functions:
   strandsAgent:
-    handler: strandsapp.lambda_handler
+    handler: app.lambda_handler
     runtime: python3.11
     package:
       exclude:

@@ -1,7 +1,7 @@
 import json
 import os
 import logging
-from strandsapp import Agent, tool
+from strands import Agent, tool
 
 # Configure logging
 logger = logging.getLogger()
