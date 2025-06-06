@@ -73,8 +73,6 @@ functions:
     runtime: python3.11
     architecture: x86_64
     package:
-      exclude:
-        - "*"
       include:
         - src/python/agents/agent_handler.py
     events:
@@ -219,7 +217,10 @@ resources:
     #privatenotificationOwnerPathResource: '${file(./iac/api/definitions/private_crud.yml):privatenotificationOwnerPathResource}'
     #privatenotificationOwnerMethodGet: '${file(./iac/api/definitions/private_crud.yml):privatenotificationOwnerMethodGet}'
 
+    #   ------- LAMBDA LAYERS  🫡 --------------    
+
     
+    LambdaLayer: '${file(./iac/lambda/layer_strands.yml):LambdaLayer}'
 
   #extensions:
   #  deploymentSettings:

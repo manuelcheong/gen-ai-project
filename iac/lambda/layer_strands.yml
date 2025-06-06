@@ -1,12 +1,15 @@
 LambdaLayer:
   Type: AWS::Lambda::LayerVersion
   Properties:
-    LayerName: !Ref LayerName
-    Description: !Ref Description
+    LayerName: python-layer
+    Description: Layer containing Python dependencies
     Content:
-      S3Bucket: !Ref S3BucketName
-      S3Key: !Ref S3Key
-    CompatibleRuntimes: !Ref CompatibleRuntimes
+      S3Bucket: !Ref strandsDepsBucket
+      S3Key: strands-layer.zip
+    CompatibleRuntimes:
+      - python3.10
+      - python3.11
+      - python3.13
     CompatibleArchitectures:
       - x86_64
       - arm64
