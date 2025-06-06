@@ -73,6 +73,12 @@ functions:
     runtime: python3.11
     architecture: x86_64
     package:
+      exclude:
+        - "./*"
+        - "src/*"
+        - "node_modules/*"
+        - "target/**"
+        - "iac/**"
       include:
         - src/python/agents/agent_handler.py
     events:
