@@ -66,20 +66,20 @@ provider:
 functions:
   strandsAgent:
     handler: agent_handler.handler
-    runtime: python3.11
+    #runtime: python3.11
     architecture: x86_64
-    package:
-      exclude:
-        - "**"
-      include:
-        - agent_handler.py
+    #package:
+    #  exclude:
+    #    - "**"
+    #  include:
+    #    - agent_handler.py
     events:
       - http:
           path: agent
           method: post
           cors: true
-    layers:
-      - { Ref: PythonDepsLambdaLayer }
+    #layers:
+    #  - { Ref: PythonDepsLambdaLayer }
       #- arn:aws:lambda:eu-west-1:178934116267:layer:python-layer:1
     
   #strands: '${file(./iac/lambda/agent.yml):strands}'
