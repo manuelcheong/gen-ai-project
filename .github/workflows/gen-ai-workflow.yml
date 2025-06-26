@@ -99,9 +99,6 @@ jobs:
               public.ecr.aws/lambda/python:3.11 \
               pip install --no-cache-dir -r /requirements.txt -t /opt/python
 
-            find layers/temp/python -name "*.pyc" -delete
-            find layers/temp/python -name "__pycache__" -type d -exec rm -rf {} + 2>/dev/null || true
-            find layers/temp/python -name "*.dist-info" -type d -exec rm -rf {} + 2>/dev/null || true
             
             cd layers/temp
             zip -r ../python-deps.zip python/
