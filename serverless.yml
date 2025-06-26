@@ -234,7 +234,7 @@ resources:
     #   ------- LAMBDA LAYERS  🫡 --------------    
 
     
-    LambdaLayer: '${file(./iac/lambda/layer_strands.yml):LambdaLayer}'
+    #LambdaLayer: '${file(./iac/lambda/layer_strands.yml):LambdaLayer}'
 
   #extensions:
   #  deploymentSettings:
