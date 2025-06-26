@@ -276,14 +276,14 @@ custom:
     includeLayers: true    
     number: 1
 
-  pythonRequirements:
-    dockerizePip: true
-    layer: true
-    slim: true
-    strip: false
-    noDeps: false
-    useDownloadCache: false
-    useStaticCache: false
+  #pythonRequirements:
+  #  dockerizePip: true
+  #  layer: true
+  #  slim: true
+  #  strip: false
+  #  noDeps: false
+  #  useDownloadCache: false
+  #  useStaticCache: false
 
 plugins:
   - serverless-prune-plugin
