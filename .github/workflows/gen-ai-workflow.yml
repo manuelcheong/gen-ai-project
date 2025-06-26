@@ -88,23 +88,23 @@ jobs:
       #- name: Install Cargo Lambda Plugin 🦀 👾
       #  run: pip3 install cargo-lambda
 
-      - name: Creating BootStrap Layer 👾
-        run: |
-            mkdir -p layers/temp/python
+      #- name: Creating BootStrap Layer 👾
+      #  run: |
+      #      mkdir -p layers/temp/python
 
-            docker run --rm \
-              -v $(pwd)/layers/python-deps/requirements.txt:/requirements.txt \
-              -v $(pwd)/layers/temp/python:/opt/python \
-              --platform linux/amd64 \
-              public.ecr.aws/lambda/python:3.11 \
-              pip install --no-cache-dir -r /requirements.txt -t /opt/python
+      #      docker run --rm \
+      #        -v $(pwd)/layers/python-deps/requirements.txt:/requirements.txt \
+      #        -v $(pwd)/layers/temp/python:/opt/python \
+      #        --platform linux/amd64 \
+      #        public.ecr.aws/lambda/python:3.11 \
+      #        pip install --no-cache-dir -r /requirements.txt -t /opt/python
 
             
-            cd layers/temp
-            zip -r ../python-deps.zip python/
-            cd ../..
+      #      cd layers/temp
+      #      zip -r ../python-deps.zip python/
+      #      cd ../..
 
-            echo "Layer built successfully: layers/python-deps.zip"
+      #      echo "Layer built successfully: layers/python-deps.zip"
       #      mkdir -p lambda-layer/python
       #      pip install -r requests strands-agents  strands-agents-tools --platform manylinux2014_x86_64 --only-binary=:all: -t lambda-layer/python
       #      cd lambda-layer
