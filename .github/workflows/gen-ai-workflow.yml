@@ -88,9 +88,12 @@ jobs:
       #- name: Install Cargo Lambda Plugin 🦀 👾
       #  run: pip3 install cargo-lambda
 
-      #- name: Creating BootStrap Layer 👾
-      #  run: |
-      #      cd src/python/
+      - name: Creating BootStrap Layer 👾
+        run: |
+            cd layers
+            pip install -r requirements.txt
+            zip -r ../python-deps.zip . 
+            cd ..
       #      mkdir -p lambda-layer/python
       #      pip install -r requests strands-agents  strands-agents-tools --platform manylinux2014_x86_64 --only-binary=:all: -t lambda-layer/python
       #      cd lambda-layer
