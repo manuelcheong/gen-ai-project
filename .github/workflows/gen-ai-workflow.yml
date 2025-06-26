@@ -90,7 +90,7 @@ jobs:
 
       - name: Creating BootStrap Layer 👾
         run: |
-            cd layers
+            cd layers/python-deps
             pip install -r requirements.txt
             zip -r ../python-deps.zip . 
             cd ..
