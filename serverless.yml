@@ -79,11 +79,25 @@ functions:
           method: post
           cors: true
     layers:
-      - arn:aws:lambda:eu-west-1:178934116267:layer:python-layer:1
+      - { Ref: PythonDepsLambdaLayer }
+      #- arn:aws:lambda:eu-west-1:178934116267:layer:python-layer:1
     
   #strands: '${file(./iac/lambda/agent.yml):strands}'
     
   
+layers:
+  pythonDeps:
+  name: python-deps-${self:provider.stage}
+  description: Python dependencies for Strands Agents
+  compatibleRuntimes:
+    - python3.11
+  compatibleArchitectures:
+    - x86_64
+  package:
+    artifact: layers/python-deps.zip
+  retain: false
+
+
 
 resources:
   # ---------- PArameters 🫡 ---------------
@@ -262,10 +276,19 @@ custom:
     includeLayers: true    
     number: 1
 
+  pythonRequirements:
+    dockerizePip: true
+    layer: true
+    slim: true
+    strip: false
+    noDeps: false
+    useDownloadCache: false
+    useStaticCache: false
+
 plugins:
   - serverless-prune-plugin
   #- serverless-rust-plugin
   - serverless-ssm-fetch
-  #- serverless-python-requirements
+  - serverless-python-requirements
 
 
