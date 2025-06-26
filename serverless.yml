@@ -87,15 +87,15 @@ functions:
   
 layers:
   pythonDeps:
-  name: python-deps-${self:provider.stage}
-  description: Python dependencies for Strands Agents
-  compatibleRuntimes:
-    - python3.11
-  compatibleArchitectures:
-    - x86_64
-  package:
-    artifact: layers/python-deps.zip
-  retain: false
+    name: python-deps-${self:provider.stage}
+    description: Python dependencies for Strands Agents
+    compatibleRuntimes:
+      - python3.11
+    compatibleArchitectures:
+      - x86_64
+    package:
+      artifact: layers/python-deps.zip
+    retain: false
 
 
 
