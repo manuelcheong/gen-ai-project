@@ -92,8 +92,8 @@ jobs:
         run: |
             cd layers/python-deps
             pip install -r requirements.txt
-            zip -r ../python-deps.zip . 
-            cd ..
+            zip -r ../python-deps.zip .
+            cd ../..
       #      mkdir -p lambda-layer/python
       #      pip install -r requests strands-agents  strands-agents-tools --platform manylinux2014_x86_64 --only-binary=:all: -t lambda-layer/python
       #      cd lambda-layer
