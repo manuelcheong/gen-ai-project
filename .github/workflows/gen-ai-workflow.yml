@@ -88,9 +88,13 @@ jobs:
       #- name: Install Cargo Lambda Plugin 🦀 👾
       #  run: pip3 install cargo-lambda
 
-      #- name: Creating BootStrap Layer 👾
-      #  run: |
-      #      mkdir -p layers/temp/python
+      - name: Creating BootStrap Layer 👾
+        run: |
+            mkdir -p layers/python-deps
+            cd layers/python-deps
+            pip install --no-cache-dir -r requirements.txt
+            zip -r ../python-deps.zip .
+            cd ../..
 
       #      docker run --rm \
       #        -v $(pwd)/layers/python-deps/requirements.txt:/requirements.txt \
@@ -100,9 +104,7 @@ jobs:
       #        pip install --no-cache-dir -r /requirements.txt -t /opt/python
 
             
-      #      cd layers/temp
-      #      zip -r ../python-deps.zip python/
-      #      cd ../..
+            
 
       #      echo "Layer built successfully: layers/python-deps.zip"
       #      mkdir -p lambda-layer/python
