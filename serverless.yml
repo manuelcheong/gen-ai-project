@@ -65,14 +65,14 @@ provider:
   #faiss: '${file(./iac/lambda/faiss.yml):faiss}'
 functions:
   strandsAgent:
-    handler: src.agent_handler.handler
+    handler: agent_handler.handler
     runtime: python3.11
     architecture: x86_64
     package:
       exclude:
         - "**"
       include:
-        - src/agent_handler.py
+        - agent_handler.py
     events:
       - http:
           path: agent
