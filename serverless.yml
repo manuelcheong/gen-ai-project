@@ -63,21 +63,21 @@ provider:
 #  scrapperrs: '${file(./iac/lambda/scrapper.yml):scrapperrs}'
   #enrich_event: '${file(./iac/lambda/enrich_event.yml):enrich_event}'
   #faiss: '${file(./iac/lambda/faiss.yml):faiss}'
-functions:
-  strandsAgent:
-    handler: agent_handler.handler
+#functions:
+#  strandsAgent:
+#    handler: agent_handler.handler
     #runtime: python3.11
-    architecture: x86_64
+#    architecture: x86_64
     #package:
     #  exclude:
     #    - "**"
     #  include:
     #    - agent_handler.py
-    events:
-      - http:
-          path: agent
-          method: post
-          cors: true
+#    events:
+#      - http:
+#          path: agent
+#          method: post
+#          cors: true
     #layers:
     #  - { Ref: PythonDepsLambdaLayer }
       #- arn:aws:lambda:eu-west-1:178934116267:layer:python-layer:1
@@ -85,17 +85,17 @@ functions:
   #strands: '${file(./iac/lambda/agent.yml):strands}'
     
   
-layers:
-  pythonDeps:
-    name: python-deps-${self:provider.stage}
-    description: Python dependencies for Strands Agents
-    compatibleRuntimes:
-      - python3.11
-    compatibleArchitectures:
-      - x86_64
-    package:
-      artifact: layers/python-deps.zip
-    retain: false
+#layers:
+#  pythonDeps:
+#    name: python-deps-${self:provider.stage}
+#    description: Python dependencies for Strands Agents
+#    compatibleRuntimes:
+#      - python3.11
+#    compatibleArchitectures:
+#      - x86_64
+#    package:
+#      artifact: layers/python-deps.zip
+#    retain: false
 
 
 
@@ -276,19 +276,19 @@ custom:
     includeLayers: true    
     number: 1
 
-  pythonRequirements:
-    dockerizePip: true
-    layer: true
-    slim: true
-    strip: false
-    noDeps: false
-    useDownloadCache: false
-    useStaticCache: false
+#  pythonRequirements:
+#    dockerizePip: true
+#    layer: true
+#    slim: true
+#    strip: false
+#    noDeps: false
+#    useDownloadCache: false
+#    useStaticCache: false
 
 plugins:
   - serverless-prune-plugin
   #- serverless-rust-plugin
   - serverless-ssm-fetch
-  - serverless-python-requirements
+#  - serverless-python-requirements
 
 
