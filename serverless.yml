@@ -85,17 +85,17 @@ provider:
   #strands: '${file(./iac/lambda/agent.yml):strands}'
     
   
-#layers:
-#  pythonDeps:
-#    name: python-deps-${self:provider.stage}
-#    description: Python dependencies for Strands Agents
-#    compatibleRuntimes:
-#      - python3.11
-#    compatibleArchitectures:
-#      - x86_64
-#    package:
-#      artifact: layers/python-deps.zip
-#    retain: false
+layers:
+  pythonDeps:
+    name: strands-deps-${self:provider.stage}
+    description: Python dependencies for Strands Agents
+    compatibleRuntimes:
+      - python3.12
+    compatibleArchitectures:
+      - aarch64
+    package:
+      artifact: packaging/dependencies.zip
+    retain: false
 
 
 
@@ -234,7 +234,7 @@ resources:
     #   ------- LAMBDA LAYERS  🫡 --------------    
 
     
-    strandsDeps: '${file(./iac/lambda/layer_strands.yml):strandsDeps}'
+    #trandsDeps: '${file(./iac/lambda/layer_strands.yml):strandsDeps}'
 
   #extensions:
   #  deploymentSettings:
