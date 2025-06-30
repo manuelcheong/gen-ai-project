@@ -60,7 +60,7 @@ def create_lambda_package():
                 arcname = os.path.relpath(file_path, app_dir)
                 zipf.write(file_path, arcname)
 
-    print(f"Lambda deployment packages created successfully: {dependencies_deployment_zip.name} {app_deployment_zip.name} {cycling_deployment_zip}")
+    print(f"Lambda deployment packages created successfully: {dependencies_deployment_zip.name} {app_deployment_zip.name}")
     return True
 
 
