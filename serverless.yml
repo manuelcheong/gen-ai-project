@@ -59,6 +59,12 @@ provider:
       - "s3:*"
     Resource: "*"
 
+  - Effect: "Allow"
+    Action:
+      - bedrock:InvokeModel
+      - bedrock:InvokeModelWithResponseStream
+    Resource: "*"
+
 #functions:
 #  scrapperrs: '${file(./iac/lambda/scrapper.yml):scrapperrs}'
   #enrich_event: '${file(./iac/lambda/enrich_event.yml):enrich_event}'
