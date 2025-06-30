@@ -63,6 +63,7 @@ provider:
 #  scrapperrs: '${file(./iac/lambda/scrapper.yml):scrapperrs}'
   #enrich_event: '${file(./iac/lambda/enrich_event.yml):enrich_event}'
   #faiss: '${file(./iac/lambda/faiss.yml):faiss}'
+
 #functions:
 #  strandsAgent:
 #    handler: agent_handler.handler
@@ -92,7 +93,7 @@ layers:
     compatibleRuntimes:
       - python3.12
     compatibleArchitectures:
-      - aarch64
+      - arm64
     package:
       artifact: packaging/dependencies.zip
     retain: false
