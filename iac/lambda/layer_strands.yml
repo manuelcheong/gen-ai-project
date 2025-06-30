@@ -1,10 +1,13 @@
 strandsDeps:
-  name: strands-deps-${self:provider.stage}
-  description: Python dependencies for Strands Agents
-  compatibleRuntimes:
-    - python3.12
-  compatibleArchitectures:
-    - aarch64
-  package:
-    artifact: packaging/dependencies.zip
-  retain: false
+  Type: AWS::Lambda::LayerVersion
+  Properties:
+    LayerName: strands-deps-${self:provider.stage}
+    Description: Python dependencies for Strands Agents
+    CompatibleRuntimes:
+      - python3.12
+    CompatibleArchitectures:
+      - aarch64
+    Content:
+      ZipFile: packaging/dependencies.zip
+   
+  
