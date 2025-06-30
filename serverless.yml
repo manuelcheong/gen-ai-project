@@ -237,6 +237,9 @@ resources:
     
     #trandsDeps: '${file(./iac/lambda/layer_strands.yml):strandsDeps}'
 
+    # ---------- AGENTS 🫡 --------------
+    strands: '${file(./iac/lambda/agent.yml):strands}'
+
   #extensions:
   #  deploymentSettings:
   #    capabilities:

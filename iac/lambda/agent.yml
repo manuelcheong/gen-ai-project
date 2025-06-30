@@ -1,6 +1,8 @@
 strands:
-  handler: strands.handler
-  runtime: python3.13
-  #package:
-  #  artifact: src/python/agents/bootstrap.zip
+  handler: agent_weather.handler
+  runtime: python3.12
+  package:
+    artifact: src/python/agents/bootstrap.zip
   timeout: 300 
+  layers:
+    - { Ref: PythonDepsLambdaLayer }
