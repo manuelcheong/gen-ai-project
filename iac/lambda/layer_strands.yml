@@ -1,22 +1,10 @@
-LambdaLayer:
-  Type: AWS::Lambda::LayerVersion
-  Properties:
-    LayerName: python-layer
-    Description: Layer containing Python dependencies
-    Content:
-      S3Bucket: !Ref strandsDepsBucket
-      S3Key: strands-layer.zip
-    CompatibleRuntimes:
-      - python3.10
-      - python3.11
-      - python3.13
-    CompatibleArchitectures:
-      - x86_64
-    LicenseInfo: MIT
-
-LayerPermission:
-  Type: AWS::Lambda::LayerVersionPermission
-  Properties:
-    Action: lambda:GetLayerVersion
-    LayerVersionArn: !Ref LambdaLayer
-    Principal: '*'
+strandsDeps:
+  name: strands-deps-${self:provider.stage}
+  description: Python dependencies for Strands Agents
+  compatibleRuntimes:
+    - python3.12
+  compatibleArchitectures:
+    - aarch64
+  package:
+    artifact: packaging/dependencies.zip
+  retain: false

@@ -90,11 +90,10 @@ jobs:
 
       - name: Creating BootStrap Layer 👾
         run: |
-            mkdir -p layers/python-deps
-            cd layers/python-deps
-            pip install --no-cache-dir -r requirements.txt
-            zip -r ../python-deps.zip .
-            cd ../..
+            python -m venv .venv
+            source .venv/bin/activate
+            pip install -r requirements.txt --python-version 3.12 --platform manylinux2014_aarch64 --target ./packaging/_dependencies --only-binary=:all:
+            python ./utils/package_for_lambda.py
 
       #      docker run --rm \
       #        -v $(pwd)/layers/python-deps/requirements.txt:/requirements.txt \
