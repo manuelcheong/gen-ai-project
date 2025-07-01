@@ -25,7 +25,9 @@ def create_lambda_package():
 
     # get the path to the strands_tools package
     app_dir = current_dir / "src/python/weather"
+    location_dir = current_dir / "src/python/location"
     app_deployment_zip = packaging_dir / "app.zip"
+    location_deployment_zip = packaging_dir / "location.zip"
 
 
     dependencies_dir = packaging_dir / "_dependencies"
@@ -58,6 +60,14 @@ def create_lambda_package():
             for file in files:
                 file_path = os.path.join(root, file)
                 arcname = os.path.relpath(file_path, app_dir)
+                zipf.write(file_path, arcname)
+
+    print(f"  Creating {location_deployment_zip.name}...")
+    with zipfile.ZipFile(location_deployment_zip, 'w', zipfile.ZIP_DEFLATED) as zipf:
+        for root, _, files in os.walk(location_dir):
+            for file in files:
+                file_path = os.path.join(root, file)
+                arcname = os.path.relpath(file_path, location_dir)
                 zipf.write(file_path, arcname)
 
     print(f"Lambda deployment packages created successfully: {dependencies_deployment_zip.name} {app_deployment_zip.name}")

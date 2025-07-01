@@ -1,3 +1,4 @@
+import os
 from strands import Agent
 from strands_tools import http_request
 from typing import Dict, Any
@@ -8,6 +9,7 @@ bedrock_model = BedrockModel(
     region_name='us-west-2',  # Change to your preferred region
     temperature=0.3,
 )
+os.environ["STRANDS_TOOL_CONSOLE_MODE"] = "enabled"
 
 # Define a weather-focused system prompt
 WEATHER_SYSTEM_PROMPT = """You are a weather assistant with HTTP capabilities. You can:

@@ -1,0 +1,8 @@
+locationAgent:
+  handler: agent.handler
+  runtime: python3.12
+  package:
+    artifact: packaging/location.zip
+  timeout: 300 
+  layers:
+    - { Ref: PythonDepsLambdaLayer }

@@ -73,6 +73,7 @@ provider:
 functions:
     # ---------- AGENTS 🫡 --------------
     strands: '${file(./iac/lambda/agent.yml):strands}'
+    locationAgent: '${file(./iac/lambda/location_agent.yml):locationAgent}'
 #  strandsAgent:
 #    handler: agent_handler.handler
     #runtime: python3.11
