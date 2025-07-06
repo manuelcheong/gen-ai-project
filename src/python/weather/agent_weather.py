@@ -1,14 +1,17 @@
 import os
 from strands import Agent
 from strands_tools import http_request
-from typing import Dict, Any
 from strands.models import BedrockModel
+from typing import Dict, Any
 
-bedrock_model = BedrockModel(
-    model_id="anthropic.claude-3-5-sonnet-20241022-v2:0",
-    region_name='us-west-2',  # Change to your preferred region
-    temperature=0.3,
+model = BedrockModel(
+    model_id="eu.anthropic.claude-sonnet-4-20250514-v1:0",
+    additional_request_fields={
+        "anthropic_beta": ["interleaved-thinking-2025-05-14"],
+        "thinking": {"type": "enabled", "budget_tokens": 8000},
+    },
 )
+
 os.environ["STRANDS_TOOL_CONSOLE_MODE"] = "enabled"
 
 # Define a weather-focused system prompt
@@ -33,10 +36,13 @@ Always explain the weather conditions clearly and provide context for the foreca
 
 def handler(event: Dict[str, Any], _context) -> str:
     weather_agent = Agent(
-        model=bedrock_model,
+        model=model,
         system_prompt=WEATHER_SYSTEM_PROMPT,
-        tools=[http_request],
+        tools=[http_request]
     )
 
+    
+
     response = weather_agent(event.get('prompt'))
+    print(response)
     return str(response)

@@ -1,77 +1,48 @@
-import asyncio
-import json
-from mcp import stdio_client, StdioServerParameters
-from strands import Agent, tool
-from strands.tools.mcp import MCPClient
-from strands_tools import current_time
+import os
+from strands import Agent
+from strands_tools import http_request
 from strands.models import BedrockModel
 from typing import Dict, Any
 
-bedrock_model = BedrockModel(
-    model_id="anthropic.claude-3-5-sonnet-20241022-v2:0",
-    region_name='us-west-2',  # Change to your preferred region
-    temperature=0.3,
+model = BedrockModel(
+    model_id="eu.anthropic.claude-sonnet-4-20250514-v1:0",
+    additional_request_fields={
+        "anthropic_beta": ["interleaved-thinking-2025-05-14"],
+        "thinking": {"type": "enabled", "budget_tokens": 8000},
+    },
 )
 
-async def create_location_agent():
-    """Create a Strands agent with AWS Location MCP tools"""
-    
-    # Connect to AWS Location MCP server
-    location_mcp_client = MCPClient(lambda: stdio_client(
-        StdioServerParameters(
-            command="uvx", 
-            args=["awslabs.aws-location-mcp-server@latest"]
-        )
-    ))
-    
-    with location_mcp_client:
-        # Get location tools from MCP server
-        location_tools = location_mcp_client.list_tools_sync()
-        
-        # Add custom location-aware tools
-        @tool
-        def get_user_context() -> str:
-            """Get current user context including time and location preferences"""
-            return "User prefers locations within 10 miles, current session started recently"
-        
-        # Combine MCP location tools with custom tools
-        all_tools = [current_time, get_user_context] + location_tools
-        
-        # Create agent with location capabilities
-        agent = Agent(
-            model=bedrock_model,
-            tools=all_tools,
-            system_prompt="""You are a helpful location-aware assistant with access to:
-            - Geocoding and reverse geocoding services
-            - Place search and discovery
-            - Route calculation and optimization
-            - Real-time location data
-            
-            Help users find places, get directions, and discover locations based on their needs.
-            Always consider distance, travel time, and user preferences when making recommendations."""
-        )
-        
-        return agent
+os.environ["STRANDS_TOOL_CONSOLE_MODE"] = "enabled"
+
+# Define a weather-focused system prompt
+WEATHER_SYSTEM_PROMPT = """You are a weather assistant with HTTP capabilities. You can:
+
+1. Make HTTP requests to the National Weather Service API
+2. Process and display weather forecast data
+3. Provide weather information for locations in the United States
+
+When retrieving weather information:
+1. First get the coordinates or grid information using https://api.weather.gov/points/{latitude},{longitude} or https://api.weather.gov/points/{zipcode}
+2. Then use the returned forecast URL to get the actual forecast
+
+When displaying responses:
+- Format weather data in a human-readable way
+- Highlight important information like temperature, precipitation, and alerts
+- Handle errors appropriately
+- Convert technical terms to user-friendly language
+
+Always explain the weather conditions clearly and provide context for the forecast.
+"""
+
+def handler(event: Dict[str, Any], _context) -> str:
+    weather_agent = Agent(
+        model=model,
+        system_prompt=WEATHER_SYSTEM_PROMPT,
+        tools=[http_request]
+    )
+
     
 
-
-async def handler(event: Dict[str, Any], _context) -> str:
-    agent = await create_location_agent()
-    print("Location agent created successfully!")
-    examples = [
-        "Find coffee shops Puerta del Sol, Madrid, Spain",
-        "What's the address of coordinates 47.6062, -122.3321?",
-        "Optimize my route to visit 3 locations: Starbucks, grocery store, and gas station near my location"
-    ]
-    
-    for query in examples:
-        print(f"\n🗺️  Query: {query}")
-        try:
-            response = agent(query)
-            print(f"📍 Response: {response.message}")
-
-        except Exception as e:
-            print(f"❌ Error: {e}")
-
-    return "true"
-
+    response = weather_agent(event.get('prompt'))
+    print(response)
+    return str(response)
