@@ -29,7 +29,7 @@ def create_lambda_package():
     dafo_agent_dir = current_dir / "src/python/data"
     app_deployment_zip = packaging_dir / "app.zip"
     location_deployment_zip = packaging_dir / "location.zip"
-    dafo_agent_deployment_zip = packaging_dir / "dato_agent.zip"
+    dafo_agent_deployment_zip = packaging_dir / "dafo_agent.zip"
 
 
     dependencies_dir = packaging_dir / "_dependencies"
