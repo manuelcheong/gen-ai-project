@@ -1,0 +1,8 @@
+dafoAgent:
+  handler: dafo_agent.handler
+  runtime: python3.12
+  package:
+    artifact: packaging/dafo_agent.zip
+  timeout: 300 
+  layers:
+    - { Ref: PythonDepsLambdaLayer }
