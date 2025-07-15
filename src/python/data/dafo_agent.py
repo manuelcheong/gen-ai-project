@@ -38,7 +38,7 @@ Metodología clara y organizada:
 def handler(event: Dict[str, Any], _context) -> str:
     dafo_agent = Agent(
         model=model,
-        system_prompt=WEATHER_SYSTEM_PROMPT,
+        system_prompt=DAFO_PROMPT,
         tools=[http_request]
     )
 
