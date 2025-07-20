@@ -1,0 +1,45 @@
+queryVector:
+  Type: AWS::Lambda::Function
+  Properties:
+    Code:
+      ZipFile: |
+        import boto3 
+        import json 
+        from typing import Dict, Any
+
+        s3vectors = boto3.client('s3vectors', region_name='eu-central-1')
+        bedrock= boto3.client("bedrock-runtime", region_name="eu-west-1")
+
+        def lambda_handler(event: Dict[str, Any], _context) -> str:
+
+            input_query = event.get('query')
+            request = json.dumps({"inputText": input_query})
+
+            response = bedrock.invoke_model(modelId="amazon.titan-embed-text-v2:0", body=request)
+
+            model_response = json.loads(response["body"].read())
+
+            embedding = model_response["embedding"]
+
+            query = s3vectors.query_vectors( vectorBucketName="s3-vector-bucket-pre",
+              indexName="s3-vector-index-pre",
+              queryVector={"float32":embedding},
+              topK=3, 
+              filter={"genre":"documents"},
+              returnDistance=True,
+              returnMetadata=True
+              )
+            results = query["vectors"]
+            return { "statusCode": 200, "body": json.dumps({"result": results})}
+
+    Description: AWS Lambda function to query vector un S3-Vectors
+    FunctionName: queryVector
+    Handler: index.lambda_handler
+    MemorySize: 256
+    Role: arn:aws:iam::178934116267:role/AlseaLambdaFullAccess
+    Runtime: python3.13
+    Architectures:
+      - arm64
+    Timeout: 60
+    Layers:
+      - !Ref PythonDepsLambdaLayer

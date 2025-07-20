@@ -232,6 +232,7 @@ resources:
     # ------------- S3 VECTOR HANDLERS
 
     putVector: '${file(./iac/lambda/vectors/putvector.yml):putVector}'
+    queryVector: '${file(./iac/lambda/vectors/queryvector.yml):queryVector}'
 
     #   ------- Networking  🫡 --------------
 
