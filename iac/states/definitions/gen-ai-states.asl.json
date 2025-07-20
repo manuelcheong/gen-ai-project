@@ -467,7 +467,7 @@
                                             "FunctionName": "putVector",
                                             "Payload": {
                                                 "key.$": "$.Payload.textLocation.key",
-                                                "embedding": "$.embeddingContent.Body.embedding"
+                                                "embedding.$": "$.embeddingContent.Body.embedding"
                                             }
                                         },
                                         "Retry": [
