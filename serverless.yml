@@ -76,9 +76,9 @@ functions:
     locationAgent: '${file(./iac/lambda/location_agent.yml):locationAgent}'
     dafoAgent: '${file(./iac/lambda/data_agents/dafo_agent.yml):dafoAgent}'
 
-    putVector: '${file(./iac/lambda/vectors/putvector.yml):putVector}'
-
     
+
+
 #  strandsAgent:
 #    handler: agent_handler.handler
     #runtime: python3.11
@@ -228,6 +228,10 @@ resources:
     # ----------- TEXTRACTOR FUNCTIONS 🫡 --------------
 
     textExtractorFunction: '${file(./iac/lambda/textExtractor.yml):textExtractorFunction}'
+
+    # ------------- S3 VECTOR HANDLERS
+
+    putVector: '${file(./iac/lambda/vectors/putvector.yml):putVector}'
 
     #   ------- Networking  🫡 --------------
 
