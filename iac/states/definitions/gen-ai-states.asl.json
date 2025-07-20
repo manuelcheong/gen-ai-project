@@ -488,10 +488,10 @@
                                     }
                                 }
                             },
-                            "Next": "Send Message to WebSocket Menu Prompt",
+                            "Next": "Send Message to WebSocket File Prompt",
                             "ResultPath": "$.clearOutput"
                         },
-                        "Send Message to WebSocket Menu Prompt": {
+                        "Send Message to WebSocket File Prompt": {
                             "End": true,
                             "Parameters": {
                                 "ApiEndpoint": "gvy669mge1.execute-api.eu-west-1.amazonaws.com",
