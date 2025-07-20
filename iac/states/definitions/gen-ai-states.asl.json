@@ -375,7 +375,7 @@
                                             "DocumentLocation": {
                                                 "S3Object": {
                                                     "Bucket": "areas-locations",
-                                                    "Name": "resumen1.pdf"
+                                                    "Name.$": "$.body.body.file"
                                                 }
                                             },
                                             "OutputConfig": {
