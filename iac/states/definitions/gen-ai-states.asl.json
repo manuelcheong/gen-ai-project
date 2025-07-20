@@ -494,7 +494,7 @@
                                             "ApiEndpoint": "gvy669mge1.execute-api.eu-west-1.amazonaws.com",
                                             "AuthType": "IAM_ROLE",
                                             "Method": "POST",
-                                            "Path.$": "States.Format('/@connections/{}', $.connectionId)",
+                                            "Path.$": "States.Format('/@connections/{}', $.messageAttributes.connectionId.stringValue)",
                                             "RequestBody": {
                                                 "Message": "Document vector stored succesfully 💪"
                                             },
