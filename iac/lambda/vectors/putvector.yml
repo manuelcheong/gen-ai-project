@@ -9,7 +9,7 @@ putVector:
 
         s3vectors = boto3.client('s3vectors', region_name='eu-central-1')
 
-        def handler(event: Dict[str, Any], _context) -> str:
+        def lambda_handler(event: Dict[str, Any], _context) -> str:
 
             s3vectors.put_vectors( vectorBucketName="s3-vector-bucket-pre",
             indexName="s3-vector-index-pre", 
