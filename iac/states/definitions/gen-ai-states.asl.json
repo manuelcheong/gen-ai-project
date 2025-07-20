@@ -463,7 +463,6 @@
                                     "Create document Vector": {
                                         "Type": "Task",
                                         "Resource": "arn:aws:states:::lambda:invoke",
-                                        "OutputPath": "$.Payload",
                                         "Parameters": {
                                             "FunctionName": "putVector",
                                             "Payload": {
