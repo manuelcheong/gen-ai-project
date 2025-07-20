@@ -75,6 +75,10 @@ functions:
     strands: '${file(./iac/lambda/agent.yml):strands}'
     locationAgent: '${file(./iac/lambda/location_agent.yml):locationAgent}'
     dafoAgent: '${file(./iac/lambda/data_agents/dafo_agent.yml):dafoAgent}'
+
+    putVector: '${file(./iac/lambda/vectors/putvector.yml):putVector}'
+
+    
 #  strandsAgent:
 #    handler: agent_handler.handler
     #runtime: python3.11
