@@ -467,8 +467,8 @@
                                         "Parameters": {
                                             "FunctionName": "putVector",
                                             "Payload": {
-                                                "key.$": "$.Payload.textLocation.key",
-                                                "embedding.$": "$.embeddingContent.Body.embedding"
+                                                "key.$": "$.allPages.Payload.textLocation.key",
+                                                "embedding.$": "$.allPages.embeddingContent.Body.embedding"
                                             }
                                         },
                                         "Retry": [
@@ -485,6 +485,7 @@
                                                 "JitterStrategy": "FULL"
                                             }
                                         ],
+                                        "ResultPath": "$.vectorCreated",
                                         "Next": "Send Message to WebSocket File Prompt"
                                     },
                                     "Send Message to WebSocket File Prompt": {
