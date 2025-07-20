@@ -429,6 +429,7 @@
                                                 "jobId.$": "$.textractJob.JobId"
                                             }
                                         },
+                                        "ResultPath": "$.allPages",
                                         "Next": "Embeding extracted text with Titan"
                                     },
                                     "JobFailed": {
@@ -442,7 +443,7 @@
                                         "Parameters": {
                                             "ModelId": "amazon.titan-embed-text-v2:0",
                                             "Input": {
-                                                "S3Uri.$": "States.Format('s3://{}/{}', $.Payload.embeddingjsonLocation.bucket , $.Payload.embeddingjsonLocation.key)"
+                                                "S3Uri.$": "States.Format('s3://{}/{}', $.allPages.Payload.embeddingjsonLocation.bucket , $.allPages.Payload.embeddingjsonLocation.key)"
                                             },
                                             "ContentType": "application/json",
                                             "Accept": "application/json"
@@ -484,27 +485,26 @@
                                                 "JitterStrategy": "FULL"
                                             }
                                         ],
-                                        "End": true
+                                        "Next": "Send Message to WebSocket File Prompt"
+                                    },
+                                    "Send Message to WebSocket File Prompt": {
+                                        "End": true,
+                                        "Parameters": {
+                                            "ApiEndpoint": "gvy669mge1.execute-api.eu-west-1.amazonaws.com",
+                                            "AuthType": "IAM_ROLE",
+                                            "Method": "POST",
+                                            "Path.$": "States.Format('/@connections/{}', $.connectionId)",
+                                            "RequestBody": {
+                                                "Message": "Document vector stored succesfully 💪"
+                                            },
+                                            "Stage": "pre"
+                                        },
+                                        "Resource": "arn:aws:states:::apigateway:invoke",
+                                        "Type": "Task"
                                     }
                                 }
                             },
-                            "Next": "Send Message to WebSocket File Prompt",
-                            "ResultPath": "$.clearOutput"
-                        },
-                        "Send Message to WebSocket File Prompt": {
-                            "End": true,
-                            "Parameters": {
-                                "ApiEndpoint": "gvy669mge1.execute-api.eu-west-1.amazonaws.com",
-                                "AuthType": "IAM_ROLE",
-                                "Method": "POST",
-                                "Path.$": "States.Format('/@connections/{}', $.connectionId)",
-                                "RequestBody": {
-                                    "Message": "Document vector stored succesfully 💪"
-                                },
-                                "Stage": "pre"
-                            },
-                            "Resource": "arn:aws:states:::apigateway:invoke",
-                            "Type": "Task"
+                            "End": true
                         }
                     }
                 }
