@@ -488,7 +488,23 @@
                                     }
                                 }
                             },
-                            "End": true
+                            "Next": "Send Message to WebSocket Menu Prompt",
+                            "ResultPath": "$.clearOutput"
+                        },
+                        "Send Message to WebSocket Menu Prompt": {
+                            "End": true,
+                            "Parameters": {
+                                "ApiEndpoint": "gvy669mge1.execute-api.eu-west-1.amazonaws.com",
+                                "AuthType": "IAM_ROLE",
+                                "Method": "POST",
+                                "Path.$": "States.Format('/@connections/{}', $.connectionId)",
+                                "RequestBody": {
+                                    "Message": "Document vector stored succesfully 💪"
+                                },
+                                "Stage": "pre"
+                            },
+                            "Resource": "arn:aws:states:::apigateway:invoke",
+                            "Type": "Task"
                         }
                     }
                 }
